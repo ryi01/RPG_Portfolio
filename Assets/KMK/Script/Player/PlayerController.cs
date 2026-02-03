@@ -7,8 +7,8 @@ public class PlayerController : MonoBehaviour
     public InputAttack AttackComp { get; private set; }
     public Animator Animator { get; private set; }
 
+    private Vector3 moveDir;
     private Vector3 attackDir;
-    private Vector3 dir;
     private bool isAttack = false;
 
     private void Awake()
@@ -21,65 +21,72 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HandleInput();
         HandleMovement();
-        HandleAttack();
         HandleRotation();
         
+    }
+    private void HandleInput()
+    {
+        // 입력 이동 방향
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        // 입력값에 따라 dir 설정
+        moveDir = new Vector3(h, 0, v).normalized;
+        AttackComp.UpdateAttackProgress();
+        if (Input.GetMouseButtonDown(0))
+        {
+            AttackComp.TriggerAttack();
+            UpdateAttackDir();
+        }
+        if (AttackComp.IsAttackAnimation() || Animator.IsInTransition(0))
+        {
+            isAttack = true;
+        }
+        else
+        {
+            isAttack = false;
+        }
     }
 
     private void HandleMovement()
     {
         MovementComp.GravityDown();
-        // 입력 이동 방향
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        // 입력값에 따라 dir 설정
-        dir = new Vector3(h, 0, v).normalized;
-        MovementComp.Move(dir);
-    }
-    private void HandleAttack()
-    {
-        AttackComp.ResetTrigger();
-        if (Input.GetMouseButtonDown(0))
+        if (isAttack || Animator.IsInTransition(0))
         {
-            attackDir = (MovementComp.GetMouseWorldPos() - transform.position);
-            attackDir.y = 0;
-            isAttack = true;
-            AttackComp.TriggerAttack();
+            return;
         }
-        AttackComp.UpdateAttackProgress();
-        if (!AttackComp.IsAttackAnimation())
-        {
-            isAttack = false;
-        }
-
+        MovementComp.Move(moveDir);
     }
     private void HandleRotation()
     {
         Vector3 targetDir = Vector3.zero;
-        if (isAttack)
+        if (isAttack && attackDir != Vector3.zero)
         {
             targetDir = attackDir;
         }
-        else if (dir != Vector3.zero)
+        else if (moveDir != Vector3.zero)
         {
-            targetDir = dir;
+            targetDir = moveDir;
         }
-
-        targetDir.y = 0;
-        
-        MovementComp.RotTarget(targetDir.normalized);
+        if(targetDir != Vector3.zero)
+        {
+            targetDir.y = 0;
+            MovementComp.RotTarget(targetDir.normalized);
+        }        
     }
-    public void SetAnimFloat(string animString, float amount)
+    private void UpdateAttackDir()
     {
-        Animator.SetFloat(animString, amount);
+        Vector3 diff = (MovementComp.GetMouseWorldPos() - transform.position);
+        diff.y = 0;
+        if(diff.sqrMagnitude > 0.001f)
+        {
+            attackDir = diff;
+        }
     }
-    public void SetAnimTrigger(int animIndex)
+    
+    public void OnAttackDash(float distance)
     {
-        Animator.SetTrigger(animIndex);
-    }
-    public void SetAnimBool(int animIndex, bool value)
-    {
-        Animator.SetBool(animIndex, value);
+        MovementComp.Push(transform.forward, distance, 0.1f);
     }
 }

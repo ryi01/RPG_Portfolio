@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class InputMovement : MonoBehaviour
@@ -28,13 +29,13 @@ public class InputMovement : MonoBehaviour
     {
         movement = dir;
         cc.Move(movement * pc.StatComp.MoveSpeed * Time.deltaTime);
-        Vector3 targetDir = movement.normalized;
-        targetDir.y = 0; 
+        movement.y = 0; 
 
-        pc.SetAnimFloat("Move", movement.magnitude);
+        pc.Animator.SetFloat("Move", movement.normalized.magnitude);
     }
     public void RotTarget(Vector3 dir)
     {
+        if (dir == Vector3.zero) return;
         Quaternion targetRot = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, pc.StatComp.RotSpeed * Time.deltaTime);
     }
@@ -64,5 +65,22 @@ public class InputMovement : MonoBehaviour
             return ray.GetPoint(enter);
         }
         return transform.position;
+    }
+    private Coroutine forceCoroutine;
+    public void Push(Vector3 dir, float distance, float duration)
+    {
+        if(forceCoroutine != null) StopCoroutine(forceCoroutine); 
+        forceCoroutine = StartCoroutine(OnForce(dir, distance, duration));
+    }
+    IEnumerator OnForce(Vector3 dir, float distance, float duration)
+    {
+        float elapsed = 0;
+        while(elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float currentStep = (distance/duration)* Time.deltaTime;
+            cc.Move(dir * currentStep);
+            yield return null;
+        }
     }
 }
