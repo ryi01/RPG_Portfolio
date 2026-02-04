@@ -32,14 +32,18 @@ public class InputAttack : MonoBehaviour
                     ExecuteAttak();
                 }
             }
-            // 공격중이 아니라면 바로 실행
-            else ExecuteAttak();
+            else
+            {
+                // 공격중이 아니라면 바로 실행
+                ExecuteAttak();
+            }
             if (bufferTimer <= 0) isBufferActive = false;
         }
         
     }
     private void ExecuteAttak()
     {
+        // 트리거 리셋후 다시 실행
         pc.Animator.ResetTrigger(hashAttack);
         pc.Animator.SetTrigger(hashAttack);
         isBufferActive = false;
@@ -52,8 +56,9 @@ public class InputAttack : MonoBehaviour
         bufferTimer = BUFFER_DURATION;
     }
 
+    // animation을 태그로 확인하고 실행중이면 true
     public bool IsAttackAnimation()
     {
-        return pc.Animator.GetCurrentAnimatorStateInfo(0).IsTag("Attack");
+        return pc.Animator.GetCurrentAnimatorStateInfo(1).IsTag("Attack");
     }
 }

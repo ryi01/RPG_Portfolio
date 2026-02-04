@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d41eec9c1d9c9d4b9bb5df6fd866281, type: 3}
   m_Name: PlayerStatInfo
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatInfo
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  passLayer:
+    serializedVersion: 2
+    m_Bits: 256
   maxHP: 100
-  attack: 10
+  attack: 2
+  attackRadius: 2.2
+  hitAngle: 90
   moveSpeed: 5
   rotSpeed: 600
   nockbackForce: 20

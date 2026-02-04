@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class InputMovement : MonoBehaviour
 {
-    private Camera mainCam;
-    private Vector3 targetPos;
-    private bool isMoving;
     #region 이동
     [Header("이동")]
     private CharacterController cc;
@@ -22,8 +19,6 @@ public class InputMovement : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
         pc = GetComponent<PlayerController>();
-        mainCam = Camera.main;
-        targetPos = transform.position; 
     }
     public void Move(Vector3 dir)
     {
