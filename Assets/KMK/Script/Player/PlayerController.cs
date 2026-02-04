@@ -87,20 +87,17 @@ public class PlayerController : BaseController
         {
             currentSkill = InputSkill.SKILLS.SKILL1;
             UpdateAttackDir();
-            Animator.SetLayerWeight(1, 1);
-            StartAnim();
+            StartAnim(1);
         }
         if(Input.GetKeyDown(KeyCode.Alpha2) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL2))
         {
             currentSkill = InputSkill.SKILLS.SKILL2;
-            Animator.SetLayerWeight(1, 0);
             StartAnim();
         }
         if (Input.GetKeyDown(KeyCode.Alpha3) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL3))
         {
             currentSkill = InputSkill.SKILLS.SKILL3;
-            Animator.SetLayerWeight(1, 0);
-            StartAnim();
+            SkillComp.ActiveSkill3(currentSkill);
         }
         if (Input.GetKeyDown(KeyCode.Alpha4) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL4))
         {
@@ -110,13 +107,14 @@ public class PlayerController : BaseController
         if (Input.GetKeyDown(KeyCode.Alpha5) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL5))
         {
             currentSkill = InputSkill.SKILLS.SKILL5;
-            Animator.SetLayerWeight(1, 0);
+            
             StartAnim();
         }
 
     }
-    private void StartAnim()
+    private void StartAnim(int weight = 0)
     {
+        Animator.SetLayerWeight(1, weight);
         StartCoroutine(SkillComp.WaitSkill(currentSkill));
         SkillComp.ActiveSkill(currentSkill);
     }

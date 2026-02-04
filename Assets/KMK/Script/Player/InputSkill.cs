@@ -28,6 +28,11 @@ public class InputSkill : MonoBehaviour
         skillAttacks[(int)skillTypes].StartSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], true);
     }
+    public void ActiveSkill3(SKILLS skillTypes)
+    {
+        skillAttacks[(int)skillTypes].StartSkill();
+        pc.Animator.SetTrigger(hashSkillAttacks[(int)skillTypes]);     
+    }
     public void DeActiveSkill(SKILLS skillTypes)
     {
         skillAttacks[(int)skillTypes].EndSkill();

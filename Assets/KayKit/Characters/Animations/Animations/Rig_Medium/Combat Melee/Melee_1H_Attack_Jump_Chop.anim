@@ -39454,7 +39454,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.9
-    functionName: Skill3
+    functionName: OnStanSkill
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
