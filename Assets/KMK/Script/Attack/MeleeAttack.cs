@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class MeleeAttack : CommonAttack
 {
-    protected CharacterStatComponent CS { get => bc.StatComp; }
-    protected float Force { get => bc.StatComp.NockbackForce; }
+    protected CharacterStatComponent CS { get => bc.GetStat(); }
+    protected float Force { get => CS.NockbackForce; }
     public override void Attack()
     {
         RangeAngleTargetAttack();
@@ -12,10 +12,6 @@ public class MeleeAttack : CommonAttack
     public virtual void RangeAngleTargetAttack(SkillInfo data = null)
     {
         float radius = (data != null) ? data.attackRadius : CS.AttackRadius;
-        if(data == null)
-        {
-            Debug.Log($"data ¾øÀ½");
-        }
         Collider[] hits = Physics.OverlapSphere(attackTransform.position, radius, CS.TargetLayer);
         if(hits.Length > 0)
         {

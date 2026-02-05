@@ -23,17 +23,16 @@ public class InputSkill : MonoBehaviour
         }
     }
 
-    public void ActiveSkill(SKILLS skillTypes)
+    public void ActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
         skillAttacks[(int)skillTypes].StartSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], true);
     }
-    public void ActiveSkill3(SKILLS skillTypes)
+    public void OnSkill3End()
     {
-        skillAttacks[(int)skillTypes].StartSkill();
-        pc.Animator.SetTrigger(hashSkillAttacks[(int)skillTypes]);     
+        DeActiveSkill();
     }
-    public void DeActiveSkill(SKILLS skillTypes)
+    public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
         skillAttacks[(int)skillTypes].EndSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], false);
@@ -44,8 +43,10 @@ public class InputSkill : MonoBehaviour
     }
     public bool IsSkillAnimation(SKILLS skillTypes)
     {
-        AnimatorStateInfo stat = pc.Animator.GetCurrentAnimatorStateInfo(1);
-        return stat.IsTag(skillAttacks[(int)skillTypes].skillHashName);
+        string tag = skillAttacks[(int)skillTypes].skillHashName;
+        AnimatorStateInfo layer0 = pc.Animator.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo layer1 = pc.Animator.GetCurrentAnimatorStateInfo(1);
+        return layer0.IsTag(tag) || layer1.IsTag(tag);
     }
 
     public IEnumerator WaitSkill(SKILLS currentSkill)

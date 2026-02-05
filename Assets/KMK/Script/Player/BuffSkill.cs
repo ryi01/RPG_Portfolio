@@ -4,7 +4,6 @@ using UnityEngine.Rendering;
 
 public class BuffSkill : PlayerSkillAttack
 {
-    [SerializeField] private float duration = 5;
     private bool isBuff = false;    
     public override void Attack()
     {

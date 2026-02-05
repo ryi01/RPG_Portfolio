@@ -4,6 +4,8 @@ public class PlayerStatComponent : CharacterStatComponent
 {
     private PlayerStatInfo playerInfo;
     private float currentST;
+    private float lastSTUsedTime;
+    [SerializeField] private float regenDely = 0.5f;
 
     public float CurrentST { get => currentST; }
     public float MaxST { get => playerInfo.maxST; }
@@ -24,10 +26,14 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         if (currentST < amount) return false;
         currentST -= amount;
+        lastSTUsedTime = Time.time;
         return true;
     }
     public void ReganST(float deltaTime)
     {
-        currentST = Mathf.Clamp(currentST + playerInfo.regenST * deltaTime, 0, playerInfo.maxST);
+        if (Time.time > lastSTUsedTime + regenDely && currentST < MaxST)
+        {
+            currentST = Mathf.Clamp(currentST + playerInfo.regenST * deltaTime, 0, playerInfo.maxST);
+        }
     }
 }

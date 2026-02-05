@@ -13,6 +13,9 @@ public class EnemyStatInfo : StatInfo
     public float reganGroggy;
     [Header("Wander")]
     public float wanderNavCheckRadius;
+    public float nextPointSelectDistance = 1;
+    [Header("Death")]
+    public float deathDelayTime = 2;
     [Header("Boss")]
     public bool isBoss = false;
 }

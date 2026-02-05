@@ -17,4 +17,5 @@ public abstract class StatInfo : ScriptableObject
     public float rotSpeed;
     [Header("KnockBack")]
     public float nockbackForce;
+    public float nockbackTime = 0.1f;
 }

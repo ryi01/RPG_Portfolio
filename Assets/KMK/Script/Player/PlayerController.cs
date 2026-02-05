@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : BaseController
+public class PlayerController : BaseController<PlayerStatComponent>
 {
     public InputMovement MovementComp { get; private set; }
     public InputAttack AttackComp { get; private set; }
@@ -9,12 +9,15 @@ public class PlayerController : BaseController
 
     private Vector3 moveDir;
     private Vector3 attackDir;
+    private Vector3 finalPos;
     private bool isAttack = false;
+    private bool isMove = false;
+    private InputSkill.SKILLS currentSkill;
+    private KeyCode[] skillKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5 };
 
     protected override void Awake()
     {
         base.Awake();
-        StatComp = GetComponent<PlayerStatComponent>();
         MovementComp = GetComponent<InputMovement>();
         AttackComp = GetComponent<InputAttack>();
         SkillComp = GetComponent<InputSkill>();
@@ -55,16 +58,36 @@ public class PlayerController : BaseController
 
     private void HandleMovement()
     {
-        if (SkillComp.IsSkillAnimation(currentSkill)) return;
+        if (SkillComp.IsSkillAnimation(currentSkill))
+        {
+            if(currentSkill == InputSkill.SKILLS.SKILL2)
+            {
+                if(isMove)
+                {
+                    MovementComp.Move(moveDir);
+                }
+                Animator.SetFloat("Move", 0);
+            }
+            return;
+        }
         MovementComp.GravityDown();
         if (isAttack) return;
         MovementComp.Move(moveDir);
+        Animator.SetFloat("Move", moveDir.normalized.magnitude);
     }
     private void HandleRotation()
     {
-        if (SkillComp.IsSkillAnimation(InputSkill.SKILLS.SKILL2)) return;
         Vector3 targetDir = Vector3.zero;
-        if (isAttack)
+        if (SkillComp.IsSkillAnimation(InputSkill.SKILLS.SKILL2))
+        {
+            if (moveDir != Vector3.zero)
+            {
+                targetDir = moveDir;
+                transform.rotation = Quaternion.LookRotation(targetDir);
+            }
+            else return;
+        }
+        else if (isAttack || SkillComp.IsSkillAnimation(currentSkill))
         {
             targetDir = attackDir;
         }
@@ -78,63 +101,78 @@ public class PlayerController : BaseController
             MovementComp.RotTarget(targetDir.normalized);
         }        
     }
-    private InputSkill.SKILLS currentSkill;
     private void HandleSkill()
     {
         if (SkillComp.IsSkillAnimation(currentSkill)) return;
-        
-        if (Input.GetKeyDown(KeyCode.Alpha1) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL1))
+
+        for (int i = 0; i < skillKeys.Length; i++)
         {
-            currentSkill = InputSkill.SKILLS.SKILL1;
-            UpdateAttackDir();
-            StartAnim(1);
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha2) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL2))
-        {
-            currentSkill = InputSkill.SKILLS.SKILL2;
-            StartAnim();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL3))
-        {
-            currentSkill = InputSkill.SKILLS.SKILL3;
-            SkillComp.ActiveSkill3(currentSkill);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL4))
-        {
-            currentSkill = InputSkill.SKILLS.SKILL4;
-            SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL4);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5) && !SkillComp.CurrentSkillActive(InputSkill.SKILLS.SKILL5))
-        {
-            currentSkill = InputSkill.SKILLS.SKILL5;
-            
-            StartAnim();
+            if (Input.GetKeyDown(skillKeys[i]))
+            {
+                InputSkill.SKILLS select = (InputSkill.SKILLS)i;
+                if (!SkillComp.CurrentSkillActive(select))
+                {
+                    ExcuteSkillLogic(select);
+                }
+                break;
+            }
         }
 
     }
+    private void ExcuteSkillLogic(InputSkill.SKILLS skill)
+    {
+        currentSkill = skill;
+
+        switch(skill)
+        {
+            case InputSkill.SKILLS.SKILL1:
+                StartAnim(1);
+                break;
+            case InputSkill.SKILLS.SKILL3:
+                UpdateAttackDir();
+                Animator.SetLayerWeight(1, 0);
+                SkillComp.ActiveSkill();
+                break;
+            case InputSkill.SKILLS.SKILL4:
+                SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL4);
+                break;
+            default:
+                StartAnim();
+                break;
+        }
+    }
     private void StartAnim(int weight = 0)
     {
+        UpdateAttackDir();
         Animator.SetLayerWeight(1, weight);
         StartCoroutine(SkillComp.WaitSkill(currentSkill));
         SkillComp.ActiveSkill(currentSkill);
     }
     private void UpdateAttackDir()
     {
-        Vector3 diff = (MovementComp.GetMouseWorldPos() - transform.position);
-        diff.y = 0;
-        if(diff.sqrMagnitude > 0.001f)
+        finalPos = (MovementComp.GetMouseWorldPos() - transform.position);
+        finalPos.y = 0;
+        if(finalPos.sqrMagnitude > 0.001f)
         {
-            attackDir = diff;
+            attackDir = finalPos;
+            MovementComp.LookAtInstant(attackDir.normalized);
         }
     }
     public override void Damage(float damage, float force)
     {
-        StatComp.TakeDamage(damage);
+        base.Damage(damage, force);
         MovementComp.Push(-transform.forward, force, 0.1f);
     }
     public void OnAttackDash(float distance)
     {
-        MovementComp.Push(transform.forward, distance, 0.1f);
+        if (currentSkill == InputSkill.SKILLS.SKILL3)
+        {
+            distance = Mathf.Clamp(finalPos.magnitude, 0f, 5f);
+        }
+        MovementComp.Push(transform.forward, distance, StatComp.KnckBackTime);
     }
-
+    public void OnIsMove(int value)
+    {
+        isMove = (value != 0);
+    }
 }

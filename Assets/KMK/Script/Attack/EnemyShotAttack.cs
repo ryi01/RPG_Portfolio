@@ -2,15 +2,13 @@ using UnityEngine;
 
 public class EnemyShotAttack : MeleeAttack
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] protected GameObject bulletPrefab;
+    public override void Attack()
     {
-        
+        Instantiate(bulletPrefab, attackTransform.position, transform.rotation);
     }
-
-    // Update is called once per frame
-    void Update()
+    public void OnShotAttack()
     {
-        
+        Attack();
     }
 }

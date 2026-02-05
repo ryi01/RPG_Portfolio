@@ -25,14 +25,19 @@ public class InputMovement : MonoBehaviour
         movement = dir;
         cc.Move(movement * pc.StatComp.MoveSpeed * Time.deltaTime);
         movement.y = 0; 
-
-        pc.Animator.SetFloat("Move", movement.normalized.magnitude);
     }
     public void RotTarget(Vector3 dir)
     {
         if (dir == Vector3.zero) return;
         Quaternion targetRot = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, pc.StatComp.RotSpeed * Time.deltaTime);
+    }
+
+    public void LookAtInstant(Vector3 dir)
+    {
+        if (dir == Vector3.zero) return;
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.LookRotation(dir);
     }
 
     public void GravityDown()
@@ -53,13 +58,13 @@ public class InputMovement : MonoBehaviour
     public Vector3 GetMouseWorldPos()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane ground = new Plane(Vector3.up, Vector3.zero);
+        Plane ground = new Plane(Vector3.up, new Vector3(0, transform.position.y, 0));
 
         if(ground.Raycast(ray, out float enter))
         {
             return ray.GetPoint(enter);
         }
-        return transform.position;
+        return transform.position + transform.forward;
     }
     private Coroutine forceCoroutine;
     public void Push(Vector3 dir, float distance, float duration)
