@@ -12,6 +12,7 @@ public class EnemyIdleState : EnemyState
         StandWait();
         NavigationStop();
         // 애니메이션 호출 => 컨트롤러에 존재
+        Anim.SetInteger("State", (int)state);
     }
     public override void UpdateState()
     {

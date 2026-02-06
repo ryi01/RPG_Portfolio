@@ -6,7 +6,7 @@ public class PlayerMeleeAttack : MeleeAttack
     [SerializeField] private Vector2 attackGain;
     private void Start()
     {
-        camController = GetComponent<CameraShakeController>();
+        camController = FindFirstObjectByType<CameraShakeController>();
     }
     protected override void AttackReady()
     {
@@ -17,6 +17,6 @@ public class PlayerMeleeAttack : MeleeAttack
     {
         base.AttackHit(hit);
         
-        bc.Damage(CS.FinalAttack, CS.NockbackForce);
+        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack, CS.NockbackForce);
     }
 }

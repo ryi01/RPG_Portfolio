@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+// 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
+[RequireComponent(typeof(PlayerStatComponent))]
 public class PlayerController : BaseController<PlayerStatComponent>
 {
     public InputMovement MovementComp { get; private set; }
@@ -10,6 +12,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private Vector3 moveDir;
     private Vector3 attackDir;
     private Vector3 finalPos;
+    private Vector3 mouseDir;
     private bool isAttack = false;
     private bool isMove = false;
     private InputSkill.SKILLS currentSkill;
@@ -42,7 +45,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (SkillComp.IsSkillAnimation(currentSkill)) return;
         if (Input.GetMouseButtonDown(0))
         {
-            Animator.SetLayerWeight(1, 1);
             AttackComp.TriggerAttack();
             UpdateAttackDir();
         }
@@ -62,9 +64,12 @@ public class PlayerController : BaseController<PlayerStatComponent>
         {
             if(currentSkill == InputSkill.SKILLS.SKILL2)
             {
+                mouseDir = (MovementComp.GetMouseWorldPos() - transform.position).normalized;
+                mouseDir.y = 0;
                 if(isMove)
                 {
-                    MovementComp.Move(moveDir);
+                   
+                    MovementComp.Move(mouseDir);
                 }
                 Animator.SetFloat("Move", 0);
             }
@@ -80,9 +85,9 @@ public class PlayerController : BaseController<PlayerStatComponent>
         Vector3 targetDir = Vector3.zero;
         if (SkillComp.IsSkillAnimation(InputSkill.SKILLS.SKILL2))
         {
-            if (moveDir != Vector3.zero)
+            if (mouseDir != Vector3.zero && isMove)
             {
-                targetDir = moveDir;
+                targetDir = mouseDir;
                 transform.rotation = Quaternion.LookRotation(targetDir);
             }
             else return;
@@ -126,11 +131,10 @@ public class PlayerController : BaseController<PlayerStatComponent>
         switch(skill)
         {
             case InputSkill.SKILLS.SKILL1:
-                StartAnim(1);
+                StartAnim();
                 break;
             case InputSkill.SKILLS.SKILL3:
                 UpdateAttackDir();
-                Animator.SetLayerWeight(1, 0);
                 SkillComp.ActiveSkill();
                 break;
             case InputSkill.SKILLS.SKILL4:
@@ -141,10 +145,9 @@ public class PlayerController : BaseController<PlayerStatComponent>
                 break;
         }
     }
-    private void StartAnim(int weight = 0)
+    private void StartAnim()
     {
         UpdateAttackDir();
-        Animator.SetLayerWeight(1, weight);
         StartCoroutine(SkillComp.WaitSkill(currentSkill));
         SkillComp.ActiveSkill(currentSkill);
     }

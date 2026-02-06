@@ -5,8 +5,9 @@ public class EnemyDamageState : EnemyHitState
 {
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        base.EnterState(state, data);
         // ÆÄÆ¼Å¬ 
+        Anim.SetInteger("State", (int)state);
+        base.EnterState(state, data);
     }
 
     public override void UpdateState()

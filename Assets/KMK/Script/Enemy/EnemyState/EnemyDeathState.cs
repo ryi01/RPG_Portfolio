@@ -1,3 +1,4 @@
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 public class EnemyDeathState : EnemyHitState
@@ -6,6 +7,8 @@ public class EnemyDeathState : EnemyHitState
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
+        Anim.SetInteger("State", Random.Range(7, 9));
+        Anim.SetBool("Death", true);
     }
 
     public override void UpdateState()

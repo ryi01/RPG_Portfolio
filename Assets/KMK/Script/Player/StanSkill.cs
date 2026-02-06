@@ -9,6 +9,9 @@ public class StanSkill : PlayerSkillAttack
     protected override void AttackHit(Collider hit)
     {
         base.AttackHit(hit);
-        Debug.Log($"스턴 넣을꺼야");
+        if(hit.TryGetComponent(out EnemyController enemy))
+        {
+            enemy.ForceStun(2);
+        }
     }
 }

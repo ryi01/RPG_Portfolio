@@ -36,11 +36,12 @@ public class EnemyStatComponent : CharacterStatComponent
             wanderPoints[i] = wayPointGameObjects[i].transform;
         }
     }
+
     private void ApplyStun(float duration)
     {
         currentStunTime = duration;
     }
-    public void UpdateStunStatus(float duration)
+    public void UpdateStunStatus()
     {
         if(IsStun)
         {
@@ -59,9 +60,9 @@ public class EnemyStatComponent : CharacterStatComponent
         {
             currentGroggy = 0;
             ApplyStun(duration);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public void ReganGroogy(float deltaTime)

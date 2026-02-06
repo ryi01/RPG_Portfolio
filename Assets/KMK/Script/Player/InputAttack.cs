@@ -59,6 +59,6 @@ public class InputAttack : MonoBehaviour
     // animation을 태그로 확인하고 실행중이면 true
     public bool IsAttackAnimation()
     {
-        return pc.Animator.GetCurrentAnimatorStateInfo(1).IsTag("Attack");
+        return pc.Animator.GetCurrentAnimatorStateInfo(0).IsTag("Attack");
     }
 }

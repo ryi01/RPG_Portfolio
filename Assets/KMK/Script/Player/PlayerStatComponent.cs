@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class PlayerStatComponent : CharacterStatComponent
 {
     private PlayerStatInfo playerInfo;

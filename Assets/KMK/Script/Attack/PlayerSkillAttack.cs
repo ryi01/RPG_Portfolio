@@ -22,6 +22,6 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     }
     protected override void AttackHit(Collider hit)
     {
-        bc.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce);
+        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce);
     }
 }

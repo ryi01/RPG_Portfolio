@@ -14,11 +14,18 @@ public class EnemyHitState : EnemyState
         navMeshAgent.isStopped = true;
         // 파티클 
         // 애니메이션
+        Anim.SetInteger("State", (int)state);
         StartCoroutine(ApllyHitKnockback(-transform.forward, force));
     }
     public override void UpdateState()
     {
-        
+        if (fsmInfo.IsHit) return;
+        if(controller.GetPlayerDis() <= fsmInfo.AttackRange)
+        {
+            controller.TransactionToState(EnumTypes.STATE.ATTACK);  
+            return;
+        }
+        controller.TransactionToState(EnumTypes.STATE.DETECT);
     }
     public IEnumerator ApllyHitKnockback(Vector3 hitDir, float force)
     {

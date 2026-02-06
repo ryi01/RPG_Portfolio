@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f0472b71db7864dae53216e904dd1c, type: 3}
   m_Name: AoEInfo
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  attackMultifle: 5
+  attackMultifle: 10
   attackRadius: 10
   hitAngle: 360
   attackTime: 3

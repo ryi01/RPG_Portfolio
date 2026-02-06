@@ -12,6 +12,7 @@ public class EnemyRoamingState : EnemyState
     {
         base.EnterState(state, data);
         // 애니메이션 파라미터 변경
+        Anim.SetInteger("State", (int)state);
     }
 
     public override void UpdateState()
@@ -51,9 +52,10 @@ public class EnemyRoamingState : EnemyState
         // 로밍 중심 위치 설정
         targetTrans = fsmInfo.WanderPoints[index];
         // 구체로 랜덤한 방향 벡터 구하기 => nextPoint가 반지름
-        Vector3 randDir = Random.insideUnitSphere * fsmInfo.NextPoint;
+        Vector3 randDir = Random.insideUnitSphere;
         // y 축 제거
         randDir.y = 0;
+        randDir *= fsmInfo.NextPoint;
         // 상대적 거리에서 실제거리로 변경 
         randDir += fsmInfo.WanderPoints[index].position;
 

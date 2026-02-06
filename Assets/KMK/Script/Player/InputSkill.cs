@@ -45,8 +45,7 @@ public class InputSkill : MonoBehaviour
     {
         string tag = skillAttacks[(int)skillTypes].skillHashName;
         AnimatorStateInfo layer0 = pc.Animator.GetCurrentAnimatorStateInfo(0);
-        AnimatorStateInfo layer1 = pc.Animator.GetCurrentAnimatorStateInfo(1);
-        return layer0.IsTag(tag) || layer1.IsTag(tag);
+        return layer0.IsTag(tag);
     }
 
     public IEnumerator WaitSkill(SKILLS currentSkill)
@@ -57,9 +56,5 @@ public class InputSkill : MonoBehaviour
     public void ExcuteSkill(SKILLS type)
     {
         skillAttacks[(int)type].Attack();
-    }
-    public void OnSkillEnd()
-    {
-        pc.Animator.SetLayerWeight(1, 0);
     }
 }

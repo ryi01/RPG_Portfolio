@@ -29,7 +29,7 @@ public class AoESkill : PlayerSkillAttack
         foreach(Collider target in targets)
         {
             if (target == null) continue;
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.03f);
             AttackHit(target);
         }
     }

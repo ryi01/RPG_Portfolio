@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyStatComponent))]
 public class EnemyController : BaseController<EnemyStatComponent>
 {
     private EnemyState currentState;
@@ -15,14 +16,38 @@ public class EnemyController : BaseController<EnemyStatComponent>
     private void Update()
     {
         currentState?.UpdateState();
+        StatComp?.UpdateStunStatus();
     }
     public override void Damage(float damage, float force)
     {
+        base.Damage(damage, force);
 
+        if (StatComp.CurrentHP <= 0)
+        {
+            TransactionToState(EnumTypes.STATE.DEATH, force);
+            return;
+        }
+        bool isStun = StatComp.AddGroogy(damage);
+        if(isStun)
+        {
+            TransactionToState(EnumTypes.STATE.STUN);
+            return;
+        }
+        if (currentState != enemyStates[(int)EnumTypes.STATE.STUN])
+        {
+            TransactionToState(EnumTypes.STATE.DAMAGE, force);
+        }
+    }
+    public void ForceStun(float duration)
+    {
+        StatComp.AddGroogy(StatComp.MaxGroogy);
+        TransactionToState(EnumTypes.STATE.STUN);
     }
     public void TransactionToState(EnumTypes.STATE state, object data = null)
     {
         if (currentState == enemyStates[(int)EnumTypes.STATE.DEATH]) return;
+        if (currentState == enemyStates[(int)state]) return;
+        if (state == EnumTypes.STATE.STUN && currentState == enemyStates[(int)EnumTypes.STATE.STUN]) return;
         currentState?.ExitState();
         currentState = enemyStates[(int)state];
         currentState?.EnterState(state, data);
@@ -32,8 +57,4 @@ public class EnemyController : BaseController<EnemyStatComponent>
         return Vector3.Distance(transform.position, Player.transform.position);
     }
 
-    public void SetAnimatorState(EnumTypes.STATE state)
-    {
-        Animator.SetInteger("State", (int)state);
-    }
 }

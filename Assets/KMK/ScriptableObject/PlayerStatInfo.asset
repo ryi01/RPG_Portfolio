@@ -25,6 +25,7 @@ MonoBehaviour:
   moveSpeed: 5
   rotSpeed: 600
   nockbackForce: 20
+  nockbackTime: 0.2
   criticalChance: 10
   criticalMultifle: 1.2
   maxST: 100

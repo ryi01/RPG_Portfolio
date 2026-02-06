@@ -29,7 +29,7 @@ public abstract class EnemyState : MonoBehaviour
     }
     public virtual void EnterState(EnumTypes.STATE state, object data = null)
     {
-        controller.Animator.speed = animSpeed;
+        Anim.speed = animSpeed;  
     }
 
     public abstract void UpdateState();

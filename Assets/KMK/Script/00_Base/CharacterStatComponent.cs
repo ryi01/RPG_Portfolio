@@ -41,7 +41,7 @@ public class CharacterStatComponent : MonoBehaviour
     {
         currentHP = Mathf.Clamp(currentHP + recovery, 0, statinfo.maxHP);
     }
-    public void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage)
     {
         currentHP = Mathf.Clamp(currentHP - damage, 0, statinfo.maxHP);
     }

@@ -8,6 +8,7 @@ public class EnemyAttackState : EnemyState
     {
         base.EnterState(state, data);
         NavigationStop();
+        Anim.SetInteger("State", (int)state);
     }
     public override void UpdateState()
     {
@@ -23,7 +24,7 @@ public class EnemyAttackState : EnemyState
     protected void LookAtTarget()
     {
         Vector3 dir = (controller.Player.transform.position - transform.position).normalized;
-        Quaternion lookRot = Quaternion.LookRotation(new Vector3(dir.x, 0, dir.y));
+        Quaternion lookRot = Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * fsmInfo.RotSpeed);
     }
 
