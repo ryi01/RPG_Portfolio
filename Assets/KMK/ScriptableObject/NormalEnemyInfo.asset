@@ -30,8 +30,8 @@ MonoBehaviour:
   attackRange: 1.5
   wanderRange: 1
   returnRange: 3
-  maxGroggy: 10
-  reganGroggy: 0
+  maxGroggy: 5
+  reganGroggy: 1
   wanderNavCheckRadius: 10
   nextPointSelectDistance: 1
   deathDelayTime: 2

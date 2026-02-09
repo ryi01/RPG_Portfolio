@@ -43,7 +43,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
             TransactionToState(EnumTypes.STATE.STUN);
             return;
         }
-        if (currentState != enemyStates[(int)EnumTypes.STATE.STUN])
+        if (!stateDict.TryGetValue(EnumTypes.STATE.STUN, out var stunState))
         {
             TransactionToState(EnumTypes.STATE.DAMAGE, force);
         }
