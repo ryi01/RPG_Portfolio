@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skill3Info
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 3
-  attackRadius: 2
+  attackRadius: 3
   hitAngle: 360
   attackTime: 3
   nockbackForce: 2

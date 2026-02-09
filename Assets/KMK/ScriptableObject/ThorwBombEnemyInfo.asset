@@ -19,7 +19,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   maxHP: 15
-  attack: 5
+  attack: 10
   attackRadius: 1.5
   hitAngle: 0
   moveSpeed: 1.5
@@ -27,7 +27,7 @@ MonoBehaviour:
   nockbackForce: 8.5
   nockbackTime: 0.12
   detectRange: 10
-  attackRange: 5
+  attackRange: 8
   wanderRange: 1
   returnRange: 3
   maxGroggy: 10

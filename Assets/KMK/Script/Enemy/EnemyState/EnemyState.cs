@@ -5,6 +5,9 @@ public abstract class EnemyState : MonoBehaviour
 {
     protected EnemyController controller;
 
+    [SerializeField]private EnumTypes.STATE stateType;
+    public EnumTypes.STATE StateType { get => stateType; }
+
     // 애니메이션 재생속도
     [Range(1f, 2f)]
     [SerializeField] protected float animSpeed;

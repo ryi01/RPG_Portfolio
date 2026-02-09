@@ -16,6 +16,7 @@ public class PlayerStatComponent : CharacterStatComponent
         base.Awake();
         playerInfo = statinfo as PlayerStatInfo;
         if (playerInfo == null) Debug.Log($"playerinfo ¾øÀ½");
+        currentST = MaxST;
     }
 
     public bool InvokeCri()
@@ -34,7 +35,7 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         if (Time.time > lastSTUsedTime + regenDely && currentST < MaxST)
         {
-            currentST = Mathf.Clamp(currentST + playerInfo.regenST * deltaTime, 0, playerInfo.maxST);
+            currentST = Mathf.Clamp(currentST + playerInfo.regenST * deltaTime, 0, MaxST);
         }
     }
 }

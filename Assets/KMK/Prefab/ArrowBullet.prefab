@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3805801971815749458}
   - component: {fileID: 4677699866943419906}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ArrowBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bffda73802cdd64d95441c7caa5c795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DirectionMovement
-  moveSpeed: 8
+  moveSpeed: 10
 --- !u!1 &7244995910750554913
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 5907305738148428296}
   - component: {fileID: 878799319491463380}
   - component: {fileID: 3882755070738340708}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ArrowBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,4 +206,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   attack: 2
-  offset: {x: 0, y: 1, z: 0}
+  destroyTime: 0.5

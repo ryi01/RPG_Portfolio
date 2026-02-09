@@ -21,10 +21,10 @@ MonoBehaviour:
   maxHP: 10
   attack: 2
   attackRadius: 1.5
-  hitAngle: 0
+  hitAngle: 60
   moveSpeed: 1.5
   rotSpeed: 600
-  nockbackForce: 8.5
+  nockbackForce: 0
   nockbackTime: 0.12
   detectRange: 10
   attackRange: 1.5

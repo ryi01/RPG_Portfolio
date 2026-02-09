@@ -32,6 +32,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         HandleMovement();
         HandleRotation();
         HandleSkill();
+        HandleRun();
     }
 
     private void HandleInput()
@@ -57,6 +58,20 @@ public class PlayerController : BaseController<PlayerStatComponent>
             isAttack = false;
         }
     }
+    private float currentMoveValue;
+    private void HandleRun()
+    {
+        // 입력값이 있는지 없는지 확인
+        bool isInput = Input.GetKey(KeyCode.LeftShift) && moveDir.magnitude > 0;
+        // 입력값이 있고 CurrentST가 있으면
+        bool canRun = isInput && StatComp.CurrentST > 0;
+        // isST = true
+        bool isST = canRun && StatComp.UseST(1 * Time.deltaTime);
+        float speedMult = isST ? 2 : 1;
+        StatComp.SetSpeedMultifle(speedMult);
+        currentMoveValue = moveDir.magnitude > 0 ? speedMult : 0;
+        StatComp.ReganST(Time.deltaTime);
+    }
 
     private void HandleMovement()
     {
@@ -68,7 +83,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
                 mouseDir.y = 0;
                 if(isMove)
                 {
-                   
                     MovementComp.Move(mouseDir);
                 }
                 Animator.SetFloat("Move", 0);
@@ -78,7 +92,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         MovementComp.GravityDown();
         if (isAttack) return;
         MovementComp.Move(moveDir);
-        Animator.SetFloat("Move", moveDir.normalized.magnitude);
+        Animator.SetFloat("Move", currentMoveValue);
     }
     private void HandleRotation()
     {
