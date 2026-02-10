@@ -28,13 +28,13 @@ public class InputSkill : MonoBehaviour
         skillAttacks[(int)skillTypes].StartSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], true);
     }
+
     public void OnSkill3End()
     {
         DeActiveSkill();
     }
     public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
-        skillAttacks[(int)skillTypes].EndSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], false);
     }
     public bool CurrentSkillActive(SKILLS types)
@@ -56,5 +56,12 @@ public class InputSkill : MonoBehaviour
     public void ExcuteSkill(SKILLS type)
     {
         skillAttacks[(int)type].Attack();
+    }
+    private void OnEnable()
+    {
+        for (int i = 0; i < skillAttacks.Length; i++)
+        {
+            // 아이콘 세팅
+        }
     }
 }

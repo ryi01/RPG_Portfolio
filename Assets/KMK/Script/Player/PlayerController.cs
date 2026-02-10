@@ -3,6 +3,8 @@ using UnityEngine;
 
 // 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
 [RequireComponent(typeof(PlayerStatComponent))]
+// 추가로 할일
+// 조준 보정 => 마우스포인터와 가장 가까이 있는 Enemy로 회전
 public class PlayerController : BaseController<PlayerStatComponent>
 {
     public InputMovement MovementComp { get; private set; }
@@ -10,11 +12,12 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public InputSkill SkillComp { get; private set; }
 
     private Vector3 moveDir;
-    private Vector3 attackDir;
-    private Vector3 finalPos;
-    private Vector3 mouseDir;
-    private bool isAttack = false;
+    private Vector3 targetLookDir;
+    private Vector3 offsetToMouse;
+
     private bool isMove = false;
+    private float currentMoveValue;
+
     private InputSkill.SKILLS currentSkill;
     private KeyCode[] skillKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5 };
 
@@ -42,6 +45,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
         float v = Input.GetAxisRaw("Vertical");
         // 입력값에 따라 dir 설정
         moveDir = new Vector3(h, 0, v).normalized;
+        offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
+        offsetToMouse.y = 0;
         AttackComp.UpdateAttackProgress();
         if (SkillComp.IsSkillAnimation(currentSkill)) return;
         if (Input.GetMouseButtonDown(0))
@@ -49,24 +54,14 @@ public class PlayerController : BaseController<PlayerStatComponent>
             AttackComp.TriggerAttack();
             UpdateAttackDir();
         }
-        if (AttackComp.IsAttackAnimation())
-        {
-            isAttack = true;
-        }
-        else
-        {
-            isAttack = false;
-        }
     }
-    private float currentMoveValue;
+
     private void HandleRun()
     {
         // 입력값이 있는지 없는지 확인
-        bool isInput = Input.GetKey(KeyCode.LeftShift) && moveDir.magnitude > 0;
-        // 입력값이 있고 CurrentST가 있으면
-        bool canRun = isInput && StatComp.CurrentST > 0;
+        bool isInput = Input.GetKey(KeyCode.LeftShift) && moveDir.magnitude > 0 && StatComp.CurrentST > 0;
         // isST = true
-        bool isST = canRun && StatComp.UseST(1 * Time.deltaTime);
+        bool isST = isInput && StatComp.UseST(Time.deltaTime);
         float speedMult = isST ? 2 : 1;
         StatComp.SetSpeedMultifle(speedMult);
         currentMoveValue = moveDir.magnitude > 0 ? speedMult : 0;
@@ -79,18 +74,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
         {
             if(currentSkill == InputSkill.SKILLS.SKILL2)
             {
-                mouseDir = (MovementComp.GetMouseWorldPos() - transform.position).normalized;
-                mouseDir.y = 0;
                 if(isMove)
                 {
-                    MovementComp.Move(mouseDir);
+                    MovementComp.Move(offsetToMouse.normalized);
                 }
                 Animator.SetFloat("Move", 0);
             }
             return;
         }
         MovementComp.GravityDown();
-        if (isAttack) return;
+        if (AttackComp.IsAttackAnimation()) return;
         MovementComp.Move(moveDir);
         Animator.SetFloat("Move", currentMoveValue);
     }
@@ -99,18 +92,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
         Vector3 targetDir = Vector3.zero;
         if (SkillComp.IsSkillAnimation(InputSkill.SKILLS.SKILL2))
         {
-            if (mouseDir != Vector3.zero && isMove)
+            if (isMove)
             {
-                targetDir = mouseDir;
-                transform.rotation = Quaternion.LookRotation(targetDir);
+                targetDir = offsetToMouse;
             }
-            else return;
         }
-        else if (isAttack || SkillComp.IsSkillAnimation(currentSkill))
+        else if (AttackComp.IsAttackAnimation() || SkillComp.IsSkillAnimation(currentSkill))
         {
-            targetDir = attackDir;
+            targetDir = targetLookDir;
         }
-        else if (moveDir != Vector3.zero)
+        else if (moveDir.sqrMagnitude > 0)
         {
             targetDir = moveDir;
         }
@@ -141,38 +132,28 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private void ExcuteSkillLogic(InputSkill.SKILLS skill)
     {
         currentSkill = skill;
-
-        switch(skill)
+        UpdateAttackDir();
+        if(skill == InputSkill.SKILLS.SKILL4) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL4);
+        else
         {
-            case InputSkill.SKILLS.SKILL1:
-                StartAnim();
-                break;
-            case InputSkill.SKILLS.SKILL3:
-                UpdateAttackDir();
+            if (skill == InputSkill.SKILLS.SKILL3)
+            {
                 SkillComp.ActiveSkill();
-                break;
-            case InputSkill.SKILLS.SKILL4:
-                SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL4);
-                break;
-            default:
-                StartAnim();
-                break;
+            }
+            else
+            {
+                if(skill != InputSkill.SKILLS.SKILL3) StartCoroutine(SkillComp.WaitSkill(currentSkill));
+                SkillComp.ActiveSkill(currentSkill);
+            }
         }
     }
-    private void StartAnim()
-    {
-        UpdateAttackDir();
-        StartCoroutine(SkillComp.WaitSkill(currentSkill));
-        SkillComp.ActiveSkill(currentSkill);
-    }
+
     private void UpdateAttackDir()
     {
-        finalPos = (MovementComp.GetMouseWorldPos() - transform.position);
-        finalPos.y = 0;
-        if(finalPos.sqrMagnitude > 0.001f)
+        if(offsetToMouse.sqrMagnitude > 0.001f)
         {
-            attackDir = finalPos;
-            MovementComp.LookAtInstant(attackDir.normalized);
+            targetLookDir = offsetToMouse.normalized;
+            MovementComp.LookAtInstant(targetLookDir);
         }
     }
     public override void Damage(float damage, float force)
@@ -184,7 +165,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         if (currentSkill == InputSkill.SKILLS.SKILL3)
         {
-            distance = Mathf.Clamp(finalPos.magnitude, 0f, 5f);
+            distance = Mathf.Clamp(offsetToMouse.magnitude, 0f, 5f);
         }
         MovementComp.Push(transform.forward, distance, StatComp.KnckBackTime);
     }

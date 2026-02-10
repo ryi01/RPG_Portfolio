@@ -6,7 +6,6 @@ public class BulletCollision : MonoBehaviour
 {
     // 피격 대상 태그
     [SerializeField] protected LayerMask hitLayer;
-    [SerializeField] protected bool isHidden;
     protected MeshRenderer mesh;
 
     // 피격 제한 대상 태그 (복수 대상일 경우 레이어로 제어할 것)

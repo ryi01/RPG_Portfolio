@@ -34,5 +34,5 @@ MonoBehaviour:
   reganGroggy: 1
   wanderNavCheckRadius: 10
   nextPointSelectDistance: 1
-  deathDelayTime: 2
+  deathDelayTime: 0.5
   isBoss: 0

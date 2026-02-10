@@ -5,14 +5,19 @@ public class EnemyShotAttack : MeleeAttack
     [SerializeField] protected GameObject bulletPrefab;
     public override void Attack()
     {
-        GameObject bullet = Instantiate(bulletPrefab, attackTransform.position, transform.rotation);
-        if(bullet)
+        GameObject obj = CreateSomething(bulletPrefab, attackTransform);
+        if (obj)
         {
-            bullet.GetComponentInChildren<BulletCollision>().Owner = this.gameObject;
+            obj.GetComponentInChildren<BulletCollision>().Owner = this.gameObject;
         }
     }
     public void OnShotAttack()
     {
         Attack();
+    }
+    
+    protected GameObject CreateSomething(GameObject prefab, Transform pos)
+    {
+        return Instantiate(prefab, pos.position, pos.rotation);
     }
 }

@@ -66,7 +66,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         if (currentState == nextState) return;
         if (state == EnumTypes.STATE.STUN && currentState == nextState) return;
         currentState?.ExitState();
-        currentState = enemyStates[(int)state];
+        currentState = nextState;
         currentState?.EnterState(state, data);
     }
     public float GetPlayerDis()
