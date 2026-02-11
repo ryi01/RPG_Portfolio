@@ -5,7 +5,8 @@ public class BossDetectState : EnemyDetectState
     public override void UpdateState()
     {
         float dis = controller.GetPlayerDis();
-        if (dis <= fsmInfo.AttackRange)
+        BossController boss = controller as BossController;
+        if (boss.CheckSkillReady())
         {
             controller.TransactionToState(EnumTypes.STATE.ATTACK);
             return;

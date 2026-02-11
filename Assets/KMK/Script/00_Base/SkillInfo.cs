@@ -4,6 +4,7 @@ public class SkillInfo: ScriptableObject
 {
     [Header("Attack")]
     public float attackMultifle = 1.0f;
+    public float attackRange = 2.5f;
     public float attackRadius = 2.0f;
     public float hitAngle = 60f;
     public float attackTime = 1;

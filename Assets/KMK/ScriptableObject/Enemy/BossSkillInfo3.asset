@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: BossSkillInfo3
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 1
-  attackRadius: 10
+  attackRange: 10
+  attackRadius: 15
   hitAngle: 360
   attackTime: 2
   nockbackForce: 6

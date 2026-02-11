@@ -9,6 +9,7 @@ public class EnemySkillAttack : EnemyMeleeAttack
     public bool IsReady => Time.time - lastUseTime >= skillInfo.coolTime;
     private float lastUseTime = -100f;
     public float WaitSkillTime { get => skillInfo.coolTime; }
+    public float AttackRange { get => skillInfo.attackRange; }
     public override void Attack()
     {
         if (IsSkill) return;

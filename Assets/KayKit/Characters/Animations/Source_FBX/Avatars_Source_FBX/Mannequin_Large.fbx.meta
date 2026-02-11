@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 73836786844caa142b5bcfedb7b50cdb
+AssetOrigin:
+  serializedVersion: 1
+  productId: 290680
+  packageName: KayKit - Skeletons Character Pack (for Unity)
+  packageVersion: 1.1.1
+  assetPath: Assets/KayKit/Characters/Animations/Source_FBX/Avatars_Source_FBX/Mannequin_Large.fbx
+  uploadId: 832000
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
   externalObjects:
   - first:
@@ -21,8 +28,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -63,6 +68,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -167,7 +175,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: upperarm.l
+    - boneName: lowerarm.l
       humanName: LeftUpperArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -175,7 +183,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: upperarm.r
+    - boneName: lowerarm.r
       humanName: RightUpperArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -183,7 +191,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: lowerarm.l
+    - boneName: wrist.l
       humanName: LeftLowerArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -191,7 +199,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: lowerarm.r
+    - boneName: wrist.r
       humanName: RightLowerArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -225,6 +233,22 @@ ModelImporter:
         modified: 0
     - boneName: toes.r
       humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm.l
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm.r
+      humanName: RightShoulder
       limit:
         min: {x: 0, y: 0, z: 0}
         max: {x: 0, y: 0, z: 0}
@@ -310,8 +334,7 @@ ModelImporter:
     - name: hand.l
       parentName: wrist.l
       position: {x: 5.400125e-13, y: 0.17718212, z: -0.0000002524443}
-      rotation: {x: 0.0000000053829785, y: -0.00000014410426, z: 0.0000017569101,
-        w: 1}
+      rotation: {x: 0.0000000053829785, y: -0.00000014410426, z: 0.0000017569101, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: handslot.l
       parentName: hand.l
@@ -336,8 +359,7 @@ ModelImporter:
     - name: hand.r
       parentName: wrist.r
       position: {x: -6.252776e-13, y: 0.17718212, z: -0.00000025244432}
-      rotation: {x: 0.0000000053828986, y: 0.00000010032113, z: -0.0000017569101,
-        w: 1}
+      rotation: {x: 0.0000000053828986, y: 0.00000010032113, z: -0.0000017569101, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: handslot.r
       parentName: hand.r
@@ -413,10 +435,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 290680
-  packageName: KayKit - Skeletons Character Pack (for Unity)
-  packageVersion: 1.1.1
-  assetPath: Assets/KayKit/Characters/Animations/Source_FBX/Avatars_Source_FBX/Mannequin_Large.fbx
-  uploadId: 832000

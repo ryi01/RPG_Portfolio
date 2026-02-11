@@ -1034,6 +1034,10 @@ MonoBehaviour:
   - {fileID: 291470612}
   - {fileID: 291470611}
   - {fileID: 291470620}
+  skillList:
+  - {fileID: 291470624}
+  - {fileID: 291470625}
+  - {fileID: 291470626}
 --- !u!114 &291470616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1144,10 +1148,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossAttackState
   stateType: 3
   animSpeed: 1
-  skillList:
-  - {fileID: 291470624}
-  - {fileID: 291470625}
-  - {fileID: 291470626}
 --- !u!114 &291470622
 MonoBehaviour:
   m_ObjectHideFlags: 0

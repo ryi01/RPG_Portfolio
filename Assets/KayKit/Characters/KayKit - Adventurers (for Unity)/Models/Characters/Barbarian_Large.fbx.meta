@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 421082f82b39a634681ce31b88a2c363
+AssetOrigin:
+  serializedVersion: 1
+  productId: 290679
+  packageName: KayKit - Adventurers Character Pack (for Unity)
+  packageVersion: 2.0.1
+  assetPath: Assets/KayKit/Characters/KayKit - Adventurers (for Unity)/Models/Characters/Barbarian_Large.fbx
+  uploadId: 831988
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
   externalObjects: {}
   materials:
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -58,6 +63,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -162,7 +170,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: upperarm.l
+    - boneName: lowerarm.l
       humanName: LeftUpperArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -170,7 +178,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: upperarm.r
+    - boneName: lowerarm.r
       humanName: RightUpperArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -178,7 +186,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: lowerarm.l
+    - boneName: wrist.l
       humanName: LeftLowerArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -186,7 +194,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: lowerarm.r
+    - boneName: wrist.r
       humanName: RightLowerArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -226,44 +234,55 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
+    - boneName: upperarm.l
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: upperarm.r
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
     skeleton:
-    - name: Mannequin_Large(Clone)
+    - name: Barbarian_Large(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: MannequinLarge_ArmLeft
-      parentName: Mannequin_Large(Clone)
-      position: {x: -0.0000009536743, y: 0, z: 0}
+    - name: Barbarian_Large_BearPelt
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 3.1909447, z: 0.29076004}
       rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: MannequinLarge_ArmRight
-      parentName: Mannequin_Large(Clone)
-      position: {x: -0.0000009536743, y: 0, z: 0}
+    - name: Barbarian_Large_BearHat
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 3.1909447, z: 0.29076135}
       rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: MannequinLarge_Body
-      parentName: Mannequin_Large(Clone)
-      position: {x: -0.0000009536743, y: 0, z: 0}
+    - name: Barbarian_Large_Body
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 0, z: 0}
       rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: MannequinLarge_Head
-      parentName: Mannequin_Large(Clone)
-      position: {x: -0, y: 3.2007322, z: 0}
+    - name: Barbarian_Large_ArmLeft
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 0, z: 0}
       rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: MannequinLarge_LegLeft
-      parentName: Mannequin_Large(Clone)
-      position: {x: -0.0000009536743, y: 0, z: 0}
-      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: MannequinLarge_LegRight
-      parentName: Mannequin_Large(Clone)
-      position: {x: -0.0000009536743, y: 0, z: 0}
+    - name: Barbarian_Large_ArmRight
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 0, z: 0}
       rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Rig_Large
-      parentName: Mannequin_Large(Clone)
+      parentName: Barbarian_Large(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
@@ -285,105 +304,128 @@ ModelImporter:
     - name: chest
       parentName: spine
       position: {x: 8.470326e-22, y: 0.74997604, z: 2.0194827e-28}
-      rotation: {x: -1.7763568e-15, y: 0.00000011920928, z: 1.9765979e-22, w: 1}
-      scale: {x: 1, y: 1, z: 1}
+      rotation: {x: 1.7763568e-15, y: 0.00000011920924, z: 8.68457e-23, w: 1}
+      scale: {x: 1, y: 0.99999994, z: 1}
     - name: upperarm.l
       parentName: chest
-      position: {x: -0.88401353, y: 0.4982636, z: 0.00000016975677}
+      position: {x: -0.88401353, y: 0.4982636, z: 0.00000016975685}
       rotation: {x: -0.51412374, y: 0.48546556, z: 0.48546603, w: 0.5141233}
-      scale: {x: 0.9999997, y: 0.9999998, z: 0.9999999}
+      scale: {x: 0.9999997, y: 0.9999998, z: 1}
     - name: lowerarm.l
       parentName: upperarm.l
-      position: {x: 0.0000000066596613, y: 0.5805539, z: 0.0000000018606272}
-      rotation: {x: 0.000000001230414, y: 0.00000006458165, z: 0.05529301, w: 0.9984702}
-      scale: {x: 1, y: 0.9999998, z: 1}
+      position: {x: -6.6003736e-10, y: 0.5805539, z: 6.0985483e-10}
+      rotation: {x: 6.6022193e-10, y: 0.0000000674389, z: 0.055293012, w: 0.9984702}
+      scale: {x: 0.99999994, y: 0.99999976, z: 1}
     - name: wrist.l
       parentName: lowerarm.l
-      position: {x: -6.6474115e-10, y: 0.6241053, z: -0.000000009438903}
-      rotation: {x: 8.53279e-10, y: 6.358911e-10, z: -0.026658112, w: 0.99964464}
+      position: {x: 0.0000000022962325, y: 0.6241055, z: -0.000000008864603}
+      rotation: {x: 0.0000000012012875, y: 5.166037e-10, z: -0.026658108, w: 0.99964464}
       scale: {x: 0.99999994, y: 1, z: 1}
     - name: hand.l
       parentName: wrist.l
-      position: {x: 5.400125e-13, y: 0.17718212, z: -0.0000002524443}
-      rotation: {x: 0.0000000053829785, y: -0.00000014410426, z: 0.0000017569101,
-        w: 1}
+      position: {x: 2.5579538e-13, y: 0.17718188, z: -0.000000014992267}
+      rotation: {x: 0.0000000057031233, y: -0.00000014684963, z: 0.0000017522536, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: handslot.l
       parentName: hand.l
-      position: {x: -0.0000000020439614, y: 0.2307005, z: -0.13800001}
-      rotation: {x: -0.000000008604832, y: -0.00000002159236, z: 0.7071068, w: 0.7071067}
+      position: {x: -2.57252e-10, y: 0.2307005, z: -0.13799977}
+      rotation: {x: -0.000000010030509, y: -0.000000020166684, z: 0.7071068, w: 0.7071067}
       scale: {x: 1, y: 1, z: 1}
     - name: upperarm.r
       parentName: chest
-      position: {x: 0.88401353, y: 0.4982636, z: 0.00000016975687}
+      position: {x: 0.88401353, y: 0.4982636, z: 0.00000016975679}
       rotation: {x: -0.5141239, y: -0.48546532, z: -0.4854663, w: 0.5141231}
-      scale: {x: 0.9999997, y: 0.9999998, z: 0.9999999}
+      scale: {x: 0.9999997, y: 0.9999998, z: 1}
     - name: lowerarm.r
       parentName: upperarm.r
-      position: {x: -0.0000000056931952, y: 0.5805539, z: -0.0000000010519301}
-      rotation: {x: 0.0000000012304137, y: -0.00000006458166, z: -0.05529301, w: 0.9984702}
-      scale: {x: 1, y: 0.9999998, z: 1}
+      position: {x: 0.000000001626411, y: 0.5805539, z: -0.0000000023027007}
+      rotation: {x: 6.602224e-10, y: -0.0000000674389, z: -0.055293012, w: 0.9984702}
+      scale: {x: 0.99999994, y: 0.99999976, z: 1}
     - name: wrist.r
       parentName: lowerarm.r
-      position: {x: -0.0000000021458817, y: 0.6241053, z: -0.000000009438899}
-      rotation: {x: 8.5328006e-10, y: -6.358912e-10, z: 0.026658112, w: 0.99964464}
+      position: {x: -0.000000012557521, y: 0.6241055, z: -0.0000000088646095}
+      rotation: {x: 0.0000000012012873, y: -5.166145e-10, z: 0.026658108, w: 0.99964464}
       scale: {x: 0.99999994, y: 1, z: 1}
     - name: hand.r
       parentName: wrist.r
-      position: {x: -6.252776e-13, y: 0.17718212, z: -0.00000025244432}
-      rotation: {x: 0.0000000053828986, y: 0.00000010032113, z: -0.0000017569101,
-        w: 1}
+      position: {x: -4.2632564e-13, y: 0.17718188, z: -0.000000014992324}
+      rotation: {x: 0.000000005703044, y: 0.000000103066455, z: -0.0000017522536, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: handslot.r
       parentName: hand.r
-      position: {x: 0.0000000020439046, y: 0.2307005, z: -0.13800001}
-      rotation: {x: -0.000000008604853, y: 0.00000002159234, z: -0.7071068, w: 0.7071067}
+      position: {x: 2.5722358e-10, y: 0.2307005, z: -0.13799977}
+      rotation: {x: -0.000000010030528, y: 0.000000020166665, z: -0.7071068, w: 0.7071067}
       scale: {x: 1, y: 1, z: 1}
     - name: head
       parentName: chest
-      position: {x: -6.5633227e-28, y: 1.0254743, z: 7.1054274e-15}
-      rotation: {x: 3.5527137e-15, y: -3.552714e-14, z: -7.607174e-29, w: 1}
+      position: {x: -3.5340969e-28, y: 1.1404743, z: -7.1054265e-15}
+      rotation: {x: -3.5527137e-15, y: -2.1316285e-14, z: -3.7135103e-22, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: upperleg.l
       parentName: hips
       position: {x: -0.34189013, y: 0.22717452, z: 0.000000027846536}
-      rotation: {x: 0.9999039, y: 0.000000055808723, z: 0.000000011316124, w: 0.01386391}
+      rotation: {x: 0.9999039, y: 0.000000055808815, z: 0.000000011316123, w: 0.01386391}
       scale: {x: 1, y: 0.99999976, z: 1.0000002}
     - name: lowerleg.l
       parentName: upperleg.l
-      position: {x: 0.000000019029923, y: 0.5690997, z: 0.0000000029105003}
-      rotation: {x: 0.07813513, y: -0.00000005641319, z: 0.000000057140415, w: 0.99694276}
+      position: {x: 0.000000019030036, y: 0.5690997, z: 0.0000000029104976}
+      rotation: {x: 0.07813513, y: -0.000000056414343, z: 0.00000005714053, w: 0.99694276}
       scale: {x: 1, y: 0.99999994, z: 0.99999976}
     - name: foot.l
       parentName: lowerleg.l
-      position: {x: -0.00000005497485, y: 0.41255808, z: -3.6071413e-10}
-      rotation: {x: -0.4331089, y: -0.00000003944337, z: 0.00000008264201, w: 0.9013416}
+      position: {x: -0.000000054974745, y: 0.41255808, z: -3.5992542e-10}
+      rotation: {x: -0.4331089, y: -0.00000003944229, z: 0.0000000826424, w: 0.9013416}
       scale: {x: 1, y: 1.0000002, z: 0.99999976}
     - name: toes.l
       parentName: foot.l
-      position: {x: 0.00000005693334, y: 0.33130008, z: 0.0000000011423609}
+      position: {x: 0.00000005693334, y: 0.33130008, z: 0.0000000011423538}
       rotation: {x: 0.0000000034097902, y: 0.92035484, z: -0.39108437, w: -0.00000008348021}
       scale: {x: 1, y: 1.0000005, z: 1.0000006}
     - name: upperleg.r
       parentName: hips
       position: {x: 0.34189013, y: 0.22717452, z: 0.000000027846555}
-      rotation: {x: 0.9999039, y: -0.000000058079184, z: 0.000000032430936, w: 0.01386391}
+      rotation: {x: 0.9999039, y: -0.000000058079276, z: 0.000000032430936, w: 0.01386391}
       scale: {x: 1, y: 0.99999976, z: 1.0000002}
     - name: lowerleg.r
       parentName: upperleg.r
-      position: {x: -0.000000019976513, y: 0.5690997, z: 0.0000000011344792}
-      rotation: {x: 0.07813515, y: 0.00000005641324, z: -0.00000005714043, w: 0.99694276}
+      position: {x: -0.000000019976627, y: 0.5690997, z: 0.0000000011344756}
+      rotation: {x: 0.07813515, y: 0.00000005641439, z: -0.000000057140543, w: 0.99694276}
       scale: {x: 1, y: 1, z: 0.9999999}
     - name: foot.r
       parentName: lowerleg.r
-      position: {x: 0.000000050753968, y: 0.41255826, z: 0.0000000033927492}
-      rotation: {x: -0.4331089, y: -0.00000019118, z: -0.000000006786163, w: 0.9013416}
+      position: {x: 0.00000005075387, y: 0.41255826, z: 0.0000000033935308}
+      rotation: {x: -0.4331089, y: -0.00000019118109, z: -0.0000000067865593, w: 0.9013416}
       scale: {x: 1, y: 1.0000005, z: 0.9999999}
     - name: toes.r
       parentName: foot.r
-      position: {x: -0.000000070885534, y: 0.33130002, z: -0.0000000085920036}
-      rotation: {x: -0.00000005454685, y: 0.92035484, z: -0.39108437, w: -0.000000058852823}
+      position: {x: -0.00000007088552, y: 0.33130002, z: -0.000000008592025}
+      rotation: {x: -0.000000054546852, y: 0.92035484, z: -0.39108437, w: -0.00000005885282}
       scale: {x: 1, y: 0.9999998, z: 1.000001}
+    - name: Barbarian_Large_LegLeft
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Barbarian_Large_LegRight
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Barbarian_Large_Head
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0, y: 3.1909447, z: 0.29076135}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Barbarian_Large_ShoulderpadLeft
+      parentName: Barbarian_Large(Clone)
+      position: {x: -0.95973206, y: 2.864174, z: 0}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Barbarian_Large_ShoulderpadRight
+      parentName: Barbarian_Large(Clone)
+      position: {x: 0.9597473, y: 2.864174, z: 0}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -396,12 +438,11 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: da239084b6058ac489176736be846194,
-    type: 2}
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 2
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
@@ -409,10 +450,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 290679
-  packageName: KayKit - Adventurers Character Pack (for Unity)
-  packageVersion: 2.0.1
-  assetPath: Assets/KayKit/Characters/KayKit - Adventurers (for Unity)/Models/Characters/Barbarian_Large.fbx
-  uploadId: 831988
