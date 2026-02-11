@@ -22,7 +22,6 @@ public class EnemyDeathState : EnemyHitState
 
     public override void ExitState()
     {
-
         Destroy(gameObject);
     }
 }

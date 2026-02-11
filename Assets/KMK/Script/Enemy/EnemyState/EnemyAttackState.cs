@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyAttackState : EnemyState
 {
-    private bool isAttack = false;
+    protected bool isAttack = false;
     public bool IsAttack { get => isAttack; set => isAttack = value; }
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -13,14 +13,14 @@ public class EnemyAttackState : EnemyState
     public override void UpdateState()
     {
         if (IsAttack) return;
-        if(controller.GetPlayerDis() > fsmInfo.AttackRange)
+
+        if (controller.GetPlayerDis() > fsmInfo.AttackRange)
         {
             controller.TransactionToState(EnumTypes.STATE.RETURN);
             return;
         }
         LookAtTarget();
     }
-
     protected void LookAtTarget()
     {
         Vector3 dir = (controller.Player.transform.position - transform.position).normalized;

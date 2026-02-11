@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52f0472b71db7864dae53216e904dd1c, type: 3}
-  m_Name: Skill4Info
+  m_Name: BossSkillInfo2
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  attackMultifle: 1.5
-  attackRadius: 2
-  hitAngle: 360
-  attackTime: 3
-  nockbackForce: 2
-  coolTime: 15
-  animTrigger: Skill4
+  attackMultifle: 1
+  attackRadius: 3
+  hitAngle: 60
+  attackTime: 2
+  nockbackForce: 3
+  coolTime: 10
+  animTrigger: Skill

@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyStatComponent))]
 public class EnemyController : BaseController<EnemyStatComponent>
 {
-    private EnemyState currentState;
-    [SerializeField] private EnemyState[] enemyStates;
-    private GameObject player;
+    protected EnemyState currentState;
+    [SerializeField] protected EnemyState[] enemyStates;
+    protected GameObject player;
     public GameObject Player { get => player; set => player = value; }
 
-    private Dictionary<EnumTypes.STATE, EnemyState> stateDict = new();
+    protected Dictionary<EnumTypes.STATE, EnemyState> stateDict = new();
 
     private void Start()
     {
@@ -23,7 +24,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         }
         TransactionToState(EnumTypes.STATE.IDLE);
     }
-    private void Update()
+    protected virtual void Update()
     {
         currentState?.UpdateState();
         StatComp?.UpdateStunStatus();
@@ -53,11 +54,12 @@ public class EnemyController : BaseController<EnemyStatComponent>
         StatComp.AddGroogy(StatComp.MaxGroogy);
         TransactionToState(EnumTypes.STATE.STUN);
     }
-    public void TransactionToState(EnumTypes.STATE state, object data = null)
+ 
+    public virtual void TransactionToState(EnumTypes.STATE state, object data = null)
     {
         if (stateDict.TryGetValue(EnumTypes.STATE.DEATH, out var deathState))
         {
-            if(currentState == deathState) return;
+            if (currentState == deathState) return;
         }
         if (!stateDict.TryGetValue(state, out EnemyState nextState))
         {

@@ -159,6 +159,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public override void Damage(float damage, float force)
     {
         base.Damage(damage, force);
+        Animator.SetTrigger("Damage");
         MovementComp.Push(-transform.forward, force, 0.1f);
     }
     public void OnAttackDash(float distance)
