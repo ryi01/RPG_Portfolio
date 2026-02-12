@@ -10,6 +10,7 @@ public class EnemySkillAttack : EnemyMeleeAttack
     private float lastUseTime = -100f;
     public float WaitSkillTime { get => skillInfo.coolTime; }
     public float AttackRange { get => skillInfo.attackRange; }
+    public int SkillIndex { get => int.Parse(skillInfo.animTrigger); }
     public override void Attack()
     {
         if (IsSkill) return;

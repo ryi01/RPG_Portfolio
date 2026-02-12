@@ -6,14 +6,10 @@ public class BossIdleState : EnemyIdleState
     {
         time += Time.deltaTime;
         float dis = controller.GetPlayerDis();
-        if (dis <= fsmInfo.AttackRange)
-        {
-            controller.TransactionToState(EnumTypes.STATE.ATTACK);
-            return;
-        }
         if (time > checkTime)
         {
             controller.TransactionToState(EnumTypes.STATE.DETECT);
+            time = 0;
         }
     }
 }

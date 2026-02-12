@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: BossSkillInfo2
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 1
+  attackRange: 2.5
   attackRadius: 3
   hitAngle: 60
   attackTime: 2
   nockbackForce: 3
   coolTime: 10
-  animTrigger: Skill
+  animTrigger: 1
