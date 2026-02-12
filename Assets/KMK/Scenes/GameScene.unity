@@ -943,7 +943,7 @@ GameObject:
   - component: {fileID: 291470622}
   - component: {fileID: 291470621}
   - component: {fileID: 291470624}
-  - component: {fileID: 291470625}
+  - component: {fileID: 291470627}
   - component: {fileID: 291470626}
   - component: {fileID: 291470612}
   - component: {fileID: 291470611}
@@ -1036,7 +1036,7 @@ MonoBehaviour:
   - {fileID: 291470620}
   skillList:
   - {fileID: 291470624}
-  - {fileID: 291470625}
+  - {fileID: 291470627}
   - {fileID: 291470626}
 --- !u!114 &291470616
 MonoBehaviour:
@@ -1193,21 +1193,6 @@ MonoBehaviour:
   bc: {fileID: 291470615}
   attackTransform: {fileID: 2076347574}
   skillInfo: {fileID: 11400000, guid: a9aa90eef6432ac43882459714320f55, type: 2}
---- !u!114 &291470625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 291470608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39625f1ae62597547bacaf6bb27596f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossTakeDownSkill
-  bc: {fileID: 291470615}
-  attackTransform: {fileID: 2076347574}
-  skillInfo: {fileID: 11400000, guid: 247ee757198b95f4893b62547963a195, type: 2}
 --- !u!114 &291470626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1223,6 +1208,21 @@ MonoBehaviour:
   bc: {fileID: 291470615}
   attackTransform: {fileID: 2076347574}
   skillInfo: {fileID: 11400000, guid: cad4911df3ed6c4458d763351d8a3356, type: 2}
+--- !u!114 &291470627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291470608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39625f1ae62597547bacaf6bb27596f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossTakeDownSkill
+  bc: {fileID: 291470615}
+  attackTransform: {fileID: 2076347574}
+  skillInfo: {fileID: 11400000, guid: 247ee757198b95f4893b62547963a195, type: 2}
 --- !u!1 &294382959
 GameObject:
   m_ObjectHideFlags: 0

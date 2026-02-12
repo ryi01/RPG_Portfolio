@@ -6,9 +6,9 @@ public class SlimeController : EnemyController
     [SerializeField] private GameObject slimePrefab;
     [SerializeField] private int splitCnt = 2;
 
-    public override void Damage(float damage, float force)
+    public override void Damage(float damage, float force, Transform attacker)
     {
-        base.Damage(damage, force);
+        base.Damage(damage, force, attacker);
         if (StatComp.CurrentHP <= 0)
         {
             SplitSlime();

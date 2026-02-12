@@ -16,6 +16,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private Vector3 offsetToMouse;
 
     private bool isMove = false;
+
+    public bool IsDamage { get; set; }
     private float currentMoveValue;
 
     private InputSkill.SKILLS currentSkill;
@@ -31,6 +33,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     // Update is called once per frame
     void Update()
     {
+        if (IsDamage) return;
         HandleInput();
         HandleMovement();
         HandleRotation();
@@ -156,11 +159,14 @@ public class PlayerController : BaseController<PlayerStatComponent>
             MovementComp.LookAtInstant(targetLookDir);
         }
     }
-    public override void Damage(float damage, float force)
+    public override void Damage(float damage, float force, Transform attacker)
     {
-        base.Damage(damage, force);
+        base.Damage(damage, force, attacker);
+        Vector3 dir = (transform.position - attacker.position).normalized;
+        dir.y = 0;
         Animator.SetTrigger("Damage");
-        MovementComp.Push(-transform.forward, force, 0.1f);
+        transform.forward = -dir;
+        MovementComp.Push(dir, force, 0.1f);
     }
     public void OnAttackDash(float distance)
     {

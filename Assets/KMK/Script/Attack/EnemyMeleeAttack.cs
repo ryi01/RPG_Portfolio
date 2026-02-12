@@ -10,6 +10,6 @@ public class EnemyMeleeAttack : MeleeAttack
     {
         base.AttackHit(hit);
 
-        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack, CS.NockbackForce);
+        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack, CS.NockbackForce, transform);
     }
 }

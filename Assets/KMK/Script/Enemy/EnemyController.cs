@@ -29,9 +29,9 @@ public class EnemyController : BaseController<EnemyStatComponent>
         currentState?.UpdateState();
         StatComp?.UpdateStunStatus();
     }
-    public override void Damage(float damage, float force)
+    public override void Damage(float damage, float force, Transform attacker)
     {
-        base.Damage(damage, force);
+        base.Damage(damage, force, attacker);
 
         if (StatComp.CurrentHP <= 0)
         {

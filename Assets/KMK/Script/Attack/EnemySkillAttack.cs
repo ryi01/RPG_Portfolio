@@ -9,7 +9,8 @@ public class EnemySkillAttack : EnemyMeleeAttack
     public bool IsReady => Time.time - lastUseTime >= skillInfo.coolTime;
     private float lastUseTime = -100f;
     public float WaitSkillTime { get => skillInfo.coolTime; }
-    public float AttackRange { get => skillInfo.attackRange; }
+    public float AttackMinRange { get => skillInfo.attackMinRange; }
+    public float AttackMaxRange { get => skillInfo.attackMaxRange; }
     public int SkillIndex { get => int.Parse(skillInfo.animTrigger); }
     public override void Attack()
     {
@@ -23,6 +24,6 @@ public class EnemySkillAttack : EnemyMeleeAttack
     }
     protected override void AttackHit(Collider hit)
     {
-        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce);
+        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
     }
 }

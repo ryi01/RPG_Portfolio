@@ -74,6 +74,6 @@ public class BossAttackState : EnemyAttackState
         yield return new WaitForSeconds(0.2f);
         isAttack = false;
         Anim.SetBool("Run", false);
-        controller.TransactionToState(EnumTypes.STATE.IDLE);
+        controller.TransactionToState(EnumTypes.STATE.DETECT);
     }    
 }
