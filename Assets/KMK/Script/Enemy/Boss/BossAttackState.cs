@@ -6,6 +6,7 @@ public class BossAttackState : EnemyAttackState
 {
     public Vector3 DashDir { get; set; }
     private EnemySkillAttack currentSkill;
+    private bool isBeforeDashAttack = false;
 
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -13,10 +14,13 @@ public class BossAttackState : EnemyAttackState
 
         if (currentSkill != null)
         {
-            LookAtTarget();
-            
+            if (!isBeforeDashAttack)
+            {
+                LookAtTarget();
+            }
             if (currentSkill.SkillIndex == 2)
             {
+                isBeforeDashAttack = true;
                 StartCoroutine(WaitDash());
             }
             else
@@ -38,17 +42,19 @@ public class BossAttackState : EnemyAttackState
     }
     public override void ExitState()
     {
+        if (isBeforeDashAttack && currentSkill.SkillIndex == 1) isBeforeDashAttack = false;
         StopAllCoroutines();
         base.ExitState();
-        controller.StatComp.SetSpeedMultifle(1);
-        navMeshAgent.speed = fsmInfo.MoveSpeed;
+        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1);
         navMeshAgent.acceleration = 8f;
-        LookAtTarget();
+        if (!isBeforeDashAttack)
+        {
+            LookAtTarget();
+        }
     }
 
     IEnumerator WaitDash()
     {
-
         Anim.SetInteger("State", 3);
         Anim.SetInteger("Skill", currentSkill.SkillIndex);
         NavigationStop();
@@ -58,8 +64,8 @@ public class BossAttackState : EnemyAttackState
         Anim.SetBool("Run", true);
         // 멈춘걸 푼 다음 속도 조절
         navMeshAgent.isStopped = false;
-        controller.StatComp.SetSpeedMultifle(4);
-        navMeshAgent.speed = fsmInfo.MoveSpeed;
+        
+        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(4);
         navMeshAgent.acceleration = 1000f;
         // 최종 위치 결정
         Vector3 targetPos = transform.position + (DashDir * 10f);
@@ -74,6 +80,7 @@ public class BossAttackState : EnemyAttackState
         yield return new WaitForSeconds(0.2f);
         isAttack = false;
         Anim.SetBool("Run", false);
-        controller.TransactionToState(EnumTypes.STATE.DETECT);
+        BossController boss = controller as BossController;
+        controller.TransactionToState(EnumTypes.STATE.ATTACK, boss.SkillList[1]);
     }    
 }

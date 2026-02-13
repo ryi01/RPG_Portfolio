@@ -4,8 +4,7 @@ public class EnemyDetectState : EnemyState
 {
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        fsmInfo.SetSpeedMultifle(1.5f);
-        navMeshAgent.speed = fsmInfo.MoveSpeed;
+        navMeshAgent.speed = fsmInfo.SetSpeedMultifle(1.5f);
         base.EnterState(state, data);
         Anim.SetInteger("State", (int)state);
     }

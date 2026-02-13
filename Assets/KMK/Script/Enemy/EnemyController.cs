@@ -65,7 +65,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         {
             return;
         }
-        if (currentState == nextState) return;
+        if (currentState == nextState && data == null) return;
         if (state == EnumTypes.STATE.STUN && currentState == nextState) return;
         currentState?.ExitState();
         currentState = nextState;

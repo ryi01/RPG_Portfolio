@@ -75,6 +75,6 @@ public class EnemyRoamingState : EnemyState
         targetTrans = null;
         targetPos = Vector3.positiveInfinity;
         targetDis = Mathf.Infinity;
-        fsmInfo.SetSpeedMultifle(1);
+        navMeshAgent.speed = fsmInfo.SetSpeedMultifle(1); 
     }
 }

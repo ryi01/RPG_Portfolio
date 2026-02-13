@@ -18,6 +18,6 @@ MonoBehaviour:
   attackRadius: 4
   hitAngle: 120
   attackTime: 2
-  nockbackForce: 5
+  nockbackForce: 4
   coolTime: 10
   animTrigger: 0

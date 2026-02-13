@@ -16,8 +16,8 @@ MonoBehaviour:
   attackMinRange: 2.5
   attackMaxRange: 15
   attackRadius: 4
-  hitAngle: 90
+  hitAngle: 60
   attackTime: 2
-  nockbackForce: 3
+  nockbackForce: 2
   coolTime: 10
   animTrigger: 1

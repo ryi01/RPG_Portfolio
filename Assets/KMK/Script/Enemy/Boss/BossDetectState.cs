@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class BossDetectState : EnemyDetectState
 {
+
     public override void UpdateState()
     {
         // 1. 플레이어와 보스의 거리를 측정하고
         float dis = controller.GetPlayerDis();
         BossController boss = controller as BossController;
-
+        
         // 4. 아니라면 다른 공격을 랜덤으로 만든다
         if (dis <= boss.SkillList[0].AttackMinRange)
         {

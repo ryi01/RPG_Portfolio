@@ -469,6 +469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 7cb9ec51c6f79fc4394ad1a7e6d2a686, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!136 &60084937
@@ -1051,6 +1052,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: f7d3289cfe16777478eb875089f94e7b, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!95 &291470617
@@ -2645,6 +2647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 68a83a34366bf1c48b586f3e4249325a, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!136 &906090639
@@ -3022,6 +3025,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatComponent
   statinfo: {fileID: 11400000, guid: fc60f5dcd971bbc4dabf9bcb6bddd65e, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
   regenDely: 0.5
@@ -4623,6 +4627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 68a83a34366bf1c48b586f3e4249325a, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!136 &1424352741
@@ -5123,6 +5128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: ef4e6237e5b7c5647903dc3c347c6d5e, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!136 &1600391823
@@ -5561,6 +5567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 68a83a34366bf1c48b586f3e4249325a, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!136 &1753249022
@@ -5842,6 +5849,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: ef4e6237e5b7c5647903dc3c347c6d5e, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!195 &1784519306
@@ -6459,6 +6467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 68a83a34366bf1c48b586f3e4249325a, type: 2}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!136 &2023617660
