@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossDetectState : EnemyDetectState
@@ -15,14 +16,14 @@ public class BossDetectState : EnemyDetectState
         if (dis <= boss.SkillList[0].AttackMinRange)
         {
             int rnd = Random.Range(0, 2);
-            ExccuteAttack(boss, boss.SkillList[rnd]);
+            boss.ExccuteAttack(boss.SkillList[rnd], navMeshAgent);
             return;
         }
         // 2. 일정거리 이상이면
         else if (dis >= boss.SkillList[2].AttackMinRange && dis <= boss.SkillList[2].AttackMaxRange)
         {
             // 3. 대쉬 공격을 하고
-            ExccuteAttack(boss, boss.SkillList[2]);
+            boss.ExccuteAttack(boss.SkillList[2], navMeshAgent);
             return;
         }
         else
@@ -32,21 +33,5 @@ public class BossDetectState : EnemyDetectState
         }
     }
 
-    private void ExccuteAttack(BossController boss, EnemySkillAttack skill)
-    {
-        if(skill.SkillIndex == 2)
-        {
-            if(boss.TryGetComponent<BossAttackState>(out BossAttackState bossAttack))
-            {
-                Vector3 pPos = boss.Player.transform.position;
-                Vector3 bPos = transform.position;
-                pPos.y = 0;
-                bPos.y = 0;
-                Vector3 dir = (pPos - bPos).normalized;
-                bossAttack.DashDir = dir == Vector3.zero ? transform.forward : dir;
-            }
-        }
-        navMeshAgent.isStopped = true;
-        boss.TransactionToState(EnumTypes.STATE.ATTACK, skill);
-    }
+
 }

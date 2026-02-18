@@ -21,7 +21,6 @@ public abstract class EnemyState : MonoBehaviour
     {
         controller = GetComponent<EnemyController>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-
     }
     private void Start()
     {
