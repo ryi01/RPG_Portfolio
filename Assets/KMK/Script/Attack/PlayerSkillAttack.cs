@@ -6,7 +6,7 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     [SerializeField] protected SkillInfo skillInfo;
     private bool isSkill;
     public bool IsSkill { get => isSkill; set => isSkill = value; }
-    public float WaitSkillTime { get => skillInfo.coolTime; }
+    public float WaitSkillTime { get => skillInfo.attackTime; }
     public string skillHashName { get => skillInfo.animTrigger; }
     // 스킬 타이머(이미지) 컴포넌트 참조
     [SerializeField] private Sprite skillBtnSprite;

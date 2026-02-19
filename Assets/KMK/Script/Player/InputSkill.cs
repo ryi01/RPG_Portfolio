@@ -35,6 +35,7 @@ public class InputSkill : MonoBehaviour
     }
     public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
+        Debug.Log($"{hashSkillAttacks[(int)skillTypes]}");
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], false);
     }
     public bool CurrentSkillActive(SKILLS types)
@@ -50,6 +51,7 @@ public class InputSkill : MonoBehaviour
 
     public IEnumerator WaitSkill(SKILLS currentSkill)
     {
+        Debug.Log($"waitSkill");
         yield return new WaitForSeconds(skillAttacks[(int)currentSkill].WaitSkillTime);
         DeActiveSkill(currentSkill);
     }
