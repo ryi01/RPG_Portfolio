@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class EnemyDamageState : EnemyHitState
 {
+    [SerializeField] protected ParticleSystem hitParticle;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         // ÆÄÆ¼Å¬ 
+        hitParticle.Play();
         Anim.SetInteger("State", (int)state);
         base.EnterState(state, data);
     }

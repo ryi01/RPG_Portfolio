@@ -35,7 +35,6 @@ public class InputSkill : MonoBehaviour
     }
     public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
-        Debug.Log($"{hashSkillAttacks[(int)skillTypes]}");
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], false);
     }
     public bool CurrentSkillActive(SKILLS types)
@@ -51,8 +50,7 @@ public class InputSkill : MonoBehaviour
 
     public IEnumerator WaitSkill(SKILLS currentSkill)
     {
-        Debug.Log($"waitSkill");
-        yield return new WaitForSeconds(skillAttacks[(int)currentSkill].WaitSkillTime);
+        yield return new WaitForSeconds(skillAttacks[(int)currentSkill].AttackTime);
         DeActiveSkill(currentSkill);
     }
     public void ExcuteSkill(SKILLS type)
@@ -64,6 +62,7 @@ public class InputSkill : MonoBehaviour
         for (int i = 0; i < skillAttacks.Length; i++)
         {
             // 아이콘 세팅
+            skillAttacks[i].SetSkillIcon();
         }
     }
 }

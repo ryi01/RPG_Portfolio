@@ -35,8 +35,8 @@ public class EnemyStatComponent : CharacterStatComponent
         {
             wanderPoints[i] = wayPointGameObjects[i].transform;
         }
+        UIManager.Instance.CreateEnemyHPBar(this);
     }
-
     private void ApplyStun(float duration)
     {
         currentStunTime = duration;
@@ -68,5 +68,10 @@ public class EnemyStatComponent : CharacterStatComponent
     public void ReganGroogy(float deltaTime)
     {
         currentGroggy = Mathf.Clamp(currentGroggy + enemyStatInfo.reganGroggy * Time.deltaTime, 0, enemyStatInfo.maxGroggy);
+    }
+
+    private void OnDestroy()
+    {
+        UIManager.Instance.UnBindEnemyUI(this);        
     }
 }

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f0472b71db7864dae53216e904dd1c, type: 3}
   m_Name: Skill2Info
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  attackMultifle: 3
+  attackMultifle: 1.3
+  attackMinRange: 2.5
+  attackMaxRange: 15
   attackRadius: 2
   hitAngle: 360
   attackTime: 3

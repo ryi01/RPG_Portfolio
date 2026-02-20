@@ -4,6 +4,7 @@ public class BombMovement : MonoBehaviour
 {
     [SerializeField] private float throwPower = 15f;
     [SerializeField] private float bias = 0.5f;
+
     private Rigidbody rb;
     private void Awake()
     {

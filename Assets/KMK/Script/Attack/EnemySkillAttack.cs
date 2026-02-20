@@ -41,7 +41,11 @@ public class EnemySkillAttack : EnemyMeleeAttack
     }
     protected override void AttackHit(Collider hit)
     {
-        Debug.Log($"{CS.FinalAttack}");
-        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
+        var target = hit.GetComponent<BaseController>();
+        if (target != null)
+        {
+            if (target.GetStat().CurrentHP <= 0) return;
+            target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
+        }
     }
 }

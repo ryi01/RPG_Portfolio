@@ -6,7 +6,8 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     [SerializeField] protected SkillInfo skillInfo;
     private bool isSkill;
     public bool IsSkill { get => isSkill; set => isSkill = value; }
-    public float WaitSkillTime { get => skillInfo.attackTime; }
+    public float AttackTime { get => skillInfo.attackTime; }
+    public float CoolTime { get => skillInfo.coolTime; }
     public string skillHashName { get => skillInfo.animTrigger; }
     // 스킬 타이머(이미지) 컴포넌트 참조
     [SerializeField] private Sprite skillBtnSprite;
@@ -18,7 +19,7 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     public void StartSkill()
     {
         IsSkill = true;
-        skillTimer.StartTimer(this, WaitSkillTime);
+        skillTimer.StartTimer(this, CoolTime);
     }
     public void EndSkill()
     {
@@ -26,7 +27,12 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     }
     protected override void AttackHit(Collider hit)
     {
-        hit.GetComponent<BaseController>()?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
+        var target = hit.GetComponent<BaseController>();
+        if (target != null)
+        {
+            if (target.GetStat().CurrentHP <= 0) return;
+            target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
+        }
     }
 
     public void SetSkillIcon()

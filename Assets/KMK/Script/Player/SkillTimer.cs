@@ -9,7 +9,10 @@ public class SkillTimer : MonoBehaviour
     private bool isTimerRun = false;
     private float timeDuration;
     private PlayerSkillAttack skillAttack;
-
+    private void Awake()
+    {
+        filledImage.fillAmount = 0;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -18,7 +21,7 @@ public class SkillTimer : MonoBehaviour
             if (timer > 0)
             {
                 timer -= Time.deltaTime;
-                Debug.Log($"{skillAttack} : {timer}");
+
                 if (filledImage != null)
                 {
                     filledImage.fillAmount = timer / timeDuration;

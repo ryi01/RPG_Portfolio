@@ -14,6 +14,8 @@ public class BulletCollision : MonoBehaviour
     [SerializeField] protected float attack = 2;
     [SerializeField] protected float destroyTime = 0.5f;
 
+    [SerializeField] protected GameObject bulletParticle;
+
     protected HashSet<CharacterStatComponent> hitTargets = new HashSet<CharacterStatComponent>();
 
     public GameObject Owner { get; set; }
@@ -50,7 +52,7 @@ public class BulletCollision : MonoBehaviour
     protected virtual void OnHitTarget(Collider other)
     {
         mesh.enabled = false;
-        CheckRadius(other);
+        DamageTarget(other);
         Destroy(gameObject, destroyTime);
     }
     protected virtual void OnHitObstacle(Collider other)
@@ -58,10 +60,11 @@ public class BulletCollision : MonoBehaviour
         Destroy(gameObject, destroyTime);
     }
 
-    protected virtual void CheckRadius(Collider other)
+    protected virtual void DamageTarget(Collider other)
     {
         if (other.TryGetComponent(out CharacterStatComponent statComp))
         {
+            if (statComp.CurrentHP <= 0) return;
             if (hitTargets.Add(statComp))
             {
                 statComp.TakeDamage(attack);

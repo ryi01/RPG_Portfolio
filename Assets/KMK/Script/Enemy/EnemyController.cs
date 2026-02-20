@@ -38,16 +38,18 @@ public class EnemyController : BaseController<EnemyStatComponent>
             TransactionToState(EnumTypes.STATE.DEATH, force);
             return;
         }
+        if(currentState != null && currentState.StateType == EnumTypes.STATE.STUN)
+        {
+            Animator.SetInteger("State", 5);
+            return;
+        }
         bool isStun = StatComp.AddGroogy(damage);
         if(isStun)
         {
             TransactionToState(EnumTypes.STATE.STUN);
             return;
         }
-        if (!stateDict.TryGetValue(EnumTypes.STATE.STUN, out var stunState))
-        {
-            TransactionToState(EnumTypes.STATE.DAMAGE, force);
-        }
+        TransactionToState(EnumTypes.STATE.DAMAGE, force);
     }
     public void ForceStun(float duration)
     {

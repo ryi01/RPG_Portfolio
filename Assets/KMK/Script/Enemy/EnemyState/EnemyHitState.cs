@@ -15,6 +15,7 @@ public class EnemyHitState : EnemyState
         // 파티클 
         // 애니메이션
         Anim.SetInteger("State", (int)state);
+
         StartCoroutine(ApllyHitKnockback(-transform.forward, force));
     }
     public override void UpdateState()

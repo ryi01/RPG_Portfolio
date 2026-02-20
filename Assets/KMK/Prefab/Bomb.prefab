@@ -208,5 +208,8 @@ MonoBehaviour:
     m_Bits: 4096
   attack: 2
   destroyTime: 2
+  bulletParticle: {fileID: 100018, guid: a40b64bf23366dc42a892af2c6ff6140, type: 3}
   rb: {fileID: 2938928714078515468}
   explosionRadius: 3
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
+  flashCount: 6

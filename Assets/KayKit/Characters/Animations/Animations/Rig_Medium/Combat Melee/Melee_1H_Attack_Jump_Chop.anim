@@ -39460,7 +39460,7 @@ AnimationClip:
     floatParameter: 1.3
     intParameter: 0
     messageOptions: 0
-  - time: 0.76666665
+  - time: 0.73333335
     functionName: OnStanSkill
     data: 
     objectReferenceParameter: {fileID: 0}

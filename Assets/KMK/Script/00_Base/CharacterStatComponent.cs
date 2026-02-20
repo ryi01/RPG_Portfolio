@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -29,6 +30,8 @@ public class CharacterStatComponent : MonoBehaviour
     public LayerMask TargetLayer { get => statinfo.targetLayer; }
     public LayerMask PassLayer { get => statinfo.passLayer; }
 
+    public Action<float, float> OnHpChanged;
+
     protected virtual void Awake()
     {
         InitStat();
@@ -42,6 +45,7 @@ public class CharacterStatComponent : MonoBehaviour
     protected virtual void InitStat()
     {
         currentHP = statinfo.maxHP;
+        OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
     }
 
     public float SetSpeedMultifle(float value)
@@ -52,14 +56,16 @@ public class CharacterStatComponent : MonoBehaviour
     public void RecoveryHP(float recovery)
     {
         currentHP = Mathf.Clamp(currentHP + recovery, 0, statinfo.maxHP);
+        OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
     }
     public virtual void TakeDamage(float damage)
     {
         currentHP = Mathf.Clamp(currentHP - damage, 0, statinfo.maxHP);
+        OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
         StartCoroutine(FlashMaterial());
     }
 
-    IEnumerator FlashMaterial()
+    protected IEnumerator FlashMaterial()
     {
         // material º¯°æ
         if (isMat || flashMat == null) yield break;

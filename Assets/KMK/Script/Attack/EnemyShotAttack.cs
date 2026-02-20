@@ -18,6 +18,6 @@ public class EnemyShotAttack : MeleeAttack
     
     protected GameObject CreateSomething(GameObject prefab, Transform pos)
     {
-        return Instantiate(prefab, pos.position, pos.rotation);
+        return Instantiate(prefab, pos.position, transform.rotation);
     }
 }

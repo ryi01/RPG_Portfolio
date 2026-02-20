@@ -12,7 +12,6 @@ public class BossController : EnemyController
     [SerializeField] private GameObject lightningPrefab;
     [SerializeField] private float lightningInterval = 2.0f;
     [SerializeField] private float strikeDelay = 1.0f;
-    [SerializeField] private float spawnRange = 15.0f;
 
     public int LastSkillIndex { get; set; } = -1;
     private bool isPhaseTwo = false;

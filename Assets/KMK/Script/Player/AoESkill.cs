@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class AoESkill : PlayerSkillAttack
 {
+    [SerializeField] protected Transform skillEffectPrefabTrans;
+    private GameObject effect;
     public void OnAoESkill()
     {
+        effect = Instantiate(hitEffectPrefab, skillEffectPrefabTrans.position, hitEffectPrefab.transform.rotation);
         Attack();
+    }
+    public void OnAoESkillEnd()
+    {
+        Destroy(effect);
     }
     public override void RangeAngleTargetAttack(SkillInfo data = null)
     {
