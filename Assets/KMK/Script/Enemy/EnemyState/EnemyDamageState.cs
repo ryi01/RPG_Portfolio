@@ -6,8 +6,11 @@ public class EnemyDamageState : EnemyHitState
     [SerializeField] protected ParticleSystem hitParticle;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        // 파티클 
-        hitParticle.Play();
+        if(hitParticle != null)
+        {
+            // 파티클 
+            hitParticle.Play();
+        }
         Anim.SetInteger("State", (int)state);
         base.EnterState(state, data);
     }

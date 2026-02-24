@@ -30,7 +30,7 @@ MonoBehaviour:
   attackRange: 5
   wanderRange: 1
   returnRange: 3
-  maxGroggy: 10
+  maxGroggy: 5
   reganGroggy: 1
   wanderNavCheckRadius: 10
   nextPointSelectDistance: 1

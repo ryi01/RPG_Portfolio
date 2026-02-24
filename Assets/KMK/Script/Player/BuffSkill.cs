@@ -19,7 +19,6 @@ public class BuffSkill : PlayerSkillAttack
         isBuff = true;
         StartSkill();
         CS.attackBuffMultifle = skillInfo.attackMultifle;
-        EndSkill();
         yield return new WaitForSeconds(skillInfo.attackTime);
         CS.attackBuffMultifle = 1.0f;
         isBuff = false;

@@ -31,6 +31,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
     }
     public override void Damage(float damage, float force, Transform attacker)
     {
+        if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH) return;
         base.Damage(damage, force, attacker);
 
         if (StatComp.CurrentHP <= 0)
@@ -59,10 +60,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
  
     public virtual void TransactionToState(EnumTypes.STATE state, object data = null)
     {
-        if (stateDict.TryGetValue(EnumTypes.STATE.DEATH, out var deathState))
-        {
-            if (currentState == deathState) return;
-        }
+        if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH) return;
         if (!stateDict.TryGetValue(state, out EnemyState nextState))
         {
             return;

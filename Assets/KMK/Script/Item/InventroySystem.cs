@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-[Serializable]
-public struct ItemInfo
-{
-    public EnumTypes.ITEM_TYPE ItemType;
-    public int ItemId;
-}
+
 public class InventroySystem : MonoBehaviour
 {
+    // 아이템 정보 DB 역할 : 0 - 무기, 1 - 소모성
     [SerializeField] private ItemList[] itemLists;
 
     [SerializeField] private List<Item> hasItemList = new List<Item>();
@@ -25,7 +21,12 @@ public class InventroySystem : MonoBehaviour
     {
 
     }
-
+    public Item GetItemData(EnumTypes.ITEM_TYPE type, int id)
+    {
+        int listIndex = (int)type;
+        if (listIndex >= itemLists.Length || itemLists[listIndex] == null) return null;
+        return itemLists[listIndex].List.FirstOrDefault(item => item.ItemID == id);
+    }
     public bool AddItem(ItemInfo itemInfo)
     {
         if (itemInfo.ItemType == EnumTypes.ITEM_TYPE.WP)
@@ -35,7 +36,7 @@ public class InventroySystem : MonoBehaviour
                 Debug.Log("인벤토리 Full");
                 return false;
             }
-            Item findItem = itemLists[(int)EnumTypes.ITEM_TYPE.WP].List.FirstOrDefault(item => item.ItemID == itemInfo.ItemId);
+            Item findItem = itemLists[(int)EnumTypes.ITEM_TYPE.WP].List.FirstOrDefault(item => item.ItemID == itemInfo.itemId);
             if (findItem == null) return false;
 
             Item pickUpItem = findItem.Clone();
@@ -43,7 +44,7 @@ public class InventroySystem : MonoBehaviour
         }
         else if(itemInfo.ItemType == EnumTypes.ITEM_TYPE.CB)
         {
-            ConsumableItem hasItem = (ConsumableItem)HasItemList.FirstOrDefault(Item => Item.ItemID == itemInfo.ItemId);
+            ConsumableItem hasItem = (ConsumableItem)HasItemList.FirstOrDefault(Item => Item.ItemID == itemInfo.itemId);
             if(hasItem != null)
             {
                 Debug.Log($"인벤토리에 [{hasItem.ItemName}] " +
@@ -56,7 +57,7 @@ public class InventroySystem : MonoBehaviour
                     Debug.Log("꽉참");
                     return false;
                 }
-                Item findItem = itemLists[(int)EnumTypes.ITEM_TYPE.CB].List.FirstOrDefault(item => item.ItemID == itemInfo.ItemId);
+                Item findItem = itemLists[(int)EnumTypes.ITEM_TYPE.CB].List.FirstOrDefault(item => item.ItemID == itemInfo.itemId);
                 if(findItem == null) return false;
                 Item pickUpItem = findItem.Clone();
                 HasItemList.Add(pickUpItem);
@@ -75,8 +76,4 @@ public class InventroySystem : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        
-    }
 }

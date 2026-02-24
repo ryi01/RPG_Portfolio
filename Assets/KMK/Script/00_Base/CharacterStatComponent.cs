@@ -60,7 +60,16 @@ public class CharacterStatComponent : MonoBehaviour
     }
     public virtual void TakeDamage(float damage)
     {
-        currentHP = Mathf.Clamp(currentHP - damage, 0, statinfo.maxHP);
+        currentHP -= damage;
+        
+        if(currentHP <= 0.01f)
+        {
+            currentHP = 0;
+        }
+        else
+        {
+            currentHP = Mathf.Clamp(currentHP, 0, statinfo.maxHP);
+        }
         OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
         StartCoroutine(FlashMaterial());
     }

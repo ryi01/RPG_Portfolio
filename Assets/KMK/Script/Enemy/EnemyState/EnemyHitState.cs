@@ -5,13 +5,17 @@ public class EnemyHitState : EnemyState
 {
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
+        if (state != EnumTypes.STATE.DEATH && controller.StatComp.CurrentHP <= 0) return;
         base.EnterState(state, data);
         float force = fsmInfo.NockbackForce;
         if (data != null)
         {
             force = (float)data;
         }
-        navMeshAgent.isStopped = true;
+        if (navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh)
+        {
+            navMeshAgent.isStopped = true;
+        }
         // 파티클 
         // 애니메이션
         Anim.SetInteger("State", (int)state);
@@ -35,12 +39,18 @@ public class EnemyHitState : EnemyState
         float time = 0;
         while (time < fsmInfo.KnckBackTime)
         {
-            navMeshAgent.Move(hitDir * force * Time.deltaTime);
+            if (navMeshAgent.isActiveAndEnabled)
+            {
+                navMeshAgent.Move(hitDir * force * Time.deltaTime);
+            }
 
             time += Time.deltaTime;
             yield return null;
         }
-        navMeshAgent.isStopped = false;
+        if (navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh)
+        {
+            navMeshAgent.isStopped = false;
+        }
         fsmInfo.IsHit = false;
     }
 }

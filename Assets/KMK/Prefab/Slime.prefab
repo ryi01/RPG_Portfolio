@@ -542,6 +542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 0d2c28644e6109b44b3a23e7ef541977, type: 2}
+  flashMat: {fileID: 0}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!114 &3367385812720687054
@@ -623,6 +624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeAttack
   bc: {fileID: 3367385812720687054}
   attackTransform: {fileID: 5730974688870767653}
+  hitEffectPrefab: {fileID: 0}
 --- !u!114 &7483860929878640491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -637,6 +639,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDamageState
   stateType: 5
   animSpeed: 1
+  hitParticle: {fileID: 3125908671876608235, guid: 2e07e5ba5a6e8b74d8206f9be0e29d37, type: 3}
 --- !u!114 &3987142320728259181
 MonoBehaviour:
   m_ObjectHideFlags: 0

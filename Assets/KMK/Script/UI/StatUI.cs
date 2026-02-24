@@ -12,7 +12,8 @@ public class StatUI : MonoBehaviour
         hpBar.fillAmount = ratio;
         if (ratio <= 0)
         {
-            Destroy(gameObject);
+            hpBar.fillAmount = 0;
+            gameObject.SetActive(false);
         }
     }
 

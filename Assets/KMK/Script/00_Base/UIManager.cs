@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
     {
         player.OnHpChanged += playerHUD.UpdateHP;
         playerHUD.UpdateHP(player.CurrentHP, player.MaxHP);
-        player.OnChangeST += playerHUD.UpdateST;
-        playerHUD.UpdateST(player.CurrentST, player.MaxST);
+/*        player.OnChangeST += playerHUD.UpdateST;
+        playerHUD.UpdateST(player.CurrentST, player.MaxST);*/
     }
 
     public void CreateEnemyHPBar(CharacterStatComponent enemyStat)
@@ -34,7 +34,7 @@ public class UIManager : MonoBehaviour
     public void UnBindPlayerUI(PlayerStatComponent player)
     {
         player.OnHpChanged -= playerHUD.UpdateHP;
-        player.OnChangeST -= playerHUD.UpdateST;
+        //player.OnChangeST -= playerHUD.UpdateST;
     }
 
     public void UnBindEnemyUI(CharacterStatComponent enemyStat)

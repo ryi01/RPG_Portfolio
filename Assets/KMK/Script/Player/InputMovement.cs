@@ -8,23 +8,66 @@ public class InputMovement : MonoBehaviour
     private CharacterController cc;
     private PlayerController pc;
     private Vector3 movement;
+    private Vector3 targetPos;
+    private bool isMoving = false;
+    public bool IsMoving => isMoving;
+
+    public System.Action OnArrival;
     #endregion
     #region 중력
     [Header("중력")]
     [SerializeField] private float grav = 20;
     private float vSpeed = 0;
     #endregion
+    
 
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
         pc = GetComponent<PlayerController>();
+        targetPos = transform.position;
+    }
+    public void SetTarget(Vector3 pos)
+    {
+        targetPos = pos;
+        isMoving = true;
+    }
+    public void StopMove()
+    {
+        isMoving = false;
+    }
+    public void UpdateClickMove()
+    {
+        if (isMoving == false) return;
+        Vector3 dir = targetPos - transform.position;
+        dir.y = 0;
+        if(dir.magnitude < 1.5f)
+        {
+            CompleteArrive();
+            return;
+        }
+        Vector3 moveDir = dir.normalized;
+        RotTarget(moveDir);
+        Move(moveDir);
     }
     public void Move(Vector3 dir)
     {
-        movement = dir;
-        cc.Move(movement * pc.StatComp.MoveSpeed * Time.deltaTime);
-        movement.y = 0; 
+        CollisionFlags flag = cc.Move(dir * pc.StatComp.MoveSpeed * Time.deltaTime);
+        if((flag & CollisionFlags.Sides) != 0)
+        {
+            float dis = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.y), new Vector3(targetPos.x, 0, targetPos.y));
+            if (dis < 1.2f)
+            {
+                CompleteArrive();
+            }
+        }
+
+    }
+    private void CompleteArrive()
+    {
+        isMoving = false;
+        OnArrival?.Invoke();
+        OnArrival = null;
     }
     public void RotTarget(Vector3 dir)
     {
@@ -36,7 +79,6 @@ public class InputMovement : MonoBehaviour
     public void LookAtInstant(Vector3 dir)
     {
         if (dir == Vector3.zero) return;
-        Quaternion targetRot = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.LookRotation(dir);
     }
 
@@ -79,7 +121,8 @@ public class InputMovement : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float currentStep = (distance/duration)* Time.deltaTime;
-            cc.Move(dir * currentStep);
+            CollisionFlags flag = cc.Move(dir * currentStep);
+            if ((flag & CollisionFlags.Sides) != 0) yield break;
             yield return null;
         }
     }

@@ -6,7 +6,7 @@ public class InputSkill : MonoBehaviour
     private PlayerController pc;
     private int[] hashSkillAttacks;
 
-    public enum SKILLS { SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, NONE };
+    public enum SKILLS { SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, SKILL6};
 
     [SerializeField] private PlayerSkillAttack[] skillAttacks;
 

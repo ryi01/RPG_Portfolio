@@ -27,6 +27,7 @@ public class MeleeAttack : CommonAttack
         
         foreach (Collider hit in hits)
         {
+            if (hit.TryGetComponent<CharacterStatComponent>(out CharacterStatComponent stat) && stat.CurrentHP <= 0) continue;
             if (hit == null) continue;
             Vector3 dir = hit.transform.position - transform.position;
             dir = new Vector3(dir.x, transform.position.y, dir.z).normalized;

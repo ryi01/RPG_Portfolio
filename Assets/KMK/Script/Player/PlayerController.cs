@@ -1,5 +1,5 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 // 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
 [RequireComponent(typeof(PlayerStatComponent))]
@@ -10,6 +10,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public InputMovement MovementComp { get; private set; }
     public InputAttack AttackComp { get; private set; }
     public InputSkill SkillComp { get; private set; }
+    public InputPickUp PickUpComp { get; private set; }
 
     private Vector3 moveDir;
     private Vector3 targetLookDir;
@@ -18,17 +19,20 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private bool isMove = false;
 
     public bool IsDamage { get; set; }
-    private float currentMoveValue;
+    public bool IsBlink { get; set; }
 
     private InputSkill.SKILLS currentSkill;
-    private KeyCode[] skillKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5 };
+    private KeyCode[] skillKeys = { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.D, KeyCode.F };
 
+    private ItemBox openBox;
+    [SerializeField] private float autoCloseDistance = 3;
     protected override void Awake()
     {
         base.Awake();
         MovementComp = GetComponent<InputMovement>();
         AttackComp = GetComponent<InputAttack>();
         SkillComp = GetComponent<InputSkill>();
+        PickUpComp = GetComponent<InputPickUp>();
     }
     // Update is called once per frame
     void Update()
@@ -38,37 +42,74 @@ public class PlayerController : BaseController<PlayerStatComponent>
         HandleMovement();
         HandleRotation();
         HandleSkill();
-        HandleRun();
+
+        CheckBoxDistance();
     }
 
     private void HandleInput()
     {
-        // 입력 이동 방향
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        // 입력값에 따라 dir 설정
-        moveDir = new Vector3(h, 0, v).normalized;
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f))
+            {
+                if (hitInfo.collider.CompareTag("Item"))
+                {
+                    Debug.Log("!@#");
+                    ItemBox box = hitInfo.collider.GetComponent<ItemBox>();
+                    Vector3 targetPos = hitInfo.point;
+                    targetPos.y = transform.position.y;
+                    
+                    MovementComp.SetTarget(targetPos);
+                    // 람다식 사용 이유 : 상자에 도착시에 오픈하는 단발성 이벤트임
+                    // 람다식 : 이름없는 함수 => 짧은 기능이나 콜백 등의 용도로 사용됨
+                    // OnArrival = (매개변수) => {식 / 함수 몸체}
+                    // 매개변수를 입력받아 오른쪽처럼 행동해라
+                    MovementComp.OnArrival = () =>
+                    {
+                        if (box != null)
+                        {
+                            openBox = box;
+                            PickUpComp.OpenItemBox(box);
+                            
+                        }
+                    };
+                    return;
+                }
+                else
+                {
+                    MovementComp.OnArrival = null;
+                    MovementComp.SetTarget(MovementComp.GetMouseWorldPos());
+                }
+            }
+            
+        }
+
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
         offsetToMouse.y = 0;
         AttackComp.UpdateAttackProgress();
         if (SkillComp.IsSkillAnimation(currentSkill)) return;
         if (Input.GetMouseButtonDown(0))
         {
-            AttackComp.TriggerAttack();
+            MovementComp.StopMove();
+            AttackComp.TriggerAttack(MovementComp.GetMouseWorldPos());
             UpdateAttackDir();
         }
     }
-
-    private void HandleRun()
+    private void CheckBoxDistance()
     {
-        // 입력값이 있는지 없는지 확인
-        bool isInput = Input.GetKey(KeyCode.LeftShift) && moveDir.magnitude > 0 && StatComp.CurrentST > 0;
-        // isST = true
-        bool isST = isInput && StatComp.UseST(Time.deltaTime);
-        float speedMult = isST ? 2 : 1;
-        StatComp.SetSpeedMultifle(speedMult);
-        currentMoveValue = moveDir.magnitude > 0 ? speedMult : 0;
-        StatComp.ReganST(Time.deltaTime);
+        if (openBox == null) return;
+        Vector3 playerPos = transform.position;
+        playerPos.y = 0;
+        Vector3 boxPos = openBox.transform.position;
+        boxPos.y = 0;
+        float dis = Vector3.Distance(playerPos, boxPos);
+        if(dis > autoCloseDistance)
+        {
+            PickUpComp.CloseUI();
+            openBox = null;
+        }
     }
 
     private void HandleMovement()
@@ -87,8 +128,9 @@ public class PlayerController : BaseController<PlayerStatComponent>
         }
         MovementComp.GravityDown();
         if (AttackComp.IsAttackAnimation()) return;
-        MovementComp.Move(moveDir);
-        Animator.SetFloat("Move", currentMoveValue);
+        MovementComp.UpdateClickMove();
+        float animMoveValue = MovementComp.IsMoving ? 1f : 0f;
+        Animator.SetFloat("Move", animMoveValue);
     }
     private void HandleRotation()
     {
@@ -136,7 +178,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         currentSkill = skill;
         UpdateAttackDir();
-        if(skill == InputSkill.SKILLS.SKILL4) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL4);
+        if(skill == InputSkill.SKILLS.SKILL5) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL5);
+        else if(skill == InputSkill.SKILLS.SKILL6) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL6);
         else
         {
             if (skill == InputSkill.SKILLS.SKILL3)
@@ -145,7 +188,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
             }
             else
             {
-                if(skill != InputSkill.SKILLS.SKILL3) StartCoroutine(SkillComp.WaitSkill(currentSkill));
+                if (skill != InputSkill.SKILLS.SKILL3) StartCoroutine(SkillComp.WaitSkill(currentSkill));
                 SkillComp.ActiveSkill(currentSkill);
             }
         }
@@ -161,6 +204,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     }
     public override void Damage(float damage, float force, Transform attacker)
     {
+        if (IsBlink || IsDamage) return;
         base.Damage(damage, force, attacker);
         Vector3 dir = (transform.position - attacker.position).normalized;
         dir.y = 0;

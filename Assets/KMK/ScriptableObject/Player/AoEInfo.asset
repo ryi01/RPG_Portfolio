@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: AoEInfo
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 10
+  attackMinRange: 2.5
+  attackMaxRange: 15
   attackRadius: 10
   hitAngle: 360
   attackTime: 3
   nockbackForce: 2
   coolTime: 15
-  animTrigger: Skill5
+  animTrigger: Skill4
