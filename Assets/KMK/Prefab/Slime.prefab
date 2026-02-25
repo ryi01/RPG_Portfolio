@@ -542,7 +542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatComponent
   statinfo: {fileID: 11400000, guid: 0d2c28644e6109b44b3a23e7ef541977, type: 2}
-  flashMat: {fileID: 0}
+  flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
+  origin: {fileID: 2100000, guid: d9c0226bd4324f01bc178cf4a515ef84, type: 2}
   speedMutlfile: 1
   attackBuffMultifle: 1
 --- !u!114 &3367385812720687054
@@ -563,7 +564,7 @@ MonoBehaviour:
   - {fileID: 7384815845096082975}
   - {fileID: 7483860929878640491}
   - {fileID: 3987142320728259181}
-  slimeLevel: 3
+  slimeLevel: 2
   slimePrefab: {fileID: 7188791091733837851}
   splitCnt: 2
 --- !u!114 &656344906190761726

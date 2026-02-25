@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SlimeController : EnemyController
 {
@@ -11,6 +12,8 @@ public class SlimeController : EnemyController
         base.Damage(damage, force, attacker);
         if (StatComp.CurrentHP <= 0)
         {
+            var agent = GetComponent<NavMeshAgent>();
+            if (agent != null && agent.isOnNavMesh) agent.isStopped = true;
             SplitSlime();
             GetComponent<Collider>().enabled = false;
             
@@ -29,10 +32,14 @@ public class SlimeController : EnemyController
                 if (slime.TryGetComponent<SlimeController>(out sc))
                 {
                     sc.slimeLevel = slimeLevel - 1;
-                    sc.transform.localScale = transform.localScale * 0.6f;
+                    sc.transform.localScale = transform.localScale * 0.8f;
+                    if (sc.StatComp != null)
+                    {
+                        sc.StatComp.ResetMat();
+                    }
                 }
             }
         }
-        Destroy(gameObject, 0.5f);
+        Destroy(gameObject, 0.2f);
     }
 }

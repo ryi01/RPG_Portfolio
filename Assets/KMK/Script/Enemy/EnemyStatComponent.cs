@@ -35,7 +35,7 @@ public class EnemyStatComponent : CharacterStatComponent
         {
             wanderPoints[i] = wayPointGameObjects[i].transform;
         }
-        UIManager.Instance.CreateEnemyHPBar(this);
+        GameManager.Instance.OnBindEnemy(this);
     }
     private void ApplyStun(float duration)
     {
@@ -72,6 +72,6 @@ public class EnemyStatComponent : CharacterStatComponent
 
     private void OnDestroy()
     {
-        UIManager.Instance.UnBindEnemyUI(this);        
+        GameManager.Instance.OnUnBindEnemy(this);        
     }
 }

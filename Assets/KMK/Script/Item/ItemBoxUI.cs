@@ -19,25 +19,52 @@ public class ItemBoxUI : MonoBehaviour
     {
         ClearExistingUI();
         currentBox = box;
-        ItemInfo[] contents = box.ItemInfoList;
+        List<ItemInfo> contents = box.ItemInfoList;
         // 상자에 미리 생성된 item 수만큼 생성
-        for(int i = 0; i < contents.Length; i++)
+        for(int i = 0; i < contents.Count; i++)
         {
-            if (contents[i].itemId == 0) continue;
+            if (i >= itemUISlots.Length) break;
             // 아이템 종류 및 아이디 담기
             ItemInfo item = contents[i];
             // 실제 아이템 값 들고오기 
             Item actualItem = inventorySystem.GetItemData(item.ItemType, item.itemId);
             if(actualItem != null)
             {
-                
                 // 아이템의 정보에 따른 prefab설정
                 ItemUI newUI = Instantiate(itemBoxItemUIPrefab, itemUISlots[i]).GetComponent<ItemUI>();
                 newUI.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
                 spawnUIs.Add(newUI);
-                newUI.InitItemUI(actualItem, () => LootItem(item, newUI));
+
+                Item displayItem = actualItem.Clone();
+                if(displayItem is ConsumableItem cb)
+                {
+                    cb.ItemCount = item.itemCount;
+                }
+                newUI.InitItemUI(displayItem, () => LootItem(item, newUI));
             }
             
+        }
+    }
+    public void UpdateBoxUI()
+    {
+        if (currentBox == null) return;
+        List<ItemInfo> boxData = currentBox.ItemInfoList;
+
+        if(spawnUIs.Count != boxData.Count)
+        {
+            SetupBoxUI(currentBox);
+            return;
+        }
+
+        for (int i = 0; i < boxData.Count; i++)
+        {
+            ItemInfo info = boxData[i];
+            Item actualItem = inventorySystem.GetItemData(info.ItemType, info.itemId);
+
+            Item displayItem = actualItem.Clone();
+            if (displayItem is ConsumableItem cb) cb.ItemCount = info.itemCount;
+
+            spawnUIs[i].InitItemUI(displayItem, () => LootItem(info, spawnUIs[i]));
         }
     }
     private void LootItem(ItemInfo info, ItemUI ui)

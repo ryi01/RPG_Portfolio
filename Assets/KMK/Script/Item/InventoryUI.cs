@@ -8,11 +8,10 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject itemUIPrefab;
     [SerializeField] private InventroySystem inventroySystem;
     private Item item;
-    private void OnEnable()
+    private void Start()
     {
-        
+        inventroySystem.OnChangedInventory += UpdateInventoryUI;
     }
-
     public void InitInventoryUI()
     {
         itemUIs = new ItemUI[itemUISlots.Length];
@@ -24,13 +23,16 @@ public class InventoryUI : MonoBehaviour
 
     public void UpdateInventoryUI()
     {
-        for (int i = 0; i < itemUISlots.Length; i++)
+        for (int i = 0; i < itemUIs.Length; i++)
         {
-            itemUIs[i].ClearItemUI();
-        }
-        for (int i = 0; i < inventroySystem.HasItemList.Count; i++)
-        {
-            Item item = inventroySystem.HasItemList[i];
+            itemUIs[i].SlotIndex = i;
+
+            if (i < inventroySystem.HasItemList.Count && inventroySystem.HasItemList[i] != null)
+            {
+                Item item = inventroySystem.HasItemList[i];
+                itemUIs[i].InitItemUI(item, () => UseItem(item));
+            }
+            else itemUIs[i].ClearItemUI();
         }
     }
 
@@ -58,5 +60,9 @@ public class InventoryUI : MonoBehaviour
 
         ((ConsumableItem)item).Consume();
         inventroySystem.RemoveItem(item);
+    }
+    private void OnDestroy()
+    {
+        if(inventroySystem != null) inventroySystem.OnChangedInventory -= UpdateInventoryUI;
     }
 }

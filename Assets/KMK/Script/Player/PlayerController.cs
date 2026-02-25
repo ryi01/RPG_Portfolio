@@ -11,7 +11,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public InputAttack AttackComp { get; private set; }
     public InputSkill SkillComp { get; private set; }
     public InputPickUp PickUpComp { get; private set; }
-
+    public CameraShakeController CameraShakeController { get; private set; }
     private Vector3 moveDir;
     private Vector3 targetLookDir;
     private Vector3 offsetToMouse;
@@ -26,6 +26,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private ItemBox openBox;
     [SerializeField] private float autoCloseDistance = 3;
+
     protected override void Awake()
     {
         base.Awake();
@@ -33,6 +34,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         AttackComp = GetComponent<InputAttack>();
         SkillComp = GetComponent<InputSkill>();
         PickUpComp = GetComponent<InputPickUp>();
+        CameraShakeController = GetComponentInChildren<CameraShakeController>();
     }
     // Update is called once per frame
     void Update()
@@ -51,12 +53,13 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(1))
         {
+            int layerMask = (1 << LayerMask.NameToLayer("Player"));
+            layerMask = ~layerMask;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f))
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
             {
                 if (hitInfo.collider.CompareTag("Item"))
                 {
-                    Debug.Log("!@#");
                     ItemBox box = hitInfo.collider.GetComponent<ItemBox>();
                     Vector3 targetPos = hitInfo.point;
                     targetPos.y = transform.position.y;
@@ -72,7 +75,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
                         {
                             openBox = box;
                             PickUpComp.OpenItemBox(box);
-                            
                         }
                     };
                     return;
@@ -206,11 +208,23 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         if (IsBlink || IsDamage) return;
         base.Damage(damage, force, attacker);
-        Vector3 dir = (transform.position - attacker.position).normalized;
-        dir.y = 0;
-        Animator.SetTrigger("Damage");
-        transform.forward = -dir;
-        MovementComp.Push(dir, force, 0.1f);
+        if(SkillComp.IsSkillAnimation(currentSkill)) return;
+        bool isBoss = false;
+        if (attacker == null) return;
+        var attackerStat = attacker.GetComponentInChildren<BaseController>() as EnemyController;
+        if (attackerStat != null && attackerStat.StatComp.IsBoss) isBoss = true;
+        if(isBoss)
+        {
+            Vector3 dir = (transform.position - attacker.position).normalized;
+            dir.y = 0;
+            Animator.SetTrigger("Damage");
+            transform.forward = -dir;
+            MovementComp.Push(dir, force, 0.1f);
+        }
+        else
+        {
+            CameraShakeController.ShakeCam(0.3f, 0.2f);
+        }
     }
     public void OnAttackDash(float distance)
     {
@@ -224,4 +238,5 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         isMove = (value != 0);
     }
+
 }

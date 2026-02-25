@@ -16,7 +16,7 @@ MonoBehaviour:
   itemId: 2002
   itemName: "\uB9C8\uB098 \uBB3C\uC57D"
   itemDescription: "\uB9C8\uB098\uBB3C\uC57D \uC544\uC774\uD15C\uC785\uB2C8\uB2E4."
-  itemIconImage: {fileID: 0}
+  itemIconImage: {fileID: 21300004, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   itemPrice: 10
   itemCount: 1
   isEquip: 0

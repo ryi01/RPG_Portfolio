@@ -21,7 +21,7 @@ public class PlayerStatComponent : CharacterStatComponent
         playerInfo = statinfo as PlayerStatInfo;
         if (playerInfo == null) Debug.Log($"playerinfo ¾øÀ½");
         currentST = MaxST;
-        UIManager.Instance.BindPlayerUI(this);
+        GameManager.Instance.OnBindPlayer(this);
     }
 
     public bool InvokeCri()
@@ -48,6 +48,6 @@ public class PlayerStatComponent : CharacterStatComponent
 
     private void OnDisable()
     {
-        UIManager.Instance.UnBindPlayerUI(this);
+        GameManager.Instance.OnUnBindPlayer(this);
     }
 }

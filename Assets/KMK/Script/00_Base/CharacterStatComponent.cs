@@ -6,6 +6,7 @@ public class CharacterStatComponent : MonoBehaviour
 {
     [SerializeField]protected StatInfo statinfo;
     [SerializeField] protected Material flashMat;
+    [SerializeField] private Material origin;
     private Material[] originMat;
     private SkinnedMeshRenderer[] renderers;
     private bool isMat = false;
@@ -35,6 +36,7 @@ public class CharacterStatComponent : MonoBehaviour
     protected virtual void Awake()
     {
         InitStat();
+
         renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
         originMat = new Material[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)
@@ -48,6 +50,13 @@ public class CharacterStatComponent : MonoBehaviour
         OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
     }
 
+    public void ResetMat()
+    {
+        StopAllCoroutines();
+        isMat = false;
+        originMat[0] = origin;
+        renderers[0].material = originMat[0];
+    }
     public float SetSpeedMultifle(float value)
     {
         speedMutlfile = value;

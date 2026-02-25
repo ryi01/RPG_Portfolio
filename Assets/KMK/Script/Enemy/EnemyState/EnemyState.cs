@@ -39,8 +39,12 @@ public abstract class EnemyState : MonoBehaviour
 
     protected virtual void NavigationStop()
     {
-        navMeshAgent.isStopped = true;
-        navMeshAgent.speed = 0;
+        if(navMeshAgent != null && navMeshAgent.gameObject.activeSelf && navMeshAgent.isOnNavMesh )
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.speed = 0;
+        }
+        
     }
 
 }

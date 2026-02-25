@@ -6,11 +6,12 @@ public struct ItemInfo
 {
     public EnumTypes.ITEM_TYPE ItemType;
     public int itemId;
+    public int itemCount;
 }
 public class ItemBox : MonoBehaviour
 {
-    [SerializeField] private ItemInfo[] itemInfoList;
-    public ItemInfo[] ItemInfoList => itemInfoList;
+    [SerializeField] private List<ItemInfo> itemInfoList = new List<ItemInfo>();
+    public List<ItemInfo> ItemInfoList => itemInfoList;
     [SerializeField] private Vector2 idWpRange;
     [SerializeField] private Vector2 idCbRange;
 
@@ -21,36 +22,67 @@ public class ItemBox : MonoBehaviour
 
     private void MakeRandomContents()
     {
-        int count = UnityEngine.Random.Range(3, 5);
-        itemInfoList = new ItemInfo[count];
+        // 리스트 초기화
+        itemInfoList.Clear();
+        // 아이템 갯수 랜덤
+        int count = UnityEngine.Random.Range(2, 5);
+        
         for (int i = 0; i < count; i++)
         {
             // wp/cb 중 아무거나 넣기
             EnumTypes.ITEM_TYPE randomType = EnumTypes.ITEM_TYPE.CB;// (EnumTypes.ITEM_TYPE)UnityEngine.Random.Range(0, 2);
             int randomID = 0;
+            bool isStacked = false;
             // 아이템의 종류에 따라 id가 달라짐
-            if(randomType == EnumTypes.ITEM_TYPE.CB)
-                randomID = UnityEngine.Random.Range((int)idCbRange.x, (int)idCbRange.y + 1);
-            else
+            if (randomType == EnumTypes.ITEM_TYPE.WP)
+            {
                 randomID = UnityEngine.Random.Range((int)idWpRange.x, (int)idWpRange.y + 1);
-            // 중복되지만 아이템 타입과 아이디를 아이템박스의 list에 넣음
-            itemInfoList[i] = new ItemInfo { ItemType = randomType, itemId = randomID };
+            }
+            else if (randomType == EnumTypes.ITEM_TYPE.CB)
+            {
+                randomID = UnityEngine.Random.Range((int)idCbRange.x, (int)idCbRange.y + 1);
+                for(int j = 0; j < itemInfoList.Count; j++)
+                {
+                    if (itemInfoList[j].itemId == randomID &&
+                        itemInfoList[j].ItemType == randomType)
+                    {
+                        ItemInfo temp = itemInfoList[j];
+                        temp.itemCount++;
+                        itemInfoList[j] = temp;
+
+                        isStacked = true;
+                        break;
+                    }
+                }
+                if (!isStacked)
+                {
+                    ItemInfo newInfo = new ItemInfo();
+                    newInfo.itemId = randomID;
+                    newInfo.ItemType = randomType;
+                    newInfo.itemCount = 1;
+
+                    ItemInfoList.Add(newInfo);
+                } 
+            }
+
         }
     }
     // 아이템 삭제
     public void RemoveItemFromBox(ItemInfo info)
     {
-        for(int i = 0; i< itemInfoList.Length; i++)
-        {
-            // 아이템이 있는지 확인
-            if (itemInfoList[i].ItemType == info.ItemType &&
-                itemInfoList[i].itemId == info.itemId)
-            {
-                itemInfoList[i] = default;
-                break;
-            }
-        }
-        
+        itemInfoList.Remove(info);
     }
 
+    public void AddItemFromInventroy(Item item)
+    {
+        ItemInfo info = new ItemInfo
+        {
+            itemId = item.ItemID,
+            itemCount = item.ItemCount,
+            ItemType = item.ItemType
+        };
+
+        itemInfoList.Add(info);
+        GameManager.Instance.UIManager.UpdateItemBoxUI();
+    }
 }

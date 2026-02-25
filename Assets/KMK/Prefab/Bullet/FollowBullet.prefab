@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e3297426d1a4d4a96e6bccc034598a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetMovement
-  moveSpeed: 3
+  moveSpeed: 10
 --- !u!1 &8133298201326429617
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,3 +207,4 @@ MonoBehaviour:
     m_Bits: 512
   attack: 2
   destroyTime: 0.5
+  bulletParticle: {fileID: 0}

@@ -3,15 +3,15 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance;
     [SerializeField] private StatUI playerHUD;
     [SerializeField] private GameObject enemyHPBarPrefab;
+    [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private ItemBoxUI itemBoxUI;
     private StatUI enemyStatUI;
 
-    private void Awake()
+    private void Start()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        inventoryUI.InitInventoryUI();
     }
 
     public void BindPlayerUI(PlayerStatComponent player)
@@ -41,4 +41,24 @@ public class UIManager : MonoBehaviour
     {
         enemyStat.OnHpChanged -= enemyStatUI.UpdateHP;
     }
+    #region 인벤토리 관련
+    public void UpdateItemBoxUI()
+    {
+        if(itemBoxUI != null && itemBoxUI.gameObject.activeSelf)
+        {
+            itemBoxUI.UpdateBoxUI();
+        }
+    }
+
+    public void UpdateInventoryUI()
+    {
+        inventoryUI.UpdateInventoryUI();
+    }
+
+    public void OpenItemBox(ItemBox box)
+    {
+        itemBoxUI.transform.parent.gameObject.SetActive(true);
+        itemBoxUI.SetupBoxUI(box);
+    }
+    #endregion
 }
