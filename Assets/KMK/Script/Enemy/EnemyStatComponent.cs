@@ -35,7 +35,8 @@ public class EnemyStatComponent : CharacterStatComponent
         {
             wanderPoints[i] = wayPointGameObjects[i].transform;
         }
-        GameManager.Instance.OnBindEnemy(this);
+        if(enemyStatInfo.isBoss) GameManager.Instance.OnBindEnemy(this, 4);
+        else GameManager.Instance.OnBindEnemy(this);
     }
     private void ApplyStun(float duration)
     {

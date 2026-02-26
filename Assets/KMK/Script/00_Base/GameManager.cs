@@ -5,8 +5,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private InventroySystem inventroySystem;
+    [SerializeField] private DataManager dataManager;
     public UIManager UIManager => uiManager;
     public InventroySystem InventroySystem => inventroySystem;
+    public DataManager DataManager => dataManager;
 
     private void Awake()
     {
@@ -22,9 +24,9 @@ public class GameManager : MonoBehaviour
     {
         uiManager.UnBindPlayerUI(player);
     }
-    public void OnBindEnemy(CharacterStatComponent enemy)
+    public void OnBindEnemy(CharacterStatComponent enemy, float y = 2.5f)
     {
-        uiManager.CreateEnemyHPBar(enemy);
+        uiManager.CreateEnemyHPBar(enemy, y);
     }
     public void OnUnBindEnemy(CharacterStatComponent enemy)
     {

@@ -40,33 +40,21 @@ public class ItemBoxUI : MonoBehaviour
                 {
                     cb.ItemCount = item.itemCount;
                 }
-                newUI.InitItemUI(displayItem, () => LootItem(item, newUI));
+                // 초기화 및 클릭 이벤트 => 익명함수에서 인자를 바로 넘기면 인덱스가 엉킴
+                ItemInfo currentInfo = item;
+                ItemUI currentUI = newUI;
+                newUI.InitItemUI(displayItem, () => LootItem(currentInfo, currentUI));
             }
             
         }
+
     }
     public void UpdateBoxUI()
     {
         if (currentBox == null) return;
-        List<ItemInfo> boxData = currentBox.ItemInfoList;
-
-        if(spawnUIs.Count != boxData.Count)
-        {
-            SetupBoxUI(currentBox);
-            return;
-        }
-
-        for (int i = 0; i < boxData.Count; i++)
-        {
-            ItemInfo info = boxData[i];
-            Item actualItem = inventorySystem.GetItemData(info.ItemType, info.itemId);
-
-            Item displayItem = actualItem.Clone();
-            if (displayItem is ConsumableItem cb) cb.ItemCount = info.itemCount;
-
-            spawnUIs[i].InitItemUI(displayItem, () => LootItem(info, spawnUIs[i]));
-        }
+        SetupBoxUI(currentBox);
     }
+
     private void LootItem(ItemInfo info, ItemUI ui)
     {
         if(inventorySystem.AddItem(info))

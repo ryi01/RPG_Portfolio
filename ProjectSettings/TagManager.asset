@@ -9,6 +9,7 @@ TagManager:
   - Item
   - ItemSlot
   - BoxSlot
+  - Trash
   layers:
   - Default
   - TransparentFX

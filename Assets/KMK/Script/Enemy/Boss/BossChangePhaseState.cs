@@ -12,9 +12,6 @@ public class BossChangePhaseState : EnemyState
     }
     public override void UpdateState()
     {
-        Debug.Log($"페이지 체인지");
-        // 애니메이션 컨트롤러 변경
-
         navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(3);
     }
 
@@ -29,5 +26,9 @@ public class BossChangePhaseState : EnemyState
         {
             UpdateState();
         }
+    }
+    public void OnChangeEndPhase()
+    {
+        controller.TransactionToState(EnumTypes.STATE.IDLE);
     }
 }

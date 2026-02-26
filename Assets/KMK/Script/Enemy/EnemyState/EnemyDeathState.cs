@@ -7,6 +7,7 @@ public class EnemyDeathState : EnemyHitState
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         if (navMeshAgent != null) navMeshAgent.enabled = false;
+        
         Anim.SetInteger("State", Random.Range(7, 9));
         Anim.SetBool("Death", true);
     }
@@ -14,6 +15,7 @@ public class EnemyDeathState : EnemyHitState
     public override void UpdateState()
     {
         time += Time.deltaTime;
+
         if(time >= fsmInfo.DeathDelayTime)
         {
             ExitState();

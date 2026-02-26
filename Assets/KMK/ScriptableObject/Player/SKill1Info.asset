@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: SKill1Info
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 1.3
-  attackRadius: 2.2
-  hitAngle: 30
-  attackTime: 2
+  attackMinRange: 2.5
+  attackMaxRange: 15
+  attackRadius: 3
+  hitAngle: 60
+  attackTime: 0.8
   nockbackForce: 2
   coolTime: 10
   animTrigger: Skill1

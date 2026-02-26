@@ -71,6 +71,7 @@ public class ItemBox : MonoBehaviour
     public void RemoveItemFromBox(ItemInfo info)
     {
         itemInfoList.Remove(info);
+        GameManager.Instance.UIManager.UpdateItemBoxUI();
     }
 
     public void AddItemFromInventroy(Item item)

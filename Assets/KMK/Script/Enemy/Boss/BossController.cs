@@ -12,14 +12,26 @@ public class BossController : EnemyController
     [SerializeField] private GameObject lightningPrefab;
     [SerializeField] private float lightningInterval = 2.0f;
     [SerializeField] private float strikeDelay = 1.0f;
+    [SerializeField] private GameObject ax;
 
+    
     public int LastSkillIndex { get; set; } = -1;
     private bool isPhaseTwo = false;
     public bool IsPhaseTwo { get => isPhaseTwo; }
     public EnemySkillAttack[] SkillList { get => skillList; }
     public bool CoolTimeAttack { get; private set; }
+
+    private Coroutine lightCoroutine;
     protected override void Update()
     {
+        if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH)
+        {
+            if(lightCoroutine != null)
+            {
+                lightCoroutine = null;
+                StopAllCoroutines();
+            }
+        }
         base.Update();
 
         float hpRatio = StatComp.CurrentHP / StatComp.MaxHP;
@@ -28,8 +40,12 @@ public class BossController : EnemyController
             isPhaseTwo = true;
             StatComp.SetSpeedMultifle(2);
             TransactionToState(EnumTypes.STATE.PATTERN_PHASE);
-
+            OnOffAX(false);
             StartCoroutine(LightningRoutine());
+        }
+        if(isPhaseTwo && currentState.StateType != EnumTypes.STATE.PATTERN_PHASE)
+        {
+            OnOffAX(true);
         }
     }
 
@@ -50,7 +66,7 @@ public class BossController : EnemyController
         }
         navMeshAgent.isStopped = true;
         TransactionToState(EnumTypes.STATE.ATTACK, skill);
-        StartCoroutine(AttackCoolTimeRoutine(2));
+        if(lightCoroutine == null) lightCoroutine = StartCoroutine(AttackCoolTimeRoutine(2));
     }
     private IEnumerator AttackCoolTimeRoutine(float delay)
     {
@@ -74,11 +90,25 @@ public class BossController : EnemyController
     private IEnumerator ExecuteLightning(Vector3 pos)
     {
         GameObject warning = Instantiate(wariningPrefab, pos, Quaternion.identity);
+        warning.transform.localScale = Vector3.zero;
+        float targetScale = 1;
+        float elapsed = 0;
+        while(elapsed < strikeDelay)
+        {
+            elapsed += Time.deltaTime;
+            float ratio = elapsed / strikeDelay;
 
-        yield return new WaitForSeconds(strikeDelay);
+            warning.transform.localScale = Vector3.one * ratio * targetScale;
+            yield return null;
+        }
 
         Destroy(warning);
         GameObject bolt = Instantiate(lightningPrefab, pos, Quaternion.identity);
         Destroy(bolt, 2);
+    }
+
+    public void OnOffAX(bool isOn)
+    {
+        ax.SetActive(isOn);
     }
 }

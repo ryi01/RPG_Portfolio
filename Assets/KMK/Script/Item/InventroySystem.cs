@@ -47,14 +47,12 @@ public class InventroySystem : MonoBehaviour
             {
                 isSucess = true;
                 hasItem.ItemCount += itemInfo.itemCount;
-                Debug.Log($"인벤토리에 [{hasItem.ItemName}] " +
-                    $"소모성 아이템이 추가됨 [현재아이템갯수 : {hasItem.ItemCount}");
             }
         }
         if(!isSucess) isSucess = TryAddNewItem(itemInfo);
         if (isSucess) OnChangedInventory?.Invoke();
 
-        return true; 
+        return isSucess; 
     }
     private bool TryAddNewItem(ItemInfo itemInfo)
     {

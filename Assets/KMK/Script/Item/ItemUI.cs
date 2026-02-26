@@ -31,14 +31,9 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     {
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
-        itemCountText.text = "";
-        itemImage.color = new Color(1, 1, 1, 0); // 투명
         // 드래그 중 마우스 검사를 확인하기 위함
-        if (GetComponent<CanvasGroup>() == null)
-        {
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
-        }
-        else canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup = GetComponent<CanvasGroup>() == null ? gameObject.AddComponent<CanvasGroup>(): GetComponent<CanvasGroup>();
+        ClearItemUI();
     }
     // 아이템 셀 초기화
     public void ClearItemUI()
@@ -65,12 +60,9 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     // 더블 클릭 확인
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(eventData.button == PointerEventData.InputButton.Left)
+        if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
         {
-            if(eventData.clickCount == 2)
-            {
-                onDoubleClick?.Invoke();
-            }
+            onDoubleClick?.Invoke();
         }
     }
     #region Drag&Drop
@@ -78,12 +70,17 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (item == null) return;
+
         // 원래 위치와 슬롯 기억
         originPos = rectTransform.anchoredPosition;
         originParent = transform.parent;
-        isFromInven = GetComponentInParent<InventoryUI>() != null; 
-        // ray가 다른 곳에 닿지 않도록 부모를 캔버스로 설정
+        isFromInven = GetComponentInParent<InventoryUI>() != null;
+
+        // 좌표 유지를 위해 월드 포지션 기억 후, 부모 변경
+        Vector3 worldPos = transform.position;
         transform.SetParent(canvas.transform);
+        transform.position = worldPos;
+
         // blcokRaycast를 끄고 들고 있는 ui가 아닌 바닥의 슬롯을 인식
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.6f;
@@ -104,67 +101,79 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         canvasGroup.alpha = 1f;
         // 마우스를 땐 위치 확인
         GameObject target = eventData.pointerCurrentRaycast.gameObject;
-        bool isMove = false;
-        // target의 태그에 따라 위치 변경
-        if(target == null || (!target.CompareTag("ItemSlot") && !target.CompareTag("BoxSlot")))
+        bool isSucess = HandleDrop(target);
+
+        if (!isSucess)
         {
-            if(isFromInven)
-            {
-                GameManager.Instance.InventroySystem.RemoveItem(item);
-            }
+            ReturnToOrigin();
         }
         else
         {
-            // 인벤토리쪽
-            if (target.CompareTag("ItemSlot"))
-            {
-                // 인벤토리 내부
-                if (isFromInven)
-                {
-                    ItemUI targetUI = target.GetComponentInChildren<ItemUI>();
-                    // 위치 변경
-                    GameManager.Instance.SwapItem(this.slotIndex, targetUI.slotIndex);
-                    isMove = true;
-                }
-                // 박스 -> 인벤토리
-                else
-                {
-                    LootToInven();
-                    isMove = true;
-                }
-            }
-            // 인벤토리 -> 박스
-            if (target.CompareTag("BoxSlot"))
-            {
-                MoveToBox();
-                isMove = true;
-            }
-        }
-
-        if(!isMove)
-        {
+            // 미리 부모를 돌려 놓기
             transform.SetParent(originParent);
             rectTransform.anchoredPosition = Vector2.zero;
+            GameManager.Instance.UIManager.UpdateItemBoxUI();
+            GameManager.Instance.UIManager.UpdateInventoryUI();
         }
     }
-    private void MoveToBox()
+    private bool HandleDrop(GameObject target)
+    {
+        if (target == null) return false;
+
+        // 인벤토리쪽
+        if (target.CompareTag("ItemSlot"))
+        {
+            // 인벤토리 내부
+            if (isFromInven)
+            {
+                // target의 태그에 따라 위치 변경
+                ItemUI targetUI = target.GetComponentInChildren<ItemUI>();
+                // 위치 변경
+                if (targetUI != null && targetUI != this)
+                {
+                    GameManager.Instance.SwapItem(this.slotIndex, targetUI.slotIndex);
+                    return true;
+                }
+            }
+            // 박스 -> 인벤토리
+            else return LootToInven();
+        }
+        // 인벤토리 -> 박스
+        else if (target.CompareTag("BoxSlot"))
+        {
+            if (isFromInven) return MoveToBox();
+        }
+        else if (isFromInven && target.CompareTag("Trash"))
+        {
+            GameManager.Instance.InventroySystem.RemoveItem(item);
+            return true;
+        }
+
+        return false;
+    }
+    private void ReturnToOrigin()
+    {
+        transform.SetParent(originParent);
+        rectTransform.anchoredPosition = Vector2.zero;
+    }
+    private bool MoveToBox()
     {
         // 현재 열린 박스를 가져와서
         ItemBox box = GameManager.Instance.InventroySystem.CurrentBox;
-        if (box != null)
-        {
-            // 박스 list에 추가
-            box.AddItemFromInventroy(item);
-            // 인벤토리에서 삭제
-            GameManager.Instance.InventroySystem.RemoveItem(item);
-        }
+        if (box == null) return false;
+        // 박스 list에 추가
+        box.AddItemFromInventroy(item);
+        // 인벤토리에서 삭제
+        GameManager.Instance.InventroySystem.RemoveItem(item);
+
+        return true;
     }
 
-    private void LootToInven()
+    private bool LootToInven()
     {
         // 현재 박스에서
         ItemBox box = GameManager.Instance.InventroySystem.CurrentBox;
-        if (box == null) return;
+        if (box == null) return false;
         // 들고있는 아이템의 info값을 가져와서
         ItemInfo info = new ItemInfo
         {
@@ -177,8 +186,9 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         {
             // 박스에서 제거하기
             box.RemoveItemFromBox(info);
-            GameManager.Instance.UIManager.UpdateItemBoxUI();
+            return true;
         }
+        return false;  
     }
     #endregion
 }

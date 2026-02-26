@@ -22,10 +22,10 @@ public class UIManager : MonoBehaviour
         playerHUD.UpdateST(player.CurrentST, player.MaxST);*/
     }
 
-    public void CreateEnemyHPBar(CharacterStatComponent enemyStat)
+    public void CreateEnemyHPBar(CharacterStatComponent enemyStat, float y = 2.5f)
     {
         GameObject go = Instantiate(enemyHPBarPrefab, enemyStat.transform);
-        go.transform.localPosition = new Vector3(0, 2.5f, 0);
+        go.transform.localPosition = new Vector3(0, y, 0);
         enemyStatUI = go.GetComponent<StatUI>();
         enemyStat.OnHpChanged += enemyStatUI.UpdateHP;
         enemyStatUI.UpdateHP(enemyStat.CurrentHP, enemyStat.MaxHP);
