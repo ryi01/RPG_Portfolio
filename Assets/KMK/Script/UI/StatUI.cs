@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class StatUI : MonoBehaviour
 {
     [SerializeField] private Image hpBar;
-    [SerializeField] private Image stBar;
+    [SerializeField] private Image expBar;
+    [SerializeField] private Text levelText;
 
     public void UpdateHP(float cur, float max)
     {
@@ -17,11 +18,15 @@ public class StatUI : MonoBehaviour
         }
     }
 
-    public void UpdateST(float cur, float max)
+    public void UpdateExp(float cur, float max)
     {
         float ratio = cur / max;
-        stBar.fillAmount = ratio;
+        expBar.fillAmount = ratio;
+    }
 
+    public void UpdateLevel(int level)
+    {
+        levelText.text = level.ToString();
     }
 
 }

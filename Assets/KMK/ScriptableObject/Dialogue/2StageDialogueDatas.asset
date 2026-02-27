@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189aa93444442434dba5d40977c9bea3, type: 3}
+  m_Name: 2StageDialogueDatas
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueDatas
+  npcSprites:
+  - {fileID: 21300000, guid: 2d089513ae4adfc48a683c362ad9992c, type: 3}
+  - {fileID: 21300000, guid: d659f7396cd57754eba78763cf986c51, type: 3}
+  - {fileID: 21300000, guid: d8335807adf4215499812f801abe6aef, type: 3}
+  npcNames:
+  - Fly
+  - fkd
+  - god
+  dialogueDatas:
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "Jack\uC774 1\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+  - direction: 1
+    imageId: 1
+    nameId: 1
+    message: "Marie\uAC00 2\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+  - direction: 1
+    imageId: 2
+    nameId: 2
+    message: "Toko\uAC00 3\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "Jack\uC774 4\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+  - direction: 1
+    imageId: 2
+    nameId: 2
+    message: "Toko\uAC00 5\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."

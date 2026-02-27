@@ -30,5 +30,10 @@ MonoBehaviour:
   criticalMultifle: 1.2
   maxST: 100
   regenST: 1
-  level: 0
-  exp: 0
+  level: 5
+  exp:
+  - 10
+  - 20
+  - 30
+  - 40
+  - 50

@@ -43,19 +43,12 @@ public class InventoryUI : MonoBehaviour
 
     public void UseItem(Item item)
     {
-        if(item.ItemType == EnumTypes.ITEM_TYPE.WP)
+        if (item.ItemCount > 1)
         {
-
-        }
-        else
-        {
-            if(item.ItemCount > 1)
-            {
-                item.ItemCount--;
-                ((ConsumableItem)item).Consume();
-                UpdateInventoryUI();
-                return;
-            }
+            item.ItemCount--;
+            ((ConsumableItem)item).Consume();
+            UpdateInventoryUI();
+            return;
         }
 
         ((ConsumableItem)item).Consume();

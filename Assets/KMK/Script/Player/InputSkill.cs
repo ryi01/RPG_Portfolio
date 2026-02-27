@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -5,7 +6,6 @@ public class InputSkill : MonoBehaviour
 {
     private PlayerController pc;
     private int[] hashSkillAttacks;
-
     public enum SKILLS { SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, SKILL6};
 
     [SerializeField] private PlayerSkillAttack[] skillAttacks;
@@ -25,6 +25,7 @@ public class InputSkill : MonoBehaviour
 
     public void ActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
+        if (!skillAttacks[(int)skillTypes].IsUnlocked) return;
         skillAttacks[(int)skillTypes].StartSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], true);
     }
@@ -32,6 +33,17 @@ public class InputSkill : MonoBehaviour
     public void OnSkill3End()
     {
         DeActiveSkill();
+    }
+
+    public void OnLockSkill(int level)
+    {
+        for(int i = 0; i < skillAttacks.Length;i++)
+        {
+            if (skillAttacks[i].UnLockLevel == level)
+            {
+                skillAttacks[i].UnLockSkill();
+            }
+        }
     }
     public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {

@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5426ea1ebe2afed45a15bea4a45eab09, type: 3}
-  m_Name: Gem
-  m_EditorClassIdentifier: Assembly-CSharp::ConsumableItem
+  m_Script: {fileID: 11500000, guid: 025713d8e3e3e754ebc524c0f6d48590, type: 3}
+  m_Name: Gold
+  m_EditorClassIdentifier: Assembly-CSharp::GemConsumable
   itemType: 1
   itemId: 2001
-  itemName: "\uBCF4\uC11D"
-  itemDescription: "\uBCF4\uC11D \uC544\uC774\uD15C\uC785\uB2C8\uB2E4."
-  itemIconImage: {fileID: 21300000, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  itemName: "\uACE8\uB4DC"
+  itemDescription: "\uACE8\uB4DC \uC544\uC774\uD15C\uC785\uB2C8\uB2E4."
+  itemIconImage: {fileID: 21300000, guid: b696afed6dece3540a9d866bea1f50da, type: 3}
   itemPrice: 30
   itemCount: 1
   isEquip: 0
   cbType: 0
-  upValue: 1
+  upValue: 10

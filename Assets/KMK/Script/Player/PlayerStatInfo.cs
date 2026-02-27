@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Stat/Player")]
@@ -11,5 +13,5 @@ public class PlayerStatInfo : StatInfo
     public float regenST;
     [Header("Level")]
     public float level;
-    public float exp;
+    public List<float> exp;
 }

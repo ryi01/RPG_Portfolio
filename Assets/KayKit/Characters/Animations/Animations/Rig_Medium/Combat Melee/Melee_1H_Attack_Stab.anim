@@ -28502,6 +28502,6 @@ AnimationClip:
     functionName: OnAttackDash
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 1.1
+    floatParameter: 1.3
     intParameter: 0
     messageOptions: 0

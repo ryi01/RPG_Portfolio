@@ -18,6 +18,8 @@ public class EnemyStatComponent : CharacterStatComponent
     public float MaxGroogy { get => enemyStatInfo.maxGroggy; }
     public float DeathDelayTime { get => enemyStatInfo.deathDelayTime; }
     public bool IsBoss { get => enemyStatInfo.isBoss; }
+
+    public float Exp { get => enemyStatInfo.exp; }
     public Transform[] WanderPoints { get => wanderPoints; set => wanderPoints = value; }
     public float WanderNavCheckRadius { get => enemyStatInfo.wanderNavCheckRadius; }
     protected override void Awake()

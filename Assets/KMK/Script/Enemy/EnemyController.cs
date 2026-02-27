@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
     public GameObject Player { get => player; set => player = value; }
 
     protected Dictionary<EnumTypes.STATE, EnemyState> stateDict = new();
-
+    
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -36,12 +37,12 @@ public class EnemyController : BaseController<EnemyStatComponent>
 
         if (StatComp.CurrentHP <= 0)
         {
+            GameManager.Instance.SendEnemyKilled(StatComp.Exp);
             TransactionToState(EnumTypes.STATE.DEATH, force);
             return;
         }
         if(currentState != null && currentState.StateType == EnumTypes.STATE.STUN)
         {
-            Animator.SetInteger("State", 5);
             return;
         }
         bool isStun = StatComp.AddGroogy(damage);

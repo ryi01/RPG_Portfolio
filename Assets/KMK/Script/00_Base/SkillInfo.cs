@@ -15,4 +15,6 @@ public class SkillInfo: ScriptableObject
     public float coolTime = 2;
     [Header("Anim")]
     public string animTrigger;
+    [Header("Level")]
+    public int openLevel;
 }

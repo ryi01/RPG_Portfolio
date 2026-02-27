@@ -21,3 +21,4 @@ MonoBehaviour:
   nockbackForce: 0
   coolTime: 10
   animTrigger: Skill6
+  openLevel: 1

@@ -33,10 +33,10 @@ public class CharacterStatComponent : MonoBehaviour
 
     public Action<float, float> OnHpChanged;
 
+
     protected virtual void Awake()
     {
         InitStat();
-
         renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
         originMat = new Material[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)

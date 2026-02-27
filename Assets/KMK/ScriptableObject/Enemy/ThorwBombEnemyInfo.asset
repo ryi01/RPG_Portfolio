@@ -30,9 +30,10 @@ MonoBehaviour:
   attackRange: 8
   wanderRange: 1
   returnRange: 3
-  maxGroggy: 10
+  maxGroggy: 4
   reganGroggy: 1
   wanderNavCheckRadius: 10
   nextPointSelectDistance: 1
   deathDelayTime: 2
   isBoss: 0
+  exp: 5

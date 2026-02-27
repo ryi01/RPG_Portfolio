@@ -9,6 +9,9 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     public float AttackTime { get => skillInfo.attackTime; }
     public float CoolTime { get => skillInfo.coolTime; }
     public string skillHashName { get => skillInfo.animTrigger; }
+    public int UnLockLevel { get => skillInfo.openLevel; }
+    public bool IsUnlocked { get; set; } = false;
+
     // 스킬 타이머(이미지) 컴포넌트 참조
     [SerializeField] private Sprite skillBtnSprite;
     [SerializeField] private SkillTimer skillTimer;
@@ -18,6 +21,11 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     }
     public void StartSkill()
     {
+        if (!IsUnlocked)
+        {
+            return;
+        }
+
         IsSkill = true;
         skillTimer.StartTimer(this, CoolTime);
     }
@@ -34,7 +42,11 @@ public class PlayerSkillAttack : PlayerMeleeAttack
             target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
         }
     }
-
+    public void UnLockSkill()
+    {
+        IsUnlocked = true;
+        skillTimer.DeleteMaskImage();
+    }
     public void SetSkillIcon()
     {
         skillTimer.SetSkillIcon(skillBtnSprite);

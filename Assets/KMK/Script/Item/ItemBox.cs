@@ -34,11 +34,7 @@ public class ItemBox : MonoBehaviour
             int randomID = 0;
             bool isStacked = false;
             // 아이템의 종류에 따라 id가 달라짐
-            if (randomType == EnumTypes.ITEM_TYPE.WP)
-            {
-                randomID = UnityEngine.Random.Range((int)idWpRange.x, (int)idWpRange.y + 1);
-            }
-            else if (randomType == EnumTypes.ITEM_TYPE.CB)
+            if (randomType == EnumTypes.ITEM_TYPE.CB)
             {
                 randomID = UnityEngine.Random.Range((int)idCbRange.x, (int)idCbRange.y + 1);
                 for(int j = 0; j < itemInfoList.Count; j++)

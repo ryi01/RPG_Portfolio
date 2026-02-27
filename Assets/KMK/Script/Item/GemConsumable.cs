@@ -1,5 +1,5 @@
 using UnityEngine;
-
+[CreateAssetMenu(fileName = "GoldConsumable", menuName = "Item/GoldConsumable")]
 public class GemConsumable : ConsumableItem
 {
     public override void Consume(GameObject target = null)
@@ -9,7 +9,7 @@ public class GemConsumable : ConsumableItem
         GameObject actor = target != null ? target : GameObject.FindGameObjectWithTag("Player");
         if (actor != null)
         {
-            GameManager.Instance.DataManager.Gold += UpValue;
+            GameManager.Instance.GoldSystem.AddGold(UpValue);
         }
     }
 }

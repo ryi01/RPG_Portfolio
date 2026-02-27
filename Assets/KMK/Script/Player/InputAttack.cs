@@ -72,11 +72,11 @@ public class InputAttack : MonoBehaviour
     {
         Collider[] closeEnemies = Physics.OverlapSphere(mousePos, autoTargetRadius, enemyLayer);
         Transform bestTarget = null;
-        float closeDist = float.MaxValue; 
+        float closeDist = float.MaxValue;
 
-        foreach(var enemy in closeEnemies)
+        foreach (var enemy in closeEnemies)
         {
-            float dis = Vector3.Distance(mousePos, enemy.transform.position);
+            float dis = Vector3.Distance(new Vector3(mousePos.x, 0, mousePos.z), new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z));
             if (dis < closeDist)
             {
                 closeDist = dis;
@@ -84,7 +84,7 @@ public class InputAttack : MonoBehaviour
             }
         }
         Vector3 targetLookDir;
-        if(bestTarget != null)
+        if (bestTarget != null)
         {
             targetLookDir = (bestTarget.position - transform.position).normalized;
         }
@@ -93,7 +93,7 @@ public class InputAttack : MonoBehaviour
             targetLookDir = (mousePos - transform.position).normalized;
         }
         targetLookDir.y = 0;
-        if(targetLookDir != Vector3.zero)
+        if (targetLookDir != Vector3.zero)
         {
             pc.MovementComp.LookAtInstant(targetLookDir);
         }

@@ -25,10 +25,6 @@ public class InventroySystem : MonoBehaviour
             hasItemList.Add(null);
         }
     }
-    protected void FirstAddItem()
-    {
-
-    }
     // 실제 아이템 데이터를 들고 오는 함수
     public Item GetItemData(EnumTypes.ITEM_TYPE type, int id)
     {

@@ -5,6 +5,7 @@ public class SkillTimer : MonoBehaviour
 {
     [SerializeField] private Image filledImage;
     [SerializeField] private Image skillIconImage;
+    [SerializeField] private GameObject skillMaskImage;
     private float timer;
     private bool isTimerRun = false;
     private float timeDuration;
@@ -12,6 +13,11 @@ public class SkillTimer : MonoBehaviour
     private void Awake()
     {
         filledImage.fillAmount = 0;
+    }
+    public void DeleteMaskImage()
+    {
+        if (skillMaskImage == null) return;
+        skillMaskImage.SetActive(false);
     }
     // Update is called once per frame
     void Update()

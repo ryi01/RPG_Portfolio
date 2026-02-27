@@ -27,6 +27,9 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private ItemBox openBox;
     [SerializeField] private float autoCloseDistance = 3;
 
+    private bool isInteraction = false;
+    private NPCInteraction currentNPC;
+
     protected override void Awake()
     {
         base.Awake();
@@ -35,6 +38,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         SkillComp = GetComponent<InputSkill>();
         PickUpComp = GetComponent<InputPickUp>();
         CameraShakeController = GetComponentInChildren<CameraShakeController>();
+        StatComp.OncChangeLevel += SkillComp.OnLockSkill;
     }
     // Update is called once per frame
     void Update()
@@ -44,8 +48,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
         HandleMovement();
         HandleRotation();
         HandleSkill();
-
+        HandleInteraction();
         CheckBoxDistance();
+    }
+    public void HandleInteraction()
+    {
+        if (isInteraction == false) return;
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            currentNPC.Interact();
+        }
     }
 
     private void HandleInput()
@@ -53,15 +65,15 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(1))
         {
-            int layerMask = (1 << LayerMask.NameToLayer("Player"));
-            layerMask = ~layerMask;
+            int layerMask = (1 << LayerMask.NameToLayer("Environment")) | (1 <<LayerMask.NameToLayer("Item"));
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
             {
                 if (hitInfo.collider.CompareTag("Item"))
                 {
                     ItemBox box = hitInfo.collider.GetComponent<ItemBox>();
-                    Vector3 targetPos = hitInfo.point;
+                    Vector3 targetPos = box.transform.position;
                     targetPos.y = transform.position.y;
                     
                     MovementComp.SetTarget(targetPos);
@@ -129,9 +141,18 @@ public class PlayerController : BaseController<PlayerStatComponent>
             return;
         }
         MovementComp.GravityDown();
-        if (AttackComp.IsAttackAnimation()) return;
-        MovementComp.UpdateClickMove();
-        float animMoveValue = MovementComp.IsMoving ? 1f : 0f;
+        float animMoveValue;
+        if (AttackComp.IsAttackAnimation())
+        {
+            animMoveValue = 2.0f;
+            MovementComp.StopMove();
+        }
+        else
+        {
+            animMoveValue = MovementComp.IsMoving ? 1f : 0f;
+            MovementComp.UpdateClickMove();
+        }
+
         Animator.SetFloat("Move", animMoveValue);
     }
     private void HandleRotation()
@@ -179,6 +200,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private void ExcuteSkillLogic(InputSkill.SKILLS skill)
     {
         currentSkill = skill;
+        
         UpdateAttackDir();
         if(skill == InputSkill.SKILLS.SKILL5) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL5);
         else if(skill == InputSkill.SKILLS.SKILL6) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL6);
@@ -238,5 +260,22 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         isMove = (value != 0);
     }
+    private void OnDestroy()
+    {
+        StatComp.OncChangeLevel -= SkillComp.OnLockSkill;
+    }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("NPC"))
+        {
+            isInteraction = true;
+            currentNPC = other.GetComponent<NPCInteraction>();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        isInteraction = false;
+    }
 }

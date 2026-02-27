@@ -7,47 +7,62 @@ public class PlayerStatComponent : CharacterStatComponent
 {
     private PlayerStatInfo playerInfo;
     private float currentST;
-    private float lastSTUsedTime;
-    [SerializeField] private float regenDely = 0.5f;
+    public float CurrentExp { get; private set; }
+    public int CurrentLevel { get; private set; } = 1;
 
     public float CurrentST { get => currentST; }
     public float MaxST { get => playerInfo.maxST; }
     public float CriticalMultifle { get => playerInfo.criticalMultifle; }
 
     public Action<float, float> OnChangeST;
+    public Action<float, float> OnChangeExp;
+    public Action<int> OncChangeLevel;
     protected override void Awake()
     {
-        base.Awake();
+        GameManager.Instance.OnBindPlayer(this);
         playerInfo = statinfo as PlayerStatInfo;
         if (playerInfo == null) Debug.Log($"playerinfo ¾øÀ½");
-        currentST = MaxST;
-        GameManager.Instance.OnBindPlayer(this);
+        base.Awake();
+        
+        InitUI();
     }
-
+    private void InitUI()
+    {
+        currentST = MaxST;
+        CurrentExp = 0;
+        OnChangeExp?.Invoke(CurrentExp, playerInfo.exp[0]);
+        GameManager.Instance.OnDieEnemy += TakeExp;
+    }
+    private void Start()
+    {
+        OncChangeLevel?.Invoke(CurrentLevel);
+    }
     public bool InvokeCri()
     {
         return Random.value < playerInfo.criticalChance;
     }
 
-    public bool UseST(float amount)
+    public void TakeExp(float amount)
     {
-        if (currentST < amount) return false;
-        currentST -= amount;
-        lastSTUsedTime = Time.time;
-        OnChangeST?.Invoke(currentST, MaxST);
-        return true;
-    }
-    public void ReganST(float deltaTime)
-    {
-        if (Time.time > lastSTUsedTime + regenDely && currentST < MaxST)
+        CurrentExp += amount;
+        float maxExp = playerInfo.exp[CurrentLevel - 1];
+        OnChangeExp?.Invoke(CurrentExp, maxExp);
+        if(CurrentExp >= maxExp)
         {
-            currentST = Mathf.Clamp(currentST + playerInfo.regenST * deltaTime, 0, MaxST);
-            OnChangeST?.Invoke(currentST, MaxST);
+            LevelUp(maxExp);
         }
     }
 
+    private void LevelUp(float usedExp)
+    {
+        CurrentExp -= usedExp;
+        CurrentLevel++;
+        OnChangeExp?.Invoke(CurrentExp, playerInfo.exp[CurrentLevel - 1]);
+        OncChangeLevel?.Invoke(CurrentLevel);
+    }
     private void OnDisable()
     {
         GameManager.Instance.OnUnBindPlayer(this);
+        GameManager.Instance.OnDieEnemy -= TakeExp;
     }
 }

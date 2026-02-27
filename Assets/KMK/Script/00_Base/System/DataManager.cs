@@ -7,6 +7,10 @@ public class DataManager : MonoBehaviour
     public int Level { get; set; }
     public int CurrentExp { get; set; }
 
+    public void ChangeGold(int amount)
+    {
+        Gold += amount;
+    }
     public void SaveData()
     {
         PlayerPrefs.SetInt("Gold", Gold);
@@ -17,8 +21,8 @@ public class DataManager : MonoBehaviour
 
     public void GetData()
     {
-        PlayerPrefs.GetInt("Gold", 0);
-        PlayerPrefs.GetInt("Level", 1);
+        Gold = PlayerPrefs.GetInt("Gold", 0);
+        Level = PlayerPrefs.GetInt("Level", 1);
         CurrentExp = PlayerPrefs.GetInt("Exp", 0);
     }
 }

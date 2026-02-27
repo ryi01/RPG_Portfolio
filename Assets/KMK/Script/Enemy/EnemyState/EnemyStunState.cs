@@ -7,6 +7,7 @@ public class EnemyStunState : EnemyState
     {
         base.EnterState(state, data);
         stunParticle.Play();
+        NavigationStop();
         Anim.SetInteger("State", (int)state);
         Anim.SetTrigger("Stun");
     }

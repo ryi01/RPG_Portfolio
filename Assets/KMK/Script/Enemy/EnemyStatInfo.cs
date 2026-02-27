@@ -18,4 +18,6 @@ public class EnemyStatInfo : StatInfo
     public float deathDelayTime = 2;
     [Header("Boss")]
     public bool isBoss = false;
+    [Header("Exp")]
+    public float exp;
 }
