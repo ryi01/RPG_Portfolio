@@ -13,14 +13,15 @@ public class TargetMovement : MonoBehaviour
     private void Update()
     {
         if (player == null || gameObject == null) return;
-        Vector3 targetPos = ((player.transform.position + Vector3.up * 1.5f)- transform.position);
-        Vector3 diff = targetPos - transform.position;
-        if (diff.sqrMagnitude < 0.01f) return;
-        targetDir = diff.normalized;
-        transform.forward = targetDir;
-        Quaternion targetRot = Quaternion.LookRotation(targetDir);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 600f);
-        transform.Translate(transform.forward * Time.deltaTime * moveSpeed, Space.World);
+        Vector3 targetPos = player.transform.position + Vector3.up * 1.5f;
+        Vector3 targetDir = (targetPos - transform.position).normalized;
+        if (Vector3.Distance(targetPos, transform.position) < 0.1f) return;
+        if (targetDir != Vector3.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(targetDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 600f);
+        }
+        transform.Translate(transform.forward * moveSpeed * Time.deltaTime, Space.Self);
     }
 
 }

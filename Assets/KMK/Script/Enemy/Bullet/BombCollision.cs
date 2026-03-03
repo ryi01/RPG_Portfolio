@@ -9,31 +9,21 @@ public class BombCollision : BulletCollision
     [SerializeField] protected int flashCount = 4;
     private Material originMat;
     private MeshRenderer meshRenderer;
-    private void Start()
+    private bool isExploding = false;
+    protected override void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
-        originMat = meshRenderer.material;
+        base.Awake();
+        originMat = mesh.material;
     }
 
-    protected override void OnHitTarget(Collider other)
+    protected override void OnHitTarget(Collider other, Vector3 hitPoint)
     {
-        
+        OnHitObstacle(other, hitPoint);
     }
-    protected override void HandleEnter(Collider other)
+    protected override void OnHitObstacle(Collider other, Vector3 hitPoint)
     {
-        if (other.gameObject == Owner) return;
-        if ((hitLayer.value & (1 << other.gameObject.layer)) > 0)
-        {
-            return;
-        }
-        else if ((noHitLayer.value & (1 << other.gameObject.layer)) > 0)
-        {
-            OnHitObstacle(other);
-        }
-    }
-    protected override void OnHitObstacle(Collider other)
-    {
-        if (rb.isKinematic) return;
+        if (rb.isKinematic || isExploding) return;
+        isExploding = true;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
@@ -55,11 +45,12 @@ public class BombCollision : BulletCollision
         }
 
         if(bulletParticle != null) Instantiate(bulletParticle, transform.position, bulletParticle.transform.rotation);
-        DamageTarget(other);
+        ExplodeDamage();
         Destroy(gameObject);
     }
-    protected override void DamageTarget(Collider other)
+    private void ExplodeDamage()
     {
+        hitTargets.Clear();
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, hitLayer);
         foreach(Collider hit in hits)
         {

@@ -20,20 +20,21 @@ public class BulletCollision : MonoBehaviour
 
     public GameObject Owner { get; set; }
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        mesh = GetComponent<MeshRenderer>();
+        mesh = GetComponentInChildren<MeshRenderer>();
         mesh.enabled = true;
     }
     protected virtual void OnCollisionEnter(Collision collision)
     {
-        HandleEnter(collision.collider);
+        HandleEnter(collision.collider, collision.contacts[0].point);
     }
     protected virtual void OnTriggerEnter(Collider other)
     {
-        HandleEnter(other);
+        Vector3 hitPoint = other.bounds.ClosestPoint(transform.position);
+        HandleEnter(other, hitPoint);
     }
-    protected virtual void HandleEnter(Collider other)
+    protected virtual void HandleEnter(Collider other, Vector3 hitPoint)
     {
         if (other.gameObject == Owner)
         {
@@ -41,23 +42,23 @@ public class BulletCollision : MonoBehaviour
         }
         if ((hitLayer.value & (1 << other.gameObject.layer)) > 0)
         {
-            OnHitTarget(other);
+            OnHitTarget(other, hitPoint);
         }
         else if ((noHitLayer.value & (1 << other.gameObject.layer)) > 0)
         {
-            OnHitObstacle(other);
+            OnHitObstacle(other, hitPoint);
             return;
         }
     }
-    protected virtual void OnHitTarget(Collider other)
+    protected virtual void OnHitTarget(Collider other, Vector3 hitPoint)
     {
         mesh.enabled = false;
         DamageTarget(other);
-        Destroy(gameObject, destroyTime);
+        FinishBullet();
     }
-    protected virtual void OnHitObstacle(Collider other)
+    protected virtual void OnHitObstacle(Collider other, Vector3 hitPoint)
     {
-        Destroy(gameObject, destroyTime);
+        FinishBullet();
     }
 
     protected virtual void DamageTarget(Collider other)
@@ -70,5 +71,12 @@ public class BulletCollision : MonoBehaviour
                 statComp.TakeDamage(attack);
             }
         }
+    }
+
+    protected virtual void FinishBullet()
+    {
+        if (mesh != null) mesh.enabled = false;
+        var movement = GetComponent<MonoBehaviour>().enabled = false;
+        Destroy(gameObject, destroyTime);
     }
 }

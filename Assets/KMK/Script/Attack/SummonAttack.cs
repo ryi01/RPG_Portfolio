@@ -6,15 +6,8 @@ public class SummonAttack : EnemyShotAttack
     [SerializeField] private Transform slimeTrans;
     public override void Attack()
     {
-        int index = Random.Range(0, 2);
-        switch(index)
-        {
-            case 0:
-                base.Attack();
-                break;
-            case 1:
-                CreateSomething(slimePrefab, slimeTrans);
-                break;
-        }
+        int index = Random.Range(0, 10);
+        if (index < 2) CreateSomething(slimePrefab, slimeTrans);
+        else base.Attack();
     }
 }

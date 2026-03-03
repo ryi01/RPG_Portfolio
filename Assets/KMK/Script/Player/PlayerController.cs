@@ -17,7 +17,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private Vector3 offsetToMouse;
 
     private bool isMove = false;
-
     public bool IsDamage { get; set; }
     public bool IsBlink { get; set; }
 
@@ -29,6 +28,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private bool isInteraction = false;
     private NPCInteraction currentNPC;
+    
 
     protected override void Awake()
     {
@@ -276,6 +276,9 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private void OnTriggerExit(Collider other)
     {
-        isInteraction = false;
+        if (other.CompareTag("NPC"))
+        {
+            isInteraction = false;
+        }
     }
 }

@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/KMK/Scenes/PersistentScene.unity
+    guid: 9cf26f7489cf4ac4a945a7a09f2196d3
+  - enabled: 1
+    path: Assets/KMK/Scenes/VillageScene.unity
+    guid: 4f4cf99ba650d91468dc20b736c3cd08
+  - enabled: 1
     path: Assets/KMK/Scenes/GameScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/KMK/Scenes/LoadingScene.unity
+    guid: c5cec59a5a18cc948a888601b5fd0be1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
