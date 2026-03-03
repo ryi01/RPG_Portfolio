@@ -20,7 +20,6 @@ public class InputMovement : MonoBehaviour
     private float vSpeed = 0;
     #endregion
     
-
     private void Awake()
     {
         cc = GetComponent<CharacterController>();

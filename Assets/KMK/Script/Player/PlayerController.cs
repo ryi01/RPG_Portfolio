@@ -43,11 +43,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
     // Update is called once per frame
     void Update()
     {
-        if (IsDamage) return;
+        if (IsDamage || GameManager.Instance.CurrentState == GameState.Pause || GameManager.Instance.CurrentState == GameState.Dialogue) return;
         HandleInput();
         HandleMovement();
         HandleRotation();
-        HandleSkill();
+        if(GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
         HandleInteraction();
         CheckBoxDistance();
     }
@@ -103,7 +103,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
         offsetToMouse.y = 0;
         AttackComp.UpdateAttackProgress();
-        if (SkillComp.IsSkillAnimation(currentSkill)) return;
+        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
         if (Input.GetMouseButtonDown(0))
         {
             MovementComp.StopMove();

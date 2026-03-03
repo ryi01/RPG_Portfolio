@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+public enum GameState { Pause, Playing, Town, Dungeon, BossPhase, Dialogue }
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -16,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public DialogueSystem DialogueSystem => dialogueSystem;
 
+    public GameState CurrentState {  get; private set; }
+
     public Action<float> OnDieEnemy;
 
     private void Awake()
@@ -28,6 +32,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        CurrentState = GameState.Town;
         BindGoldSystem();
     }
     private void OnDestroy()
