@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 2938928714078515468}
   - component: {fileID: 1435576723077818805}
   - component: {fileID: 6613200681630129038}
+  - component: {fileID: 3667390570156980080}
   m_Layer: 10
   m_Name: smokebomb
   m_TagString: Untagged
@@ -213,3 +214,21 @@ MonoBehaviour:
   explosionRadius: 3
   flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   flashCount: 6
+--- !u!114 &3667390570156980080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7932921286097933101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 4
+  outlineColor: {r: 1, g: 0.5054589, b: 0.15566039, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

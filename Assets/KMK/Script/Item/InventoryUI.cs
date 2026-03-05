@@ -43,15 +43,8 @@ public class InventoryUI : MonoBehaviour
 
     public void UseItem(Item item)
     {
-        if (item.ItemCount > 1)
-        {
-            item.ItemCount--;
-            ((ConsumableItem)item).Consume();
-            UpdateInventoryUI();
-            return;
-        }
-
-        ((ConsumableItem)item).Consume();
+        int index = inventroySystem.HasItemList.IndexOf(item);
+        if (index != -1) inventroySystem.UseItem(index);
         inventroySystem.RemoveItem(item);
     }
     private void OnDestroy()

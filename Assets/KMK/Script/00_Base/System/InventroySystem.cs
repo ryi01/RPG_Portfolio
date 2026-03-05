@@ -66,6 +66,22 @@ public class InventroySystem : MonoBehaviour
         HasItemList[emptyIndex] = pickUpItem;
         return true;
     }
+    public void UseItem(int index)
+    {
+        if (index < 0 || index >= HasItemList.Count || HasItemList[index] == null) return;
+        Item item = HasItemList[index];
+        if(item is ConsumableItem consume)
+        {
+            consume.Consume();
+            if (item.ItemCount > 1)
+            {
+                item.ItemCount--;
+            }
+            else RemoveItem(item);
+
+            OnChangedInventory?.Invoke();
+        }
+    }
     // 아이템 삭제
     public void RemoveItem(Item item)
     {

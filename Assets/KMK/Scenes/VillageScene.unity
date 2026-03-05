@@ -1447,7 +1447,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Portal
   targetSceneName: GameScene
-  spawnPos: {x: 0, y: 0, z: 0}
 --- !u!135 &1137820235
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -28,15 +28,8 @@ public class EnemyStatComponent : CharacterStatComponent
         enemyStatInfo = statinfo as EnemyStatInfo;
         if (enemyStatInfo == null) Debug.Log($"적 스테이트인포 없음");
     }
-
     private void Start()
     {
-        GameObject[] wayPointGameObjects = GameObject.FindGameObjectsWithTag("GenPoint");
-        wanderPoints = new Transform[wayPointGameObjects.Length];
-        for (int i = 0; i < wayPointGameObjects.Length; i++)
-        {
-            wanderPoints[i] = wayPointGameObjects[i].transform;
-        }
         if(enemyStatInfo.isBoss) GameManager.Instance.OnBindEnemy(this, 4);
         else GameManager.Instance.OnBindEnemy(this);
     }

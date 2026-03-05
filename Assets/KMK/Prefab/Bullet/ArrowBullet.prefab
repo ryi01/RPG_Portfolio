@@ -119,7 +119,6 @@ MonoBehaviour:
   destroyTime: 0.5
   bulletParticle: {fileID: 100018, guid: a40b64bf23366dc42a892af2c6ff6140, type: 3}
   brokenArrowPrefab: {fileID: 4924267775527157976, guid: f788ac98d45475844ba7cb36e22aef48, type: 3}
-  stickDepth: 0.2
 --- !u!1 &7244995910750554913
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,6 +130,7 @@ GameObject:
   - component: {fileID: 4554944647254976004}
   - component: {fileID: 4047834234040170285}
   - component: {fileID: 1282128163523399678}
+  - component: {fileID: 366068855351897256}
   m_Layer: 10
   m_Name: ArrowBullet
   m_TagString: Untagged
@@ -210,3 +210,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &366068855351897256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7244995910750554913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 4
+  outlineColor: {r: 1, g: 0.5054589, b: 0.15566039, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

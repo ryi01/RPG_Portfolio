@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6286122535699767303}
   - component: {fileID: 4448597447428736535}
   - component: {fileID: 4280541214256672957}
+  - component: {fileID: 7395155150075733529}
   m_Layer: 0
   m_Name: TrapArrow
   m_TagString: Untagged
@@ -134,6 +135,24 @@ MonoBehaviour:
   attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 919132149155446097, guid: 84136b9209f44484caa1bb5cd17d2925, type: 3}
+--- !u!114 &7395155150075733529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378936515409092006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 4
+  outlineColor: {r: 1, g: 0.5054589, b: 0.15566039, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &2158071795903760815
 GameObject:
   m_ObjectHideFlags: 0

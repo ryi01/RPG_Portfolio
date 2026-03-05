@@ -17,8 +17,6 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     private RectTransform rectTransform;
     // 투명도 및 마우스 ray 제어
     private CanvasGroup canvasGroup;
-    // 원래 위치
-    private Vector2 originPos;
     // 원래 슬롯
     private Transform originParent;
 
@@ -72,7 +70,6 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         if (item == null) return;
 
         // 원래 위치와 슬롯 기억
-        originPos = rectTransform.anchoredPosition;
         originParent = transform.parent;
         isFromInven = GetComponentInParent<InventoryUI>() != null;
 

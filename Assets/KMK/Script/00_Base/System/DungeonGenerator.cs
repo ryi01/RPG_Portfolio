@@ -4,6 +4,8 @@ using Unity.VisualScripting;
 using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 #region 필요한 데이터
 public class Triangle
 {
@@ -16,6 +18,7 @@ public class Triangle
         this.a = a;
         this.b = b;
         this.c = c;
+        CaculateCircle();
     }
 
     // 수학로직 : 외접원 구하기
@@ -71,9 +74,10 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Dungeon Settings")]
     [SerializeField] private int pointCount = 10;
     [SerializeField] private float areaSize = 50;
-    [SerializeField] private float minDis = 5;
+    [SerializeField] private float minDis = 5f;
     [SerializeField] private int mapWidth = 60;
     [SerializeField] private int mapHeight = 60;
+    [SerializeField] private float tileSize = 2.0f;
 
     [SerializeField] private List<Triangle> triangleList = new List<Triangle>();
     [SerializeField] private List<Edge> mstEdges = new List<Edge>();
@@ -88,7 +92,30 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private List<Vector2> points = new List<Vector2>();
     [SerializeField] private List<Edge> finalEdges = new List<Edge>();
 
+    [Header("Decoration")]
+    public GameObject[] obstaclePrefabs;
+    public GameObject[] propPrefabs;
+    public GameObject itemPrefabs;
+    public GameObject[] trapPrefab;
+    [SerializeField][Range(0, 1)] private float decorationDensity = 0.1f; 
+    [SerializeField][Range(0, 1)] private float itemBoxDensity = 0.3f; 
+    [SerializeField][Range(0, 1)] private float trapDensity = 0.2f;
+
+    [Header("Enemy Spawn")]
+    public GameObject[] enemyPrefabs;
+    [SerializeField][Range(0, 1)] private float enemySpawnDensity = 0.4f;
+    [SerializeField] private int maxEnemiesPerRoom = 5;
+
+    [Header("Navigation")]
+    public NavMeshSurface navSurface;
+
     private int[,] mapData;
+    
+    public Vector2 StartPoint { get;private set; }
+    public Vector2 EndPoint { get;private set; }
+
+    public Vector3 WorldStartPoint => new Vector3(StartPoint.x * tileSize, 1.5f, StartPoint.y * tileSize);
+    public Vector3 WorldEndPoint => new Vector3(EndPoint.x * tileSize, 1.5f, EndPoint.y * tileSize);
 
     public void GenerateDungeon()
     {
@@ -96,8 +123,16 @@ public class DungeonGenerator : MonoBehaviour
         Delaunay();
         DoMST();
         CreateFinalPath();
+
+        CalculateStartAndEnd();
+
         CreateMap();
+
         CreateWalls();
+        SpawnDungeonObjects();
+
+        BuildNavMesh();
+        SpawnEnemies();
     }
     
     private void GeneratePoint()
@@ -118,7 +153,7 @@ public class DungeonGenerator : MonoBehaviour
             bool isTooClose = false;
             foreach(var p in points)
             {
-                if(Vector2.Distance(p, newPoint) < 0.001f)
+                if(Vector2.Distance(p, newPoint) < minDis)
                 {
                     isTooClose = true;
                     break;
@@ -142,9 +177,10 @@ public class DungeonGenerator : MonoBehaviour
     private void Delaunay()
     {
         SetupSuperTriangle();
-        List<Triangle> badTriangles = new List<Triangle>();
+        
         foreach (var point in points)
         {
+            List<Triangle> badTriangles = new List<Triangle>();
             foreach (var tri in triangleList)
             {
                 // 외접원에 들어가 있는지 확인
@@ -255,13 +291,13 @@ public class DungeonGenerator : MonoBehaviour
                     foreach(var edge in allEdges)
                     {
                         if((edge.u == pReached) && (edge.v == pUnreached) ||
-                            (edge.u == pUnreached && edge.u == pReached))
+                            (edge.u == pUnreached && edge.v == pReached))
                         {
                             float dist = Vector2.Distance(pReached, pUnreached);
 
                             if(dist < minDis)
                             {
-                                dist = minDis;
+                                minDis = dist;
                                 bestEdge = edge;
                                 bestPointIndex = i;
                             }
@@ -332,16 +368,16 @@ public class DungeonGenerator : MonoBehaviour
         if (dungeonParent != null) DestroyImmediate(dungeonParent.gameObject);
         dungeonParent = new GameObject("DungenParent").transform;
         mapData = new int[mapWidth, mapHeight];
-
+        int roomSize = UnityEngine.Random.Range(4, 6);
         // 바닥 생성
-        foreach(var p in points)
+        foreach (var p in points)
         {
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
 
-            for(int x = cx -2; x <= cx + 2; x++)
+            for(int x = cx - roomSize; x <= cx + roomSize; x++)
             {
-                for(int y = cy -2; y <= cy+2; y++)
+                for(int y = cy - roomSize; y <= cy+ roomSize; y++)
                 {
                     if (IsInMap(x, y)) mapData[x, y] = 1;
                 }
@@ -357,13 +393,14 @@ public class DungeonGenerator : MonoBehaviour
         {
             for(int y = 0; y < mapHeight; y++)
             {
+                Vector3 pos = new Vector3(x * tileSize, 0, y * tileSize);
                 if (mapData[x, y] == 1)
                 {
-                    Instantiate(roomPrefab, new Vector3(x, 0, y), Quaternion.identity, dungeonParent);
+                    Instantiate(roomPrefab, pos, Quaternion.identity, dungeonParent);
                 }
                 else if (mapData[x, y] == 2)
                 {
-                    Instantiate(corridorPrefab, new Vector3(x, 0, y), Quaternion.identity, dungeonParent);
+                    Instantiate(corridorPrefab, pos, Quaternion.identity, dungeonParent);
                 }
             }
         }
@@ -375,9 +412,9 @@ public class DungeonGenerator : MonoBehaviour
         int x2 = Mathf.RoundToInt(edge.v.x);
         int y2 = Mathf.RoundToInt(edge.v.y);
 
-        for(int x = Mathf.Min(x1, x2);x <=Mathf.Max(x1, x2);x++)
+        for (int x = Mathf.Min(x1, x2); x <= Mathf.Max(x1, x2); x++)
         {
-            for(int offset = -1; offset <= 1; offset++)
+            for (int offset = -1; offset <= 1; offset++)
             {
                 int ty = y1 + offset;
                 if (IsInMap(x, ty) && mapData[x, ty] == 0) mapData[x, ty] = 2;
@@ -404,13 +441,13 @@ public class DungeonGenerator : MonoBehaviour
             {
                 if (mapData[x, y] == 0)
                 {
-                    if (IsNextToFloor(x, y))
+                    if (IsNextToType(x, y, 1) || IsNextToType(x, y, 2))
                     {
                         // 벽 높이가 2이므로 Y좌표는 1.0f (바닥 0 위에 안착)
-                        Vector3 wallPos = new Vector3(x, 1.0f, y);
+                        Vector3 wallPos = new Vector3(x * tileSize, 0f, y * tileSize);
                         GameObject wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, dungeonParent);
                         wall.name = $"Wall_{x}_{y}";
-                        wall.transform.localScale = new Vector3(1, 2, 1);
+                        wall.transform.localScale = new Vector3(0.5f, 0.8f, 1.4f);
 
                         // 생성된 벽 자리 마킹 (중복 생성 방지)
                         mapData[x, y] = 3;
@@ -420,7 +457,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private bool IsNextToFloor(int x, int y)
+    private bool IsNextToType(int x, int y, int targetType)
     {
         for(int ox = -1; ox <= 1; ox++)
         {
@@ -435,7 +472,7 @@ public class DungeonGenerator : MonoBehaviour
                 if (IsInMap(nx, ny))
                 {
                     // [수정 핵심] mapData가 1(방)이거나 2(복도)이면 true
-                    if (mapData[nx, ny] == 1 || mapData[nx, ny] == 2)
+                    if (mapData[nx, ny] == targetType)
                     {
                         return true;
                     }
@@ -443,5 +480,185 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
         return false;
+    }
+    private void CalculateStartAndEnd()
+    {
+        if (points == null || points.Count < 2) return;
+
+        float maxDis = -1;
+        int startIndex = 0;
+        int endIndex = 0;
+        for(int i = 0; i < points.Count; i++)
+        {
+            for(int j = i+1; j < points.Count; j++)
+            {
+                float dis = Vector2.Distance(points[i], points[j]);
+                if(dis > maxDis)
+                {
+                    maxDis = dis;
+                    startIndex = i;
+                    endIndex = j;
+                }
+            }
+        }
+
+        StartPoint = points[startIndex];
+        EndPoint = points[endIndex];
+        Debug.Log($"시작점: {StartPoint}, 보스방: {EndPoint} 선정 완료 (거리: {maxDis})");
+    }
+
+    private void SpawnDungeonObjects()
+    {
+        if (mapData == null) return;
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                if (mapData[x, y] > 3) continue;
+                Vector2 currentPos = new Vector2(x, y);
+                if (Vector2.Distance(currentPos, StartPoint) < 5f || currentPos == EndPoint) continue;
+                int wallCount = CountWall(x, y);
+                if (mapData[x, y]  == 1 && wallCount >=2)
+                {
+                    if(UnityEngine.Random.value < itemBoxDensity)
+                    {
+                        PlaceObject(itemPrefabs, x, y, 5);
+                        continue;
+                    }
+                }
+                if (wallCount > 0 && (mapData[x, y] == 1 || mapData[x, y] == 2) )
+                {
+                    if (UnityEngine.Random.value < decorationDensity)
+                    {
+                        GameObject randomProp = propPrefabs[UnityEngine.Random.Range(0, propPrefabs.Length)];
+                        PlaceObject(randomProp, x, y, 4);
+                        continue;
+                    }
+                }
+
+                if (mapData[x,y] == 1|| mapData[x, y] == 2 && mapData[x, y] < 4)
+                {
+                    float finalTrapDensity = trapDensity;
+                    if (mapData[x, y] == 2) finalTrapDensity *= 0.5f;
+                    if (IsNextToType(x, y, 5)) finalTrapDensity *= 1;
+                    if(UnityEngine.Random.value < finalTrapDensity)
+                    {
+                        if(wallCount > 0)
+                        {
+                            PlaceObject(trapPrefab[0], x, y, 7);
+                        }
+                        else
+                        {
+                            PlaceObject(trapPrefab[1], x, y, 7, 0.3f);
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
+    private void PlaceObject(GameObject prefab, int x, int y, int typeMask, float posY = 0.1f)
+    {
+        Vector3 pos = new Vector3(x * tileSize, posY, y * tileSize);
+        Quaternion rot = Quaternion.identity;
+        if(typeMask == 7)
+        {
+            Vector3 offset = Vector3.zero;
+            rot = GetTrapRot(x, y);
+        }
+        else
+        {
+            rot = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0);
+        }
+        GameObject obj = Instantiate(prefab, pos, rot, dungeonParent);
+        obj.name = $"{prefab.name}_{x}_{y}";
+        mapData[x, y] = typeMask;
+    }
+    private Quaternion GetTrapRot(int x, int y)
+    {
+        if (IsInMap(x - 1, y) && mapData[x - 1, y] == 3) return Quaternion.Euler(0, 180, 0);
+        if (IsInMap(x + 1, y) && mapData[x + 1, y] == 3) return Quaternion.Euler(0, 0, 0);
+        if (IsInMap(x, y - 1) && mapData[x, y - 1] == 3) return Quaternion.Euler(0, 90, 0);
+        if (IsInMap(x, y + 1) && mapData[x - 1, y + 1] == 3) return Quaternion.Euler(0, -90, 0);
+        return Quaternion.identity;
+    }
+    private int CountWall(int x, int y)
+    {
+        int count = 0;
+        for (int ox = -1; ox <= 1; ox++)
+        {
+            for (int oy = -1; oy <= 1; oy++)
+            {
+                if (ox == 0 && oy == 0) continue;
+                int nx = x + ox;
+                int ny = y + oy;
+                if (IsInMap(nx, ny) && mapData[nx, ny] == 3) count++;
+            }
+        }
+        return count;
+    }
+
+    public void SpawnEnemies()
+    {
+        if (mapData == null || points == null) return;
+
+        foreach(var p in points)
+        {
+            if (p == StartPoint) continue;
+            if (p == EndPoint) continue;
+            if (UnityEngine.Random.value > enemySpawnDensity) continue;
+
+            int spawnCount = UnityEngine.Random.Range(1, maxEnemiesPerRoom + 1);
+            int cx = Mathf.RoundToInt(p.x);
+            int cy = Mathf.RoundToInt(p.y);
+            int rSize = 3;
+
+            Transform[] wanderPoints = CreateWayPointsForPoint(cx, cy, rSize);
+
+            for(int i = 0; i < spawnCount; i++)
+            {
+                int rx = cx + UnityEngine.Random.Range(-rSize, rSize + 1);
+                int ry = cy + UnityEngine.Random.Range(-rSize, rSize + 1);
+
+                if(IsInMap(rx, ry) && mapData[rx, ry] ==1)
+                {
+                    Vector3 spawnPos = new Vector3(rx * tileSize, 0.5f, ry * tileSize);
+                    GameObject enemy = Instantiate(enemyPrefabs[0], spawnPos, Quaternion.identity, dungeonParent);
+
+                    EnemyStatComponent stat = enemy.GetComponent<EnemyStatComponent>();
+                    if (stat != null) stat.WanderPoints = wanderPoints;
+                    NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
+                    if (agent != null) agent.Warp(spawnPos);
+                }   
+            }
+        }
+    }
+
+    private Transform[] CreateWayPointsForPoint(int cx, int cy, int size)
+    {
+        Transform[] wps = new Transform[4];
+        Vector2[] offsets = {new Vector2(-size, -size), new Vector2(-size, size),
+                                new Vector2(size, -size), new Vector2(size, size)};
+        for(int i = 0; i < 4; i++)
+        {
+            GameObject wp = new GameObject($"WP_{cx}_{cy}_{i}");
+            wp.transform.SetParent(dungeonParent);
+            wp.transform.position = new Vector3((cx + offsets[i].x) * tileSize, 0, (cy + offsets[i].y) * tileSize);
+            wps[i] = wp.transform;
+        }
+        return wps;
+    }
+
+    public void BuildNavMesh()
+    {
+        if(navSurface == null)
+        {
+            navSurface = dungeonParent.gameObject.AddComponent<NavMeshSurface>();
+
+            navSurface.collectObjects = CollectObjects.Children;
+        }
+
+        navSurface.BuildNavMesh();
     }
 }

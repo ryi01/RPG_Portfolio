@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private ItemBoxUI itemBoxUI;
     [SerializeField] private Text goldText;
+    
     private StatUI enemyStatUI;
 
     private void Start()

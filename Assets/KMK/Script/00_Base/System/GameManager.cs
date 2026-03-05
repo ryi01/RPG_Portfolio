@@ -11,10 +11,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private DataManager dataManager;
     [SerializeField] private GoldSystem goldSystem;
     [SerializeField] private DialogueSystem dialogueSystem;
+    [SerializeField] private DungeonGenerator dungeonGenerator;
+    [SerializeField] private SceneLoadManager sceneLoadManager;
+
     public UIManager UIManager => uiManager;
     public InventroySystem InventroySystem => inventroySystem;
     public DataManager DataManager => dataManager;
     public GoldSystem GoldSystem => goldSystem;
+
+    public DungeonGenerator DungeonGenerator => dungeonGenerator;
+
+    public SceneLoadManager SceneLoadManager => sceneLoadManager;
 
     public DialogueSystem DialogueSystem => dialogueSystem;
 
@@ -88,6 +95,18 @@ public class GameManager : MonoBehaviour
     public void SendEnemyKilled(float exp)
     {
         OnDieEnemy?.Invoke(exp);
+    }
+
+    public void ChangeState(GameState state)
+    {
+        CurrentState = state;
+    }
+    #endregion
+    #region Æ÷Å» °ü·Ã
+    public void ChangeScene(string unloadSceneName, string loadSceneName)
+    {
+        CurrentState = GameState.Dungeon;
+        StartCoroutine(SceneLoadManager.ChangeSceneCor(unloadSceneName, loadSceneName));
     }
     #endregion
 }

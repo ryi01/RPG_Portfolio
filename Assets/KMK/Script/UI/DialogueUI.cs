@@ -92,5 +92,6 @@ public class DialogueUI : MonoBehaviour
     {
         skillUI.SetActive(true);
         dialogueUI.SetActive(false);
+        GameManager.Instance.ChangeState(GameState.Town);
     }
 }

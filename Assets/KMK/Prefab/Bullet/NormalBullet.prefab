@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 5650060926043916251}
   - component: {fileID: 7649753512584506673}
   - component: {fileID: 3828513913163104720}
+  - component: {fileID: 4391826921638303511}
   m_Layer: 0
   m_Name: bone_A
   m_TagString: Untagged
@@ -160,6 +161,7 @@ MonoBehaviour:
     m_Bits: 1024
   attack: 2
   destroyTime: 0.5
+  bulletParticle: {fileID: 0}
 --- !u!65 &5650060926043916251
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -230,3 +232,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4391826921638303511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3267184380894733531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 4
+  outlineColor: {r: 1, g: 0.5054589, b: 0.15566039, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

@@ -47,15 +47,27 @@ public class PlayerController : BaseController<PlayerStatComponent>
         HandleInput();
         HandleMovement();
         HandleRotation();
-        if(GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
+        HandleUseItem();
+        if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
         HandleInteraction();
         CheckBoxDistance();
+    }
+    private void HandleUseItem()
+    {
+        for(int i = 0; i < 9; i++)
+        {
+            if(Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
+                GameManager.Instance.InventroySystem.UseItem(i);
+            }
+        }
     }
     public void HandleInteraction()
     {
         if (isInteraction == false) return;
         if(Input.GetKeyDown(KeyCode.G))
         {
+            GameManager.Instance.ChangeState(GameState.Dialogue);
             currentNPC.Interact();
         }
     }
