@@ -28,6 +28,7 @@ public abstract class EnemyState : MonoBehaviour
         {
             fsmInfo = controller.StatComp;
         }
+        navMeshAgent.avoidancePriority = Random.Range(0, 99);
     }
     public virtual void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -42,6 +43,7 @@ public abstract class EnemyState : MonoBehaviour
         if(navMeshAgent != null && navMeshAgent.gameObject.activeSelf && navMeshAgent.isOnNavMesh )
         {
             navMeshAgent.isStopped = true;
+            navMeshAgent.velocity = Vector3.zero;
             navMeshAgent.speed = 0;
         }
         

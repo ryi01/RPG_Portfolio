@@ -11,6 +11,7 @@ public struct DialogueData
     public int imageId;
     public int nameId;
     public string message;
+    public bool isEnd;
 }
 [CreateAssetMenu(fileName = "NewDialogueData", menuName = "DialogueSystem/DialogueData")]
 public class DialogueDatas : ScriptableObject

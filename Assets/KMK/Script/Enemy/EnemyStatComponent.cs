@@ -20,7 +20,7 @@ public class EnemyStatComponent : CharacterStatComponent
     public bool IsBoss { get => enemyStatInfo.isBoss; }
 
     public float Exp { get => enemyStatInfo.exp; }
-    public Transform[] WanderPoints { get => wanderPoints; set => wanderPoints = value; }
+    public Transform WayPoint { get; set; }
     public float WanderNavCheckRadius { get => enemyStatInfo.wanderNavCheckRadius; }
     protected override void Awake()
     {

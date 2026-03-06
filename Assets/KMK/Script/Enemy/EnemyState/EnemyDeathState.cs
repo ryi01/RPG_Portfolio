@@ -26,6 +26,11 @@ public class EnemyDeathState : EnemyHitState
 
     public override void ExitState()
     {
+        if(TryGetComponent<BossController>(out BossController boss))
+        {
+            boss.OnDeath();
+        }
         Destroy(gameObject);
     }
+
 }

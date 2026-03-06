@@ -15,29 +15,64 @@ MonoBehaviour:
   npcSprites:
   - {fileID: 21300000, guid: 2d089513ae4adfc48a683c362ad9992c, type: 3}
   - {fileID: 21300000, guid: d659f7396cd57754eba78763cf986c51, type: 3}
-  - {fileID: 21300000, guid: d8335807adf4215499812f801abe6aef, type: 3}
   npcNames:
   - Jack
-  - Marie
-  - Toko
+  - Player
   dialogueDatas:
   - direction: 0
     imageId: 0
     nameId: 0
-    message: "Jack\uC774 1\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+    message: "\uC6A9\uC0AC\uC5EC, \uB9C8\uC744 \uBD81\uCABD\uC5D0 \uBCF4\uC2A4\uAC00
+      \uB098\uD0C0\uB0AC\uB124. \uCC98\uCE58\uD574\uC8FC\uACA0\uB098?"
+    isEnd: 0
   - direction: 1
     imageId: 1
     nameId: 1
-    message: "Marie\uAC00 2\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
-  - direction: 1
-    imageId: 2
-    nameId: 2
-    message: "Toko\uAC00 3\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+    message: "\uBCF4\uC2A4\uC694? \uB9C8\uC744 \uADFC\uCC98\uC5D0 \uADF8\uB7F0 \uC704\uD5D8\uD55C
+      \uAC8C \uC788\uB2E4\uB2C8..."
+    isEnd: 0
   - direction: 0
     imageId: 0
     nameId: 0
-    message: "Jack\uC774 4\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+    message: "\uC790\uB124\uC758 \uD798\uC774 \uD544\uC694\uD558\uB124. \uBD80\uD0C1\uD558\uACA0\uB124!"
+    isEnd: 0
   - direction: 1
-    imageId: 2
-    nameId: 2
-    message: "Toko\uAC00 5\uBC88\uC9F8\uB85C \uB9D0\uC744 \uD569\uB2C8\uB2E4."
+    imageId: 1
+    nameId: 1
+    message: "\uC54C\uACA0\uC2B5\uB2C8\uB2E4. \uBC14\uB85C \uCC98\uCE58\uD558\uB7EC
+      \uAC00\uC8E0."
+    isEnd: 1
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "\uC544\uC9C1 \uBCF4\uC2A4\uB97C \uBABB \uCC3E\uC740 \uAC74\uAC00? \uD798\uB0B4\uAC8C!"
+    isEnd: 1
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "\uC624! \uC815\uB9D0 \uBCF4\uC2A4\uB97C \uD574\uCE58\uC6E0\uAD70! \uC790\uB124\uC758
+      \uC2E4\uB825\uC5D0 \uAC10\uD0C4\uD588\uB124"
+    isEnd: 0
+  - direction: 1
+    imageId: 1
+    nameId: 1
+    message: "\uBCC4\uB9D0\uC500\uC744\uC694. \uB9C8\uC744\uC774 \uB2E4\uC2DC \uD3C9\uD654\uB85C\uC6CC\uC838\uC11C
+      \uB2E4\uD589\uC785\uB2C8\uB2E4."
+    isEnd: 0
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "\uACE0\uB9D9\uB124. \uC57D\uC18D\uB300\uB85C \uC790\uB124\uC5D0\uAC8C
+      \uAD81\uADF9\uAE30 \uB2A5\uB825\uC744 \uAC1C\uBC29\uD574\uC8FC\uACA0\uB124."
+    isEnd: 0
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "\uB355\uBD84\uC5D0 \uB9C8\uC744\uC774 \uD3C9\uD654\uB86D\uB124. \uC5B8\uC81C\uB4E0
+      \uB4E4\uB974\uAC8C."
+    isEnd: 1
+  - direction: 0
+    imageId: 0
+    nameId: 0
+    message: "\uD56D\uC0C1 \uACE0\uB9D9\uB124, \uC6A9\uC0AC\uC5EC!"
+    isEnd: 1

@@ -18,8 +18,9 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private bool isSkip;
 
     public static Action OnRequestNext;
+    public static Action OnDialogueFinish;
 
-    private void Start()
+    private void OnEnable()
     {
         DialogueSystem.OnLoadDialogue += ShowDialogueUI;
     }
@@ -50,12 +51,12 @@ public class DialogueUI : MonoBehaviour
         string message = currentData.message.Replace("\\n", "\n");
 
     }
-    public void ShowDialogueUI(DialogueData data, DialogueDatas so, bool isLast)
+    public void ShowDialogueUI(DialogueData data, DialogueDatas so)
     {
         dialogueUI.SetActive(true);
         skillUI.SetActive(false);
         ClearDilogueUI(false);
-
+        bool isLast = data.isEnd;
         int dirIndex = (int)data.direction;
         npcImages[dirIndex].enabled = true;
         npcImages[dirIndex].sprite = so.NPCSprites[data.imageId];
@@ -93,5 +94,6 @@ public class DialogueUI : MonoBehaviour
         skillUI.SetActive(true);
         dialogueUI.SetActive(false);
         GameManager.Instance.ChangeState(GameState.Town);
+        OnDialogueFinish?.Invoke();
     }
 }

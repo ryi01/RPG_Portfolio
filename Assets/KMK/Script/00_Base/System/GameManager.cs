@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private DialogueSystem dialogueSystem;
     [SerializeField] private DungeonGenerator dungeonGenerator;
     [SerializeField] private SceneLoadManager sceneLoadManager;
+    [SerializeField] private QuestManager questManager;
 
     public UIManager UIManager => uiManager;
     public InventroySystem InventroySystem => inventroySystem;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public DungeonGenerator DungeonGenerator => dungeonGenerator;
 
     public SceneLoadManager SceneLoadManager => sceneLoadManager;
+    public QuestManager QuestManager => questManager;
 
     public DialogueSystem DialogueSystem => dialogueSystem;
 

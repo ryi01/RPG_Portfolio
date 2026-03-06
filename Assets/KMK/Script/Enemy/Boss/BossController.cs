@@ -13,8 +13,8 @@ public class BossController : EnemyController
     [SerializeField] private float lightningInterval = 2.0f;
     [SerializeField] private float strikeDelay = 1.0f;
     [SerializeField] private GameObject ax;
+    public QuestData QuestData { get; set; }
 
-    
     public int LastSkillIndex { get; set; } = -1;
     private bool isPhaseTwo = false;
     public bool IsPhaseTwo { get => isPhaseTwo; }
@@ -110,5 +110,26 @@ public class BossController : EnemyController
     public void OnOffAX(bool isOn)
     {
         ax.SetActive(isOn);
+    }
+
+    public void OnDeath()
+    {
+        Debug.Log($"보스 OnDeath 호출됨! 데이터가 있는가? {QuestData != null}");
+        if (GameManager.Instance.QuestManager != null && QuestData != null)
+        {
+            GameManager.Instance.QuestManager.CheckObjectiveComplete(QuestData);
+        }
+    }
+
+    public EnemySkillAttack GetAvailableSkill(float dis)
+    {
+        foreach(var skill in skillList)
+        {
+            if(dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
+            {
+                return skill;
+            }
+        }
+        return null;
     }
 }

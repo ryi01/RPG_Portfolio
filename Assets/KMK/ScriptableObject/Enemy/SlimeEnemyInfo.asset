@@ -33,7 +33,7 @@ MonoBehaviour:
   maxGroggy: 4
   reganGroggy: 1
   wanderNavCheckRadius: 10
-  nextPointSelectDistance: 1
+  nextPointSelectDistance: 2
   deathDelayTime: 0.5
   isBoss: 0
   exp: 1

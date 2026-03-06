@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Unity.AI.Navigation;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
+using static UnityEngine.EventSystems.EventTrigger;
 #region 필요한 데이터
 public class Triangle
 {
@@ -86,6 +87,7 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject roomPrefab;
     public GameObject corridorPrefab;
     public GameObject wallPrefab;
+    public GameObject doorPrefab;
 
     [Header("Generation Data")]
     [SerializeField] private Transform dungeonParent;
@@ -109,7 +111,12 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Navigation")]
     public NavMeshSurface navSurface;
 
-    private int[,] mapData;
+    [Header("Boss Settings")]
+    [SerializeField] private GameObject bossPrefab;
+    [SerializeField] private QuestData dungeonQuestData;
+
+   private int[,] mapData;
+    private int roomSize;
     
     public Vector2 StartPoint { get;private set; }
     public Vector2 EndPoint { get;private set; }
@@ -129,10 +136,14 @@ public class DungeonGenerator : MonoBehaviour
         CreateMap();
 
         CreateWalls();
+        CreateDoors();
         SpawnDungeonObjects();
 
         BuildNavMesh();
+
         SpawnEnemies();
+        SpawnBossInRoom();
+
     }
     
     private void GeneratePoint()
@@ -368,7 +379,7 @@ public class DungeonGenerator : MonoBehaviour
         if (dungeonParent != null) DestroyImmediate(dungeonParent.gameObject);
         dungeonParent = new GameObject("DungenParent").transform;
         mapData = new int[mapWidth, mapHeight];
-        int roomSize = UnityEngine.Random.Range(4, 6);
+        roomSize = UnityEngine.Random.Range(4, 6);
         // 바닥 생성
         foreach (var p in points)
         {
@@ -451,6 +462,28 @@ public class DungeonGenerator : MonoBehaviour
 
                         // 생성된 벽 자리 마킹 (중복 생성 방지)
                         mapData[x, y] = 3;
+                    }
+                }
+            }
+        }
+    }
+    private void CreateDoors()
+    {
+        int bx = Mathf.RoundToInt(EndPoint.x);
+        int by = Mathf.RoundToInt(EndPoint.y);
+        for (int x = bx - roomSize; x <= bx + roomSize; x++)
+        {
+            for (int y = by - roomSize; y <= by + roomSize; y++)
+            {
+                if (mapData[x, y] == 1)
+                {
+                    if(IsNextToType(x, y, 2))
+                    {
+                        Vector3 doorPos = new Vector3(x * tileSize, 0.5f, y * tileSize);
+                        Instantiate(doorPrefab, doorPos, Quaternion.identity, dungeonParent);
+
+                        mapData[x, y] = 8;
+                        return;
                     }
                 }
             }
@@ -543,7 +576,7 @@ public class DungeonGenerator : MonoBehaviour
                     if (IsNextToType(x, y, 5)) finalTrapDensity *= 1;
                     if(UnityEngine.Random.value < finalTrapDensity)
                     {
-                        if(wallCount > 0)
+                        if(GetWallDirection(x, y) != Vector2Int.zero)
                         {
                             PlaceObject(trapPrefab[0], x, y, 7);
                         }
@@ -577,10 +610,23 @@ public class DungeonGenerator : MonoBehaviour
     }
     private Quaternion GetTrapRot(int x, int y)
     {
-        if (IsInMap(x - 1, y) && mapData[x - 1, y] == 3) return Quaternion.Euler(0, 180, 0);
-        if (IsInMap(x + 1, y) && mapData[x + 1, y] == 3) return Quaternion.Euler(0, 0, 0);
-        if (IsInMap(x, y - 1) && mapData[x, y - 1] == 3) return Quaternion.Euler(0, 90, 0);
-        if (IsInMap(x, y + 1) && mapData[x - 1, y + 1] == 3) return Quaternion.Euler(0, -90, 0);
+        // 벽과 같은 방향을 보도록 변경
+        var direction = new[]
+        {
+            new { dx = -1, dy = 0, rot = Quaternion.Euler(0, 90, 0) },
+            new { dx = 1, dy = 0, rot = Quaternion.Euler(0, -90, 0) },
+            new { dx = 0, dy = -1, rot = Quaternion.Euler(0, 0, 0) },
+            new { dx = 0, dy = 1, rot = Quaternion.Euler(0, 180, 0) }
+        };
+        foreach(var dir in direction)
+        {
+            int nx = x + dir.dx;
+            int ny = y + dir.dy;
+            if(IsInMap(nx, ny) && mapData[nx, ny] == 3)
+            {
+                return dir.rot;
+            }
+        }
         return Quaternion.identity;
     }
     private int CountWall(int x, int y)
@@ -598,6 +644,24 @@ public class DungeonGenerator : MonoBehaviour
         }
         return count;
     }
+    private Vector2Int GetWallDirection(int x, int y)
+    {
+        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+        Vector2Int foundDIr = Vector2Int.zero;
+        int count = 0;
+
+        foreach(var dir in dirs)
+        {
+            if(IsInMap(x + dir.x, y + dir.y) && mapData[x+dir.x, y+dir.y] == 3)
+            {
+                count++;
+                foundDIr = dir;
+            }
+        }
+
+        return (count == 1) ? foundDIr : Vector2Int.zero;
+    }
 
     public void SpawnEnemies()
     {
@@ -605,49 +669,43 @@ public class DungeonGenerator : MonoBehaviour
 
         foreach(var p in points)
         {
-            if (p == StartPoint) continue;
-            if (p == EndPoint) continue;
-            if (UnityEngine.Random.value > enemySpawnDensity) continue;
-
-            int spawnCount = UnityEngine.Random.Range(1, maxEnemiesPerRoom + 1);
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
-            int rSize = 3;
+            if (Vector2.Distance(p, StartPoint) < 2f || p == EndPoint) continue;
 
-            Transform[] wanderPoints = CreateWayPointsForPoint(cx, cy, rSize);
+            int spawnCount = UnityEngine.Random.Range(5, maxEnemiesPerRoom + 1);
 
             for(int i = 0; i < spawnCount; i++)
             {
-                int rx = cx + UnityEngine.Random.Range(-rSize, rSize + 1);
-                int ry = cy + UnityEngine.Random.Range(-rSize, rSize + 1);
-
-                if(IsInMap(rx, ry) && mapData[rx, ry] ==1)
+                Vector3 spawnPos = new Vector3(cx * tileSize, 0.5f, cy * tileSize);
+                GameObject enemy = Instantiate(enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)], spawnPos, Quaternion.identity, dungeonParent);
+                NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
+                if (agent != null)
                 {
-                    Vector3 spawnPos = new Vector3(rx * tileSize, 0.5f, ry * tileSize);
-                    GameObject enemy = Instantiate(enemyPrefabs[0], spawnPos, Quaternion.identity, dungeonParent);
-
-                    EnemyStatComponent stat = enemy.GetComponent<EnemyStatComponent>();
-                    if (stat != null) stat.WanderPoints = wanderPoints;
-                    NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
-                    if (agent != null) agent.Warp(spawnPos);
-                }   
+                    agent.enabled = true;
+                }
+                EnemyStatComponent stat = enemy.GetComponent<EnemyStatComponent>();
+                if (stat != null)
+                {
+                    stat.WayPoint = CreateWayPointsForPoint(cx, cy, roomSize);
+                }
             }
         }
     }
 
-    private Transform[] CreateWayPointsForPoint(int cx, int cy, int size)
+    private Transform CreateWayPointsForPoint(int cx, int cy, int size)
     {
-        Transform[] wps = new Transform[4];
-        Vector2[] offsets = {new Vector2(-size, -size), new Vector2(-size, size),
-                                new Vector2(size, -size), new Vector2(size, size)};
-        for(int i = 0; i < 4; i++)
-        {
-            GameObject wp = new GameObject($"WP_{cx}_{cy}_{i}");
-            wp.transform.SetParent(dungeonParent);
-            wp.transform.position = new Vector3((cx + offsets[i].x) * tileSize, 0, (cy + offsets[i].y) * tileSize);
-            wps[i] = wp.transform;
-        }
-        return wps;
+        Debug.Log($"웨이포인트 생성 시도: 중심({cx}, {cy})");
+        float range = size * 0.8f;
+        Vector3 randomPos = new Vector3(
+            (cx + UnityEngine.Random.Range(-range, range)) * tileSize,
+            0.5f,
+            (cy + UnityEngine.Random.Range(-range, range)) * tileSize
+        );
+        GameObject wp = new GameObject("WayPoint");
+        wp.transform.position = randomPos;
+        wp.transform.SetParent(dungeonParent);
+        return wp.transform;
     }
 
     public void BuildNavMesh()
@@ -661,4 +719,17 @@ public class DungeonGenerator : MonoBehaviour
 
         navSurface.BuildNavMesh();
     }
+
+    public void SpawnBossInRoom()
+    {
+        Vector3 spawnPos = new Vector3(EndPoint.x * tileSize, 0.5f, EndPoint.y * tileSize);
+        GameObject bossObj = Instantiate(bossPrefab, spawnPos, Quaternion.identity, dungeonParent);
+
+        BossController boss = bossObj.GetComponent<BossController>();
+        if(boss != null)
+        {
+            boss.QuestData = dungeonQuestData;
+        }
+    }
+
 }

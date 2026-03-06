@@ -8,7 +8,7 @@ public class DialogueSystem : MonoBehaviour
     [SerializeField] private DialogueDataBase dialogueDB;
     [SerializeField] private int stageIndex;
 
-    public static Action<DialogueData, DialogueDatas, bool> OnLoadDialogue;
+    public static Action<DialogueData, DialogueDatas> OnLoadDialogue;
 
     private DialogueDatas currentDialogueDatas;
 
@@ -24,6 +24,7 @@ public class DialogueSystem : MonoBehaviour
 
     public void LoadCurrentDialogueDatas(int stageIndex, int dialogueIndex)
     {
+        GameManager.Instance.ChangeState(GameState.Dialogue);
         // 현재 스테이지 위치와 로드할 대화 내용
         this.stageIndex = stageIndex;
         this.currentDialogueIndex = dialogueIndex;
@@ -38,9 +39,7 @@ public class DialogueSystem : MonoBehaviour
 
         Debug.Log($"{currentData.direction} : {currentData.nameId}: {currentData.message}");
 
-        bool isLast = (index >= currentDialogueDatas.Datas.Length - 1);
-
-        OnLoadDialogue?.Invoke(currentData, currentDialogueDatas, isLast);
+        OnLoadDialogue?.Invoke(currentData, currentDialogueDatas);
     }
 
     public void NextLoadDialogueData()

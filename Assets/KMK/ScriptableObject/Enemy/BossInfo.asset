@@ -18,7 +18,7 @@ MonoBehaviour:
   passLayer:
     serializedVersion: 2
     m_Bits: 512
-  maxHP: 30
+  maxHP: 10
   attack: 2
   attackRadius: 1.5
   hitAngle: 0
@@ -26,7 +26,7 @@ MonoBehaviour:
   rotSpeed: 600
   nockbackForce: 8.5
   nockbackTime: 0.12
-  detectRange: 10
+  detectRange: 15
   attackRange: 2
   wanderRange: 1
   returnRange: 3
