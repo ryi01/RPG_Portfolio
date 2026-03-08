@@ -105,7 +105,6 @@ public class DungeonGenerator : MonoBehaviour
 
     [Header("Enemy Spawn")]
     public GameObject[] enemyPrefabs;
-    [SerializeField][Range(0, 1)] private float enemySpawnDensity = 0.4f;
     [SerializeField] private int maxEnemiesPerRoom = 5;
 
     [Header("Navigation")]
@@ -115,7 +114,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject bossPrefab;
     [SerializeField] private QuestData dungeonQuestData;
 
-   private int[,] mapData;
+    private int[,] mapData;
     private int roomSize;
     
     public Vector2 StartPoint { get;private set; }
@@ -380,15 +379,16 @@ public class DungeonGenerator : MonoBehaviour
         dungeonParent = new GameObject("DungenParent").transform;
         mapData = new int[mapWidth, mapHeight];
         roomSize = UnityEngine.Random.Range(4, 6);
+      
         // ¹Ù´Ú »ý¼º
         foreach (var p in points)
         {
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
-
-            for(int x = cx - roomSize; x <= cx + roomSize; x++)
+            int currentRoomSize = GetRoomSize(p);
+            for(int x = cx - currentRoomSize; x <= cx + currentRoomSize; x++)
             {
-                for(int y = cy - roomSize; y <= cy+ roomSize; y++)
+                for(int y = cy - currentRoomSize; y <= cy+ currentRoomSize; y++)
                 {
                     if (IsInMap(x, y)) mapData[x, y] = 1;
                 }
@@ -471,9 +471,10 @@ public class DungeonGenerator : MonoBehaviour
     {
         int bx = Mathf.RoundToInt(EndPoint.x);
         int by = Mathf.RoundToInt(EndPoint.y);
-        for (int x = bx - roomSize; x <= bx + roomSize; x++)
+        int currentSize = GetRoomSize(EndPoint);
+        for (int x = bx - currentSize; x <= bx + currentSize; x++)
         {
-            for (int y = by - roomSize; y <= by + roomSize; y++)
+            for (int y = by - currentSize; y <= by + currentSize; y++)
             {
                 if (mapData[x, y] == 1)
                 {
@@ -576,6 +577,7 @@ public class DungeonGenerator : MonoBehaviour
         StartPoint = startCandiate;
         EndPoint = endCandiate;
     }
+
 
     private void SpawnDungeonObjects()
     {
@@ -706,6 +708,7 @@ public class DungeonGenerator : MonoBehaviour
 
         foreach(var p in points)
         {
+            if (p == EndPoint) continue;
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
             if (Vector2.Distance(p, StartPoint) < 2f || p == EndPoint) continue;
@@ -767,5 +770,8 @@ public class DungeonGenerator : MonoBehaviour
             boss.QuestData = dungeonQuestData;
         }
     }
-
+    private int GetRoomSize(Vector2 roomPos)
+    {
+        return (roomPos == EndPoint) ? roomSize + 2 : roomSize;
+    }
 }

@@ -21,4 +21,4 @@ MonoBehaviour:
   nockbackForce: 2
   coolTime: 15
   animTrigger: Skill4
-  openLevel: 4
+  openLevel: -1
