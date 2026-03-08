@@ -514,30 +514,67 @@ public class DungeonGenerator : MonoBehaviour
         }
         return false;
     }
+    // BFS 사용
+    // 어떤 점에서 가장 먼 곳을 찾고 그 점에서 다시 가장 먼 곳을 찾음
+    // => 던전의 시작과 끝 찾기
+    // 1. 모든 방을 Node, 복도를 Edge로 하는 그래프 만들기
+    // 2. 0번 방에서 출발해 가장 멀리 떨어진 방 A 찾기
+    // 3. 방 A에서 출발해서 가장 멀리 떨어진 B찾기
     private void CalculateStartAndEnd()
     {
         if (points == null || points.Count < 2) return;
-
-        float maxDis = -1;
-        int startIndex = 0;
-        int endIndex = 0;
-        for(int i = 0; i < points.Count; i++)
+        // MST 정보를 인접 리스트로 변환(길의 연결 상태를 추적하기 위함)
+        Dictionary<Vector2, List<Vector2>> graph = new Dictionary<Vector2, List<Vector2>>();
+        foreach(var edge in mstEdges)
         {
-            for(int j = i+1; j < points.Count; j++)
-            {
-                float dis = Vector2.Distance(points[i], points[j]);
-                if(dis > maxDis)
-                {
-                    maxDis = dis;
-                    startIndex = i;
-                    endIndex = j;
-                }
-            }
+            if(!graph.ContainsKey(edge.u)) graph[edge.u] = new List<Vector2>();
+            if(!graph.ContainsKey(edge.v)) graph[edge.v] = new List<Vector2>();
+            graph[edge.u].Add(edge.v);
+            graph[edge.v].Add(edge.u);
         }
 
-        StartPoint = points[startIndex];
-        EndPoint = points[endIndex];
-        Debug.Log($"시작점: {StartPoint}, 보스방: {EndPoint} 선정 완료 (거리: {maxDis})");
+        // 특정 지점에서 그래프를 따라 가장 먼 방을 찾는 BFS 함수 정의
+        Vector2 FindFarthest(Vector2 startNode)
+        {
+            Queue<Vector2> queue = new Queue<Vector2>();
+            Dictionary<Vector2, int> distances = new Dictionary<Vector2, int>();
+            queue.Enqueue(startNode);
+            distances[startNode] = 0;
+
+            Vector2 farthestNode = startNode;
+            int maxDist = 0;
+
+            while (queue.Count > 0)
+            {
+                Vector2 current = queue.Dequeue();
+                // 현재 노드가 지금까지 찾은 노드 보다 더 멀으면 갱신
+                if (distances[current] > maxDist)
+                {
+                    maxDist = distances[current];
+                    farthestNode = current;
+                }
+                // 연결된 이웃 방들을 탐색
+                if (graph.ContainsKey(current))
+                {
+                    foreach (var neighbor in graph[current])
+                    {
+                        if (!distances.ContainsKey(neighbor))
+                        {
+                            distances[neighbor] = distances[current] + 1;
+                            queue.Enqueue(neighbor);
+                        }
+                    }
+                }
+            }
+            return farthestNode;
+        }
+        // 첫번째 BFS : 임의의 방에서 가장 먼 끝점 A를 찾음
+        Vector2 startCandiate = FindFarthest(points[0]);
+        // 두번째 BFS : A에서 가장 먼 끝점 B를 찾음 
+        Vector2 endCandiate = FindFarthest(startCandiate);
+
+        StartPoint = startCandiate;
+        EndPoint = endCandiate;
     }
 
     private void SpawnDungeonObjects()
@@ -695,7 +732,6 @@ public class DungeonGenerator : MonoBehaviour
 
     private Transform CreateWayPointsForPoint(int cx, int cy, int size)
     {
-        Debug.Log($"웨이포인트 생성 시도: 중심({cx}, {cy})");
         float range = size * 0.8f;
         Vector3 randomPos = new Vector3(
             (cx + UnityEngine.Random.Range(-range, range)) * tileSize,
