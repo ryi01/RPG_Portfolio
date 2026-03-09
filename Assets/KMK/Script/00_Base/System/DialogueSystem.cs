@@ -37,8 +37,6 @@ public class DialogueSystem : MonoBehaviour
     {
         DialogueData currentData = currentDialogueDatas.Datas[index];
 
-        Debug.Log($"{currentData.direction} : {currentData.nameId}: {currentData.message}");
-
         OnLoadDialogue?.Invoke(currentData, currentDialogueDatas);
     }
 

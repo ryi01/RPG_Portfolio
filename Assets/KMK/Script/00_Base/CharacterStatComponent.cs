@@ -33,7 +33,6 @@ public class CharacterStatComponent : MonoBehaviour
 
     public Action<float, float> OnHpChanged;
 
-
     protected virtual void Awake()
     {
         InitStat();

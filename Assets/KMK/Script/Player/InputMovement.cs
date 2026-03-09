@@ -31,40 +31,48 @@ public class InputMovement : MonoBehaviour
         targetPos = pos;
         isMoving = true;
     }
+    // 강제 이동 중단 => 키입력, 피격, 대화시작 등
     public void StopMove()
     {
         isMoving = false;
+        pc.Animator.SetFloat("Move", 0);
     }
     public void UpdateClickMove()
     {
         if (isMoving == false) return;
         Vector3 dir = targetPos - transform.position;
         dir.y = 0;
-        if(dir.magnitude < 1.5f)
+        if(dir.magnitude < 0.5f)
         {
+            isMoving = false;
             CompleteArrive();
             return;
         }
-        Vector3 moveDir = dir.normalized;
-        RotTarget(moveDir);
-        Move(moveDir);
+        RotTarget(dir.normalized);
+        Move(dir.normalized);
     }
     public void Move(Vector3 dir)
     {
         CollisionFlags flag = cc.Move(dir * pc.StatComp.MoveSpeed * Time.deltaTime);
         if((flag & CollisionFlags.Sides) != 0)
         {
-            float dis = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.y), new Vector3(targetPos.x, 0, targetPos.y));
-            if (dis < 1.2f)
+            float dis = Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPos.x, 0, targetPos.z));
+            if(dis < 1.2f)
             {
                 CompleteArrive();
+            }
+            else
+            {
+                StopMove();
             }
         }
 
     }
+    // 목적지 도착 여부
     private void CompleteArrive()
     {
         isMoving = false;
+        pc.Animator.SetFloat("Move", 0);
         OnArrival?.Invoke();
         OnArrival = null;
     }

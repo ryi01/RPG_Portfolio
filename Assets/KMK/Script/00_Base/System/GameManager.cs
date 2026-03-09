@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private DungeonGenerator dungeonGenerator;
     [SerializeField] private SceneLoadManager sceneLoadManager;
     [SerializeField] private QuestManager questManager;
+    [SerializeField] private EnemyUIManager enemyUIManager;
+    [SerializeField] private GameObject protalPrefab;
 
     public UIManager UIManager => uiManager;
     public InventroySystem InventroySystem => inventroySystem;
@@ -26,6 +28,7 @@ public class GameManager : MonoBehaviour
     public QuestManager QuestManager => questManager;
 
     public DialogueSystem DialogueSystem => dialogueSystem;
+    public EnemyUIManager EnemyUIManager => enemyUIManager;
 
     public GameState CurrentState {  get; private set; }
 
@@ -51,19 +54,19 @@ public class GameManager : MonoBehaviour
     #region UI
     public void OnBindPlayer(PlayerStatComponent player)
     {
-        uiManager.BindPlayerUI(player);
+        UIManager.BindPlayerUI(player);
     }
     public void OnUnBindPlayer(PlayerStatComponent player)
     {
-        uiManager.UnBindPlayerUI(player);
+        UIManager.UnBindPlayerUI(player);
     }
     public void OnBindEnemy(CharacterStatComponent enemy, float y = 2.5f)
     {
-        uiManager.CreateEnemyHPBar(enemy, y);
+        EnemyUIManager.CreateEnemyHPBar(enemy, y);
     }
     public void OnUnBindEnemy(CharacterStatComponent enemy)
     {
-        uiManager.UnBindEnemyUI(enemy);
+        EnemyUIManager.UnBindEnemyUI(enemy);
     }
     #endregion
     #region 인벤토리
@@ -105,9 +108,26 @@ public class GameManager : MonoBehaviour
     }
     #endregion
     #region 포탈 관련
+    public void SpawnPortal(string sceneName, Vector3 pos)
+    {
+        GameObject existingPortal = GameObject.FindGameObjectWithTag("Portal");
+        if (existingPortal != null)
+        {
+            Destroy(existingPortal);
+        }
+        if (protalPrefab != null)
+        {
+            GameObject go = Instantiate(protalPrefab, pos, Quaternion.identity);
+            go.tag = "Portal";
+            if (go.TryGetComponent<Portal>(out Portal portal))
+            {
+                portal.ChangeTargetSceneName(sceneName);
+            }
+        }
+    }
     public void ChangeScene(string unloadSceneName, string loadSceneName)
     {
-        CurrentState = GameState.Dungeon;
+        CurrentState = (loadSceneName.Contains("Game")) ? GameState.Dungeon : GameState.Town;
         StartCoroutine(SceneLoadManager.ChangeSceneCor(unloadSceneName, loadSceneName));
     }
     #endregion

@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 4290611557711738831}
   - component: {fileID: 7901441640458777877}
   - component: {fileID: 1220444502404056978}
-  - component: {fileID: 6364540755234462938}
-  - component: {fileID: -5170680167036585543}
+  - component: {fileID: 2979624891451207578}
   m_Layer: 5
   m_Name: HPCanvas
   m_TagString: Untagged
@@ -30,7 +29,7 @@ RectTransform:
   m_GameObject: {fileID: 7400762671366805877}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4972422944362501604}
@@ -87,7 +86,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &1220444502404056978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,7 +104,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &6364540755234462938
+--- !u!114 &2979624891451207578
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,23 +113,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7400762671366805877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3295d9200f901244aad3e2099acf2a7, type: 3}
+  m_Script: {fileID: 11500000, guid: f93177aeabe6d834e951a834222c5019, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StatUI
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterStatUI
   hpBar: {fileID: 6989846864366340661}
-  stBar: {fileID: 0}
---- !u!114 &-5170680167036585543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7400762671366805877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 551316a6f211c9f4ab7fb8d9d30a18f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIBillboard
+  expBar: {fileID: 0}
+  levelText: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!1 &8013979356297495035
 GameObject:
   m_ObjectHideFlags: 0

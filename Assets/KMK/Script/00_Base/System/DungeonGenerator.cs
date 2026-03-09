@@ -123,6 +123,14 @@ public class DungeonGenerator : MonoBehaviour
     public Vector3 WorldStartPoint => new Vector3(StartPoint.x * tileSize, 1.5f, StartPoint.y * tileSize);
     public Vector3 WorldEndPoint => new Vector3(EndPoint.x * tileSize, 1.5f, EndPoint.y * tileSize);
 
+    private void OnEnable()
+    {
+        BossController.OnBossDeath += SpawnPortal;
+    }
+    private void OnDisable()
+    {
+        BossController.OnBossDeath -= SpawnPortal;
+    }
     public void GenerateDungeon()
     {
         GeneratePoint();
@@ -386,7 +394,8 @@ public class DungeonGenerator : MonoBehaviour
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
             int currentRoomSize = GetRoomSize(p);
-            for(int x = cx - currentRoomSize; x <= cx + currentRoomSize; x++)
+            int markValue = (p == EndPoint) ? 9 : 1;
+            for (int x = cx - currentRoomSize; x <= cx + currentRoomSize; x++)
             {
                 for(int y = cy - currentRoomSize; y <= cy+ currentRoomSize; y++)
                 {
@@ -472,11 +481,17 @@ public class DungeonGenerator : MonoBehaviour
         int bx = Mathf.RoundToInt(EndPoint.x);
         int by = Mathf.RoundToInt(EndPoint.y);
         int currentSize = GetRoomSize(EndPoint);
-        for (int x = bx - currentSize; x <= bx + currentSize; x++)
+        // 1. 반복문 범위를 배열의 최대 크기 내로 안전하게 고정합니다.
+        int minX = Mathf.Max(0, bx - currentSize);
+        int maxX = Mathf.Min(mapData.GetLength(0) - 1, bx + currentSize);
+
+        int minY = Mathf.Max(0, by - currentSize);
+        int maxY = Mathf.Min(mapData.GetLength(1) - 1, by + currentSize);
+        for (int x = minX; x <= maxX; x++)
         {
-            for (int y = by - currentSize; y <= by + currentSize; y++)
+            for (int y = minY; y <= maxY; y++)
             {
-                if (mapData[x, y] == 1)
+                if (mapData[x, y] == 9)
                 {
                     if(IsNextToType(x, y, 2))
                     {
@@ -773,5 +788,11 @@ public class DungeonGenerator : MonoBehaviour
     private int GetRoomSize(Vector2 roomPos)
     {
         return (roomPos == EndPoint) ? roomSize + 2 : roomSize;
+    }
+
+    private void SpawnPortal()
+    {
+        Vector3 spawnPos = new Vector3(EndPoint.x * tileSize, 0.5f, EndPoint.y * tileSize);
+        GameManager.Instance.SpawnPortal("VillageScene", spawnPos);
     }
 }

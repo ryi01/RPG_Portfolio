@@ -11,6 +11,7 @@ TagManager:
   - BoxSlot
   - Trash
   - NPC
+  - Portal
   layers:
   - Default
   - TransparentFX

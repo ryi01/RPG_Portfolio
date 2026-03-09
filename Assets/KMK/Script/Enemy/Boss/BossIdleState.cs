@@ -9,15 +9,15 @@ public class BossIdleState : EnemyIdleState
 
         if (boss.CoolTimeAttack) return;
 
+        if (dis <= fsmInfo.DetectRange)
+        {
+            controller.TransactionToState(EnumTypes.STATE.DETECT);
+        }
         EnemySkillAttack availableSkill = boss.GetAvailableSkill(dis);
         if (availableSkill != null)
         {
             boss.ExccuteAttack(availableSkill, navMeshAgent);
             return;
-        }
-        if (dis <= fsmInfo.DetectRange)
-        {
-            controller.TransactionToState(EnumTypes.STATE.DETECT);
         }
     }
 

@@ -10,6 +10,7 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private GameObject dialogueUI;
     [SerializeField] private Image[] npcImages;
     [SerializeField] private GameObject[] npcNames;
+    [SerializeField] private GameObject[] nameBlock;
     [SerializeField] private GameObject nextButt;
     [SerializeField] private GameObject finishButt;
     [SerializeField] private float typingDelayTime;
@@ -36,6 +37,7 @@ public class DialogueUI : MonoBehaviour
         {
             npcImages[i].enabled = false;
             npcNames[i].SetActive(false);
+            nameBlock[i].SetActive(false);
         }
 
         messageText.text = string.Empty;
@@ -61,6 +63,7 @@ public class DialogueUI : MonoBehaviour
         npcImages[dirIndex].enabled = true;
         npcImages[dirIndex].sprite = so.NPCSprites[data.imageId];
         npcNames[dirIndex].SetActive(true);
+        nameBlock[dirIndex].SetActive(true);
         npcNames[dirIndex].GetComponentInChildren<Text>().text = so.NCPName[data.nameId];
 
         if(typingCor != null)

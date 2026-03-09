@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class NPCInteraction : MonoBehaviour
 {
+    [SerializeField] private string uiCanvasRootName;
     [SerializeField] private QuestData myQuestData;
     [SerializeField] private int myStageIndex;
     [SerializeField] private int startDialogueIndex = 0;
@@ -12,8 +13,7 @@ public class NPCInteraction : MonoBehaviour
     [SerializeField] private int objectiveDoneDialogueIndex = 2;
     [SerializeField] private int completeDialogueIndex = 3;
 
-    [SerializeField] private GameObject questIcon; // 머리 위 아이콘 오브젝트
-    [SerializeField] private Image iconImage;       // 실제 아이콘이 들어갈 이미지
+    [SerializeField] private GameObject uiPrefab; // 머리 위 아이콘 오브젝트
     [SerializeField] private Sprite notStartSprite; // 수락 가능 아이콘
     [SerializeField] private Sprite doneSprite;     // 완료 보고 아이콘
     [SerializeField] private Sprite inProgressSprite;    
@@ -21,7 +21,15 @@ public class NPCInteraction : MonoBehaviour
     public static Action<EnumTypes.QUEST> OnQuestDialogueFinish;
 
     private EnumTypes.QUEST currentState;
-
+    private Transform uiCanvasRoot;
+    private NPCUI npcUI;
+    private bool isPortalSpawned = false;
+    private void Start()
+    {
+        uiCanvasRoot = GameObject.Find(uiCanvasRootName).transform;
+        npcUI = Instantiate(uiPrefab, uiCanvasRoot).GetComponent<NPCUI>();
+        npcUI.SetUpUi(transform, 3f);
+    }
     private void OnEnable()
     {
         QuestManager.OnQuestUpdate += UpdateIconUI;
@@ -35,22 +43,19 @@ public class NPCInteraction : MonoBehaviour
         var state = GameManager.Instance.QuestManager.GetQueestState(myQuestData);
         if (state == EnumTypes.QUEST.NOT_START)
         {
-            questIcon.SetActive(true);
-            iconImage.sprite = notStartSprite; // 느낌표
+            npcUI.SetIconSprites(notStartSprite);
         }
         else if (state == EnumTypes.QUEST.OBJECTIVE_DONE)
         {
-            questIcon.SetActive(true);
-            iconImage.sprite = doneSprite;     // 물음표
+            npcUI.SetIconSprites(doneSprite);
         }
         else if(state == EnumTypes.QUEST.IN_PROGRESS)
         {
-            questIcon.SetActive(true);
-            iconImage.sprite = inProgressSprite;
+            npcUI.SetIconSprites(inProgressSprite);
         }
         else
         {
-            questIcon.SetActive(false);        // 진행 중이거나 완료 상태면 숨김
+            npcUI.SetActiveIcon(false);
         }
     }
     public void Interact()
@@ -83,11 +88,17 @@ public class NPCInteraction : MonoBehaviour
         switch (currentState)
         {
             case EnumTypes.QUEST.NOT_START:
-                questManager.StartQuest(myQuestData);
+                bool isChange = questManager.StartQuest(myQuestData);
+                if (isChange && !isPortalSpawned) SpawnPortal();
                 break;
             case EnumTypes.QUEST.OBJECTIVE_DONE:
                 questManager.CompletedQuest(myQuestData);
                 break;
         }
+    }
+    private void SpawnPortal()
+    {
+        GameManager.Instance.SpawnPortal("GameScene", transform.position + Vector3.right * 2);
+        isPortalSpawned = true;
     }
 }

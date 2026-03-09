@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 1
   attackMinRange: 2.5
-  attackMaxRange: 15
+  attackMaxRange: 3
   attackRadius: 4
   hitAngle: 120
   attackTime: 3
   nockbackForce: 4
   coolTime: 10
   animTrigger: 0
+  openLevel: 0

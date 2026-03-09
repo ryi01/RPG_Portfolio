@@ -10,6 +10,6 @@ public class ConsumableItem : Item
 
     public virtual void Consume(GameObject target = null)
     {
-        Debug.Log($"{ItemName}");
+
     }
 }

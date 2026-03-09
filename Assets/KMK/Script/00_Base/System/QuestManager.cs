@@ -15,12 +15,11 @@ public class QuestManager : MonoBehaviour
 
     public bool StartQuest(QuestData data)
     {
-        if (activeQuest.Exists(q => (q.Data == data) || (q.State == EnumTypes.QUEST.IN_PROGRESS))) return false;
+        if (activeQuest.Exists(q => (q.Data == data))) return false;
         QuestInstance newQuest = new QuestInstance(data);
         newQuest.SetState(EnumTypes.QUEST.IN_PROGRESS);
         activeQuest.Add(newQuest);
         OnQuestUpdate?.Invoke();
-        Debug.Log($"{data.QuestTitle} ¼ö¶ôµÊ!");
         return true;
     }
     public void CheckObjectiveComplete(QuestData data)
@@ -39,7 +38,6 @@ public class QuestManager : MonoBehaviour
         if(quest != null)
         {
             quest.SetState(EnumTypes.QUEST.COMPLETED);
-            activeQuest.Remove(quest);
             OnQuestUpdate?.Invoke();
         }
     }

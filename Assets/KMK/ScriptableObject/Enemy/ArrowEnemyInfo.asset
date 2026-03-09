@@ -26,7 +26,7 @@ MonoBehaviour:
   rotSpeed: 600
   nockbackForce: 8.5
   nockbackTime: 0.12
-  detectRange: 10
+  detectRange: 15
   attackRange: 5
   wanderRange: 1
   returnRange: 3

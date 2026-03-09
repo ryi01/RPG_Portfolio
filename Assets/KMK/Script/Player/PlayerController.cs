@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 // 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
 [RequireComponent(typeof(PlayerStatComponent))]
@@ -24,11 +25,9 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private KeyCode[] skillKeys = { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.D, KeyCode.F };
 
     private ItemBox openBox;
-    [SerializeField] private float autoCloseDistance = 3;
+    [SerializeField] private float interactionDistance = 3f;
 
-    private bool isInteraction = false;
     private NPCInteraction currentNPC;
-    
 
     protected override void Awake()
     {
@@ -43,14 +42,17 @@ public class PlayerController : BaseController<PlayerStatComponent>
     // Update is called once per frame
     void Update()
     {
-        if (IsDamage || GameManager.Instance.CurrentState == GameState.Pause || GameManager.Instance.CurrentState == GameState.Dialogue) return;
+        if (IsDamage || GameManager.Instance.CurrentState == GameState.Pause || GameManager.Instance.CurrentState == GameState.Dialogue)
+        {
+            MovementComp.StopMove();
+            return;
+        }
         HandleInput();
-        HandleMovement();
+        HandleMovement();   
         HandleRotation();
         HandleUseItem();
         if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
-        HandleInteraction();
-        CheckBoxDistance();
+        CheckInteractionDistance();
     }
     private void HandleUseItem()
     {
@@ -62,33 +64,22 @@ public class PlayerController : BaseController<PlayerStatComponent>
             }
         }
     }
-    public void HandleInteraction()
-    {
-        if (isInteraction == false) return;
-        if(Input.GetKeyDown(KeyCode.G))
-        {
-            GameManager.Instance.ChangeState(GameState.Dialogue);
-            currentNPC.Interact();
-        }
-    }
 
     private void HandleInput()
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(1))
         {
-            int layerMask = (1 << LayerMask.NameToLayer("Environment")) | (1 <<LayerMask.NameToLayer("Item"));
-
+            int layerMask = ~LayerMask.GetMask("Player");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
             {
+                Vector3 targetPos = hitInfo.point;
+                targetPos.y = transform.position.y;
+                MovementComp.SetTarget(targetPos);
                 if (hitInfo.collider.CompareTag("Item"))
                 {
                     ItemBox box = hitInfo.collider.GetComponent<ItemBox>();
-                    Vector3 targetPos = box.transform.position;
-                    targetPos.y = transform.position.y;
-                    
-                    MovementComp.SetTarget(targetPos);
                     // 람다식 사용 이유 : 상자에 도착시에 오픈하는 단발성 이벤트임
                     // 람다식 : 이름없는 함수 => 짧은 기능이나 콜백 등의 용도로 사용됨
                     // OnArrival = (매개변수) => {식 / 함수 몸체}
@@ -103,13 +94,20 @@ public class PlayerController : BaseController<PlayerStatComponent>
                     };
                     return;
                 }
-                else
+                else if(hitInfo.collider.CompareTag("NPC"))
                 {
-                    MovementComp.OnArrival = null;
-                    MovementComp.SetTarget(MovementComp.GetMouseWorldPos());
-                }
+                    currentNPC = hitInfo.collider.GetComponent<NPCInteraction>();
+                    
+                    MovementComp.OnArrival = () =>
+                    {
+                        TryInteract(currentNPC);
+                    };
+                    return;
+                } 
             }
-            
+            Vector3 groundPos = MovementComp.GetMouseWorldPos();
+            MovementComp.OnArrival = null;
+            MovementComp.SetTarget(groundPos);
         }
 
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
@@ -123,19 +121,35 @@ public class PlayerController : BaseController<PlayerStatComponent>
             UpdateAttackDir();
         }
     }
-    private void CheckBoxDistance()
+
+    private void CheckInteractionDistance()
     {
-        if (openBox == null) return;
-        Vector3 playerPos = transform.position;
-        playerPos.y = 0;
-        Vector3 boxPos = openBox.transform.position;
-        boxPos.y = 0;
-        float dis = Vector3.Distance(playerPos, boxPos);
-        if(dis > autoCloseDistance)
+        if (openBox != null)
         {
-            PickUpComp.CloseUI();
-            openBox = null;
+            if (Vector3.Distance(transform.position, openBox.transform.position) > interactionDistance)
+            {
+                PickUpComp.CloseUI();
+                openBox = null;
+            }
         }
+
+        if(currentNPC != null)
+        {
+            float dist = Vector3.Distance(transform.position, currentNPC.transform.position);
+            if(dist <= interactionDistance)
+            {
+                MovementComp.StopMove();
+                TryInteract(currentNPC);
+            }
+        }
+    }
+
+    private void TryInteract(NPCInteraction npc)
+    {
+        if (npc == null) return;
+        GameManager.Instance.ChangeState(GameState.Dialogue);
+        npc.Interact();
+        currentNPC = null;
     }
 
     private void HandleMovement()
@@ -277,20 +291,5 @@ public class PlayerController : BaseController<PlayerStatComponent>
         StatComp.OncChangeLevel -= SkillComp.OnLockSkill;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.CompareTag("NPC"))
-        {
-            isInteraction = true;
-            currentNPC = other.GetComponent<NPCInteraction>();
-        }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("NPC"))
-        {
-            isInteraction = false;
-        }
-    }
 }

@@ -16,7 +16,6 @@ public class SceneLoadManager : MonoBehaviour
     {
         loadingCanvas.SetActive(true);
         loadingImage.fillAmount = 0;
-        yield return SceneManager.UnloadSceneAsync(unloadSceneName);
 
         AsyncOperation op = SceneManager.LoadSceneAsync(loadSceneName, LoadSceneMode.Additive);
         op.allowSceneActivation = false;
@@ -25,19 +24,16 @@ public class SceneLoadManager : MonoBehaviour
         while(timer < minLoadingTime || op.progress < 0.9f)
         {
             timer += Time.deltaTime;
-            float progress = Mathf.Clamp01(timer / minLoadingTime);
+            float progress = Mathf.Clamp01(Mathf.Min(op.progress / 0.9f, timer / minLoadingTime));
 
             loadingImage.fillAmount = progress;
-            if (op.progress >= 0.9f && timer >= minLoadingTime)
-            {
-                break;
-            }
+
             yield return null;
         }
         op.allowSceneActivation = true;
         while(!op.isDone) yield return null;
 
-        yield return null;
+        yield return SceneManager.UnloadSceneAsync(unloadSceneName);
 
         Vector3 finalPos = Vector3.zero;
 
@@ -45,7 +41,7 @@ public class SceneLoadManager : MonoBehaviour
         {
             GameManager.Instance.DungeonGenerator.GenerateDungeon();
         }
-        finalPos = (loadSceneName == "GameScene") ? GameManager.Instance.DungeonGenerator.WorldStartPoint : new Vector3(0, 1.5f, 0);
+        finalPos = (loadSceneName == "GameScene") ? GameManager.Instance.DungeonGenerator.WorldStartPoint : new Vector3(0, 0.5f, 0);
         GameObject.FindWithTag("Player").transform.position = finalPos;
         var vcam = GameObject.FindFirstObjectByType<CinemachineCamera>();
         if (vcam != null)

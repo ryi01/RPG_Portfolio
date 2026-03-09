@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class BossController : EnemyController
     public bool CoolTimeAttack { get; private set; }
 
     private Coroutine lightCoroutine;
+
+    public static Action OnBossDeath;
     protected override void Update()
     {
         if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH)
@@ -82,7 +85,7 @@ public class BossController : EnemyController
             yield return new WaitForSeconds(lightningInterval);
             if (Player == null) yield break;
             Vector3 strikePos = Player.transform.position;
-            strikePos.y = 0.05f;
+            strikePos.y = .5f;
 
             StartCoroutine(ExecuteLightning(strikePos));
         }
@@ -114,9 +117,9 @@ public class BossController : EnemyController
 
     public void OnDeath()
     {
-        Debug.Log($"보스 OnDeath 호출됨! 데이터가 있는가? {QuestData != null}");
         if (GameManager.Instance.QuestManager != null && QuestData != null)
         {
+            OnBossDeath?.Invoke();
             GameManager.Instance.QuestManager.CheckObjectiveComplete(QuestData);
         }
     }

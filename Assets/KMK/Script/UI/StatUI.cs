@@ -7,7 +7,7 @@ public class StatUI : MonoBehaviour
     [SerializeField] private Image expBar;
     [SerializeField] private Text levelText;
 
-    public void UpdateHP(float cur, float max)
+    public virtual void UpdateHP(float cur, float max)
     {
         float ratio = cur / max;
         hpBar.fillAmount = ratio;

@@ -3098,6 +3098,9 @@ MonoBehaviour:
   npcNames:
   - {fileID: 295627494}
   - {fileID: 129519536}
+  nameBlock:
+  - {fileID: 38100730}
+  - {fileID: 1296115732}
   nextButt: {fileID: 706780641}
   finishButt: {fileID: 1805297185}
   typingDelayTime: 0
@@ -3536,6 +3539,7 @@ GameObject:
   - component: {fileID: 531124696}
   - component: {fileID: 531124697}
   - component: {fileID: 531124698}
+  - component: {fileID: 531124699}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3572,7 +3576,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   playerHUD: {fileID: 1738482433}
-  enemyHPBarPrefab: {fileID: 7400762671366805877, guid: 0483c87cd00d06c40a9529f41f0c2f5e, type: 3}
   inventoryUI: {fileID: 1253995643}
   itemBoxUI: {fileID: 567655249}
   goldText: {fileID: 2085487361}
@@ -3611,6 +3614,8 @@ MonoBehaviour:
   dungeonGenerator: {fileID: 531124696}
   sceneLoadManager: {fileID: 531124695}
   questManager: {fileID: 531124697}
+  enemyUIManager: {fileID: 531124699}
+  protalPrefab: {fileID: 4144285906249098318, guid: f60cc0f80fecea74ca1d77b7eac53356, type: 3}
 --- !u!114 &531124692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3735,6 +3740,20 @@ MonoBehaviour:
   s_BGM: {fileID: 1092439552}
   s_SFX: {fileID: 399387762}
   audioMixer: {fileID: 24100000, guid: af72379efcb0fac499911ba1860fb009, type: 2}
+--- !u!114 &531124699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531124687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0311878ab48334992b6fccadb93663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyUIManager
+  enemyHPBarPrefab: {fileID: 7400762671366805877, guid: 0483c87cd00d06c40a9529f41f0c2f5e, type: 3}
+  uiCanvasRootName: EnemyHpUI
 --- !u!1 &546372568
 GameObject:
   m_ObjectHideFlags: 0
@@ -6773,6 +6792,7 @@ RectTransform:
   m_Children:
   - {fileID: 1557530398}
   - {fileID: 424561292}
+  - {fileID: 2033312254}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9867,7 +9887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae8dee59e91d18c47b1acd46faf51871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  autoCloseDistance: 3
+  interactionDistance: 3
 --- !u!143 &1738482447
 CharacterController:
   m_ObjectHideFlags: 0
@@ -11704,6 +11724,50 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1994409315}
+  m_CullTransparentMesh: 1
+--- !u!1 &2033312253
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2033312254}
+  - component: {fileID: 2033312255}
+  m_Layer: 5
+  m_Name: EnemyHpUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2033312254
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033312253}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1138747787}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &2033312255
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033312253}
   m_CullTransparentMesh: 1
 --- !u!1 &2042302773
 GameObject:
