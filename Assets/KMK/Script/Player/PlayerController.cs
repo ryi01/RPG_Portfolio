@@ -29,8 +29,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private ItemBox openBox;
     [SerializeField] private float interactionDistance = 3f;
 
-    private NPCInteraction currentNPC;
-
     private InteractionObject targetInteractable;
     protected override void Awake()
     {
@@ -130,7 +128,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (npc == null) return;
         GameManager.Instance.ChangeState(GameState.Dialogue);
         npc.Interact();
-        currentNPC = null;
     }
 
     private void HandleMovement()

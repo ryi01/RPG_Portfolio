@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private QuestManager questManager;
     [SerializeField] private EnemyUIManager enemyUIManager;
     [SerializeField] private GameObject protalPrefab;
+    [SerializeField] private CameraEnviroment cameraEnviroment;
 
     public UIManager UIManager => uiManager;
     public InventroySystem InventroySystem => inventroySystem;
@@ -29,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     public DialogueSystem DialogueSystem => dialogueSystem;
     public EnemyUIManager EnemyUIManager => enemyUIManager;
+
+    public CameraEnviroment CameraEnviroment => cameraEnviroment;
 
     public GameState CurrentState {  get; private set; }
 
@@ -45,6 +48,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CurrentState = GameState.Town;
+        cameraEnviroment.ChnageToTown();
         BindGoldSystem();
     }
     private void OnDestroy()
@@ -129,6 +133,8 @@ public class GameManager : MonoBehaviour
     {
         bool isDungeon = loadSceneName.Contains("Game");
         CurrentState = isDungeon ? GameState.Dungeon : GameState.Town;
+        if (isDungeon) cameraEnviroment.ChangeToDungeon();
+        else cameraEnviroment.ChnageToTown();
         IsPathFindingEnable = isDungeon;
         StartCoroutine(SceneLoadManager.ChangeSceneCor(unloadSceneName, loadSceneName));
     }

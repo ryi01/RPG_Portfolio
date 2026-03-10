@@ -13,6 +13,7 @@ public class Portal : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             string currentSceneName = gameObject.scene.name;
+            if (!currentSceneName.Contains("VillageScene")) currentSceneName = "VillageScene";
             GameManager.Instance.ChangeScene(currentSceneName, targetSceneName);
         }
     }

@@ -131,7 +131,16 @@ public class Pathfinder : MonoBehaviour
                 if(checkX >= 0 && checkX < grid.GridSizeX && 
                     checkY >= 0 && checkY < grid.GridSizeY)
                 {
-                    neighbors.Add(grid.GridNode[checkX, checkY]);
+                    Node neighbor = grid.GridNode[checkX, checkY];
+                    if (Mathf.Abs(x) == 1 && Mathf.Abs(y) == 1)
+                    {
+                        if (!grid.GridNode[node.gridX + x, node.gridY].isNotWall ||
+                            !grid.GridNode[node.gridX, node.gridY + y].isNotWall) continue;
+                    }
+                    if(neighbor.isNotWall)
+                    {
+                        neighbors.Add(neighbor);
+                    }
                 }
             }
         }

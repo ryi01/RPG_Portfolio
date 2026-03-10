@@ -36,14 +36,15 @@ public class SceneLoadManager : MonoBehaviour
         yield return SceneManager.UnloadSceneAsync(unloadSceneName);
 
         Vector3 finalPos = Vector3.zero;
-
+        var dungeon = GameManager.Instance.DungeonGenerator;
+        dungeon.ClearDungeon();
         if (loadSceneName == "GameScene")
         {
-            GameManager.Instance.DungeonGenerator.GenerateDungeon();
-            Scene dungeonScene = SceneManager.GetSceneByName(loadSceneName);
-
+            dungeon.GenerateDungeon();
+            // [중요] 던전 생성이 끝난 후, 물리 엔진이 한 프레임 업데이트되도록 대기
+            yield return new WaitForEndOfFrame();
         }
-        finalPos = (loadSceneName == "GameScene") ? GameManager.Instance.DungeonGenerator.WorldStartPoint : new Vector3(0, 0.5f, 0);
+        finalPos = (loadSceneName.Contains("Game")) ? GameManager.Instance.DungeonGenerator.WorldStartPoint : new Vector3(0, 0.1f, 0);
         GameObject.FindWithTag("Player").transform.position = finalPos;
         var vcam = GameObject.FindFirstObjectByType<CinemachineCamera>();
         if (vcam != null)

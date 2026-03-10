@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.0716447, g: 0.081371084, b: 0.09433961, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.02
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -847,9 +847,9 @@ MonoBehaviour:
   objectiveDoneDialogueIndex: 5
   completeDialogueIndex: 9
   uiPrefab: {fileID: 3790533417186835734, guid: bb93c905088045c46b69b28ea408f2b7, type: 3}
-  notStartSprite: {fileID: 21300000, guid: 667c3f650fb66124fb9b1018ea265b67, type: 3}
-  doneSprite: {fileID: 21300000, guid: 9a1a11de83059be4da92c242b27946b4, type: 3}
-  inProgressSprite: {fileID: 21300000, guid: 4cac170451c86d245b46712f0a0569b4, type: 3}
+  notStartSprite: {fileID: 21300000, guid: 4cac170451c86d245b46712f0a0569b4, type: 3}
+  doneSprite: {fileID: 21300000, guid: 4647dca1cbf03964180b30b6a62aaa15, type: 3}
+  inProgressSprite: {fileID: 21300000, guid: 0729355850c7a8b41bcbb0cfe1d03a24, type: 3}
 --- !u!95 &693232633
 Animator:
   serializedVersion: 7

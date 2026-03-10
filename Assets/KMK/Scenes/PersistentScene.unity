@@ -3762,6 +3762,7 @@ GameObject:
   - component: {fileID: 531124699}
   - component: {fileID: 531124701}
   - component: {fileID: 531124700}
+  - component: {fileID: 531124702}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3838,6 +3839,7 @@ MonoBehaviour:
   questManager: {fileID: 531124697}
   enemyUIManager: {fileID: 531124699}
   protalPrefab: {fileID: 4144285906249098318, guid: f60cc0f80fecea74ca1d77b7eac53356, type: 3}
+  cameraEnviroment: {fileID: 531124702}
 --- !u!114 &531124692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4004,7 +4006,20 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 33280
-  checkRadius: 0.8
+  checkRadius: 0.6
+--- !u!114 &531124702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531124687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf7f20419f931b4399d077728d2bb10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraEnviroment
+  cam: {fileID: 1923248225}
 --- !u!1 &546372568
 GameObject:
   m_ObjectHideFlags: 0
@@ -9979,7 +9994,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1721289170
 RectTransform:
@@ -10576,7 +10591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae8dee59e91d18c47b1acd46faf51871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  interactionDistance: 3
+  interactionDistance: 2
 --- !u!143 &1738482447
 CharacterController:
   m_ObjectHideFlags: 0
@@ -12133,8 +12148,8 @@ Camera:
   m_GameObject: {fileID: 1923248221}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.101960786, g: 0.11372549, b: 0.12941177, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

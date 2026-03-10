@@ -125,6 +125,7 @@ public class DungeonGenerator : MonoBehaviour
 
     public Vector3 WorldStartPoint => new Vector3(StartPoint.x, 0, StartPoint.y) * tileSize + Vector3.up * 1.5f;
     public Vector3 WorldEndPoint => new Vector3(EndPoint.x, 0, EndPoint.y) * tileSize + Vector3.up * 1.5f;
+    public Transform DungeonParent => dungeonParent;
 
     private void OnEnable()
     {
@@ -650,6 +651,8 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
         }
+
+
     }
 
     private void PlaceObject(GameObject prefab, int x, int y, int typeMask, float posY = 0.1f)
@@ -805,9 +808,13 @@ public class DungeonGenerator : MonoBehaviour
 
     private void OnDungeonGenerationComplete()
     {
-        grid.transform.position = Vector3.zero;
         Vector2 dungeonSize = new Vector2(mapWidth * tileSize, mapHeight * tileSize);
+        grid.transform.position = new Vector3(dungeonSize.x / 2f, 0, dungeonSize.y / 2f);
         grid.Init(dungeonSize, tileSize / 2);
     }
 
+    public void ClearDungeon()
+    {
+        if(dungeonParent != null) Destroy(dungeonParent);
+    }
 }
