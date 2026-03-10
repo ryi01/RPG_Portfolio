@@ -115,7 +115,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private QuestData dungeonQuestData;
 
     [Header("Grid")]
-    [SerializeField] private Grid grid;
+    [SerializeField] private GridAStar grid;
 
     private int[,] mapData;
     private int roomSize;

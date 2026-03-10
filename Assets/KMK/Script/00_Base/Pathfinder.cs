@@ -25,10 +25,10 @@ public class Node
 // F = H + G => 현재 = 미래 + 과거
 public class Pathfinder : MonoBehaviour
 {
-    private Grid grid;
+    private GridAStar grid;
     private void Awake()
     {
-        grid = GetComponent<Grid>();
+        grid = GetComponent<GridAStar>();
     }
 
     public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)

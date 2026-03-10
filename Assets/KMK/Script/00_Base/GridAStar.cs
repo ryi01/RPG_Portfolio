@@ -1,7 +1,7 @@
 using UnityEngine;
 // A* 알고리즘
 // Node <-> Node 거리를 계산해야함 => 중앙 좌표를 통해 구할 수 있음
-public class Grid : MonoBehaviour
+public class GridAStar : MonoBehaviour
 {
     // 장애물 레이어
     [SerializeField] private LayerMask obstacleLayer;
