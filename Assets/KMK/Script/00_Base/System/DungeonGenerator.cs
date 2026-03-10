@@ -114,14 +114,17 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject bossPrefab;
     [SerializeField] private QuestData dungeonQuestData;
 
+    [Header("Grid")]
+    [SerializeField] private Grid grid;
+
     private int[,] mapData;
     private int roomSize;
     
     public Vector2 StartPoint { get;private set; }
     public Vector2 EndPoint { get;private set; }
 
-    public Vector3 WorldStartPoint => new Vector3(StartPoint.x * tileSize, 1.5f, StartPoint.y * tileSize);
-    public Vector3 WorldEndPoint => new Vector3(EndPoint.x * tileSize, 1.5f, EndPoint.y * tileSize);
+    public Vector3 WorldStartPoint => new Vector3(StartPoint.x, 0, StartPoint.y) * tileSize + Vector3.up * 1.5f;
+    public Vector3 WorldEndPoint => new Vector3(EndPoint.x, 0, EndPoint.y) * tileSize + Vector3.up * 1.5f;
 
     private void OnEnable()
     {
@@ -151,6 +154,7 @@ public class DungeonGenerator : MonoBehaviour
         SpawnEnemies();
         SpawnBossInRoom();
 
+        OnDungeonGenerationComplete();
     }
     
     private void GeneratePoint()
@@ -399,7 +403,7 @@ public class DungeonGenerator : MonoBehaviour
             {
                 for(int y = cy - currentRoomSize; y <= cy+ currentRoomSize; y++)
                 {
-                    if (IsInMap(x, y)) mapData[x, y] = 1;
+                    if (IsInMap(x, y)) mapData[x, y] = markValue;
                 }
             }
         }
@@ -414,7 +418,7 @@ public class DungeonGenerator : MonoBehaviour
             for(int y = 0; y < mapHeight; y++)
             {
                 Vector3 pos = new Vector3(x * tileSize, 0, y * tileSize);
-                if (mapData[x, y] == 1)
+                if (mapData[x, y] == 1 || mapData[x, y] == 9)
                 {
                     Instantiate(roomPrefab, pos, Quaternion.identity, dungeonParent);
                 }
@@ -432,9 +436,12 @@ public class DungeonGenerator : MonoBehaviour
         int x2 = Mathf.RoundToInt(edge.v.x);
         int y2 = Mathf.RoundToInt(edge.v.y);
 
+        int corridorWidth = 4;
+        int halfWidth = corridorWidth / 2;
+
         for (int x = Mathf.Min(x1, x2); x <= Mathf.Max(x1, x2); x++)
         {
-            for (int offset = -1; offset <= 1; offset++)
+            for (int offset = -halfWidth; offset <= corridorWidth - halfWidth; offset++)
             {
                 int ty = y1 + offset;
                 if (IsInMap(x, ty) && mapData[x, ty] == 0) mapData[x, ty] = 2;
@@ -443,7 +450,7 @@ public class DungeonGenerator : MonoBehaviour
         for (int y = Mathf.Min(y1, y2); y <= Mathf.Max(y1, y2); y++)
         {
             // 복도 선뿐만 아니라 좌우 1칸씩 더 여유를 줍니다
-            for (int offset = -1; offset <= 1; offset++)
+            for (int offset = -halfWidth; offset <= corridorWidth - halfWidth; offset++)
             {
                 int tx = x2 + offset;
                 if (IsInMap(tx, y) && mapData[tx, y] == 0) mapData[tx, y] = 2;
@@ -461,7 +468,7 @@ public class DungeonGenerator : MonoBehaviour
             {
                 if (mapData[x, y] == 0)
                 {
-                    if (IsNextToType(x, y, 1) || IsNextToType(x, y, 2))
+                    if (IsNextToType(x, y, 1) || IsNextToType(x, y, 2) || IsNextToType(x, y, 9))
                     {
                         // 벽 높이가 2이므로 Y좌표는 1.0f (바닥 0 위에 안착)
                         Vector3 wallPos = new Vector3(x * tileSize, 0f, y * tileSize);
@@ -603,7 +610,7 @@ public class DungeonGenerator : MonoBehaviour
             {
                 if (mapData[x, y] > 3) continue;
                 Vector2 currentPos = new Vector2(x, y);
-                if (Vector2.Distance(currentPos, StartPoint) < 5f || currentPos == EndPoint) continue;
+                if (Vector2.Distance(currentPos, StartPoint) <= 5f || currentPos == EndPoint) continue;
                 int wallCount = CountWall(x, y);
                 if (mapData[x, y]  == 1 && wallCount >=2)
                 {
@@ -623,7 +630,7 @@ public class DungeonGenerator : MonoBehaviour
                     }
                 }
 
-                if (mapData[x,y] == 1|| mapData[x, y] == 2 && mapData[x, y] < 4)
+                if ((mapData[x,y] == 1|| mapData[x, y] == 2) && mapData[x, y] < 4)
                 {
                     float finalTrapDensity = trapDensity;
                     if (mapData[x, y] == 2) finalTrapDensity *= 0.5f;
@@ -795,4 +802,12 @@ public class DungeonGenerator : MonoBehaviour
         Vector3 spawnPos = new Vector3(EndPoint.x * tileSize, 0.5f, EndPoint.y * tileSize);
         GameManager.Instance.SpawnPortal("VillageScene", spawnPos);
     }
+
+    private void OnDungeonGenerationComplete()
+    {
+        grid.transform.position = Vector3.zero;
+        Vector2 dungeonSize = new Vector2(mapWidth * tileSize, mapHeight * tileSize);
+        grid.Init(dungeonSize, tileSize / 2);
+    }
+
 }

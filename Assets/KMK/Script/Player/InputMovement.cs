@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Splines;
 
 public class InputMovement : MonoBehaviour
 {
@@ -7,12 +9,14 @@ public class InputMovement : MonoBehaviour
     [Header("이동")]
     private CharacterController cc;
     private PlayerController pc;
-    private Vector3 movement;
     private Vector3 targetPos;
     private bool isMoving = false;
     public bool IsMoving => isMoving;
 
     public System.Action OnArrival;
+    [SerializeField] private Pathfinder pathfinder;
+    private List<Node> currentPath;
+    private int targetIndex;
     #endregion
     #region 중력
     [Header("중력")]
@@ -26,10 +30,27 @@ public class InputMovement : MonoBehaviour
         pc = GetComponent<PlayerController>();
         targetPos = transform.position;
     }
-    public void SetTarget(Vector3 pos)
+    public void FindPath(Vector3 pos)
     {
-        targetPos = pos;
-        isMoving = true;
+        // 이동 시작 시 이전 로직 정리
+        StopMove();
+        if (GameManager.Instance.IsPathFindingEnable)
+        {
+            // 경로 탐색 시작
+            currentPath = pathfinder.FindPath(transform.position, pos);
+            if (currentPath != null && currentPath.Count > 0)
+            {
+                targetIndex = 0;
+                isMoving = true;
+                targetPos = currentPath[targetIndex].worldPos;
+            }
+            else isMoving = false;
+        }
+        else
+        {
+            targetPos = pos;
+            isMoving = true;
+        }
     }
     // 강제 이동 중단 => 키입력, 피격, 대화시작 등
     public void StopMove()
@@ -42,11 +63,28 @@ public class InputMovement : MonoBehaviour
         if (isMoving == false) return;
         Vector3 dir = targetPos - transform.position;
         dir.y = 0;
-        if(dir.magnitude < 0.5f)
+        Debug.DrawLine(transform.position, targetPos, Color.red); // 플레이어에서 목표까지 선 그리기
+        Debug.DrawRay(targetPos, Vector3.up * 2, Color.green);    // 목표 지점에 기둥 세우기
+        if (dir.magnitude < 0.5f)
         {
-            isMoving = false;
-            CompleteArrive();
-            return;
+            if(GameManager.Instance.IsPathFindingEnable)
+            {
+                targetIndex++;
+                if (currentPath != null && targetIndex < currentPath.Count)
+                {
+                    targetPos = currentPath[targetIndex].worldPos;
+                }
+                else
+                {
+                    CompleteArrive();
+                    return;
+                }
+            }
+            else
+            {
+                CompleteArrive();
+                return;
+            }
         }
         RotTarget(dir.normalized);
         Move(dir.normalized);
@@ -107,6 +145,11 @@ public class InputMovement : MonoBehaviour
     public Vector3 GetMouseWorldPos()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        int layerMask = LayerMask.GetMask("Environment");
+        if(Physics.Raycast(ray, out RaycastHit hitinfo, 100f, layerMask))
+        {
+            return hitinfo.point;
+        }
         Plane ground = new Plane(Vector3.up, new Vector3(0, transform.position.y, 0));
 
         if(ground.Raycast(ray, out float enter))
@@ -124,12 +167,17 @@ public class InputMovement : MonoBehaviour
     IEnumerator OnForce(Vector3 dir, float distance, float duration)
     {
         float elapsed = 0;
-        while(elapsed < duration)
+        Vector3 startPos = transform.position;
+        if(Physics.Raycast(startPos, dir, out RaycastHit hit, distance, LayerMask.GetMask("Wall")))
+        {
+            distance = hit.distance - 0.2f;
+        }
+        Vector3 targetPos = startPos + (dir * distance);
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float currentStep = (distance/duration)* Time.deltaTime;
-            CollisionFlags flag = cc.Move(dir * currentStep);
-            if ((flag & CollisionFlags.Sides) != 0) yield break;
+            float t = Mathf.Clamp01(elapsed / duration);
+            transform.position = Vector3.Lerp(startPos, targetPos, t);
             yield return null;
         }
     }

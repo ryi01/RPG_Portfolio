@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 449089623137734526}
   - component: {fileID: 2955602532762490389}
   - component: {fileID: 170675070193876458}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: barrelDark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8068066345498398508}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Pot
   m_TagString: Untagged
   m_Icon: {fileID: 0}

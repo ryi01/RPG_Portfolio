@@ -127,8 +127,13 @@ public class GameManager : MonoBehaviour
     }
     public void ChangeScene(string unloadSceneName, string loadSceneName)
     {
-        CurrentState = (loadSceneName.Contains("Game")) ? GameState.Dungeon : GameState.Town;
+        bool isDungeon = loadSceneName.Contains("Game");
+        CurrentState = isDungeon ? GameState.Dungeon : GameState.Town;
+        IsPathFindingEnable = isDungeon;
         StartCoroutine(SceneLoadManager.ChangeSceneCor(unloadSceneName, loadSceneName));
     }
+
+    public bool IsPathFindingEnable { get; private set; } = false;
+   
     #endregion
 }

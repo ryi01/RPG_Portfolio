@@ -3,7 +3,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NPCInteraction : MonoBehaviour
+public class NPCInteraction : InteractionObject
 {
     [SerializeField] private string uiCanvasRootName;
     [SerializeField] private QuestData myQuestData;
@@ -84,21 +84,26 @@ public class NPCInteraction : MonoBehaviour
     {
         DialogueUI.OnDialogueFinish -= HandleQuestLogic;
         var questManager = GameManager.Instance.QuestManager;
-        currentState = questManager.GetQueestState(myQuestData);
         switch (currentState)
         {
             case EnumTypes.QUEST.NOT_START:
-                bool isChange = questManager.StartQuest(myQuestData);
-                if (isChange && !isPortalSpawned) SpawnPortal();
+                if (questManager.StartQuest(myQuestData) && !isPortalSpawned) SpawnPortal();
                 break;
             case EnumTypes.QUEST.OBJECTIVE_DONE:
                 questManager.CompletedQuest(myQuestData);
                 break;
         }
+        UpdateIconUI();
     }
     private void SpawnPortal()
     {
         GameManager.Instance.SpawnPortal("GameScene", transform.position + Vector3.right * 2);
         isPortalSpawned = true;
+    }
+
+    public override void Interact(PlayerController player)
+    {
+        player.MovementComp.LookAtInstant((transform.position - player.transform.position).normalized);
+        player.TryInteract(this);
     }
 }

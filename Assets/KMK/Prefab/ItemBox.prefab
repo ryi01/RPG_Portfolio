@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 5871412496823110809}
   - component: {fileID: 7760846390876887066}
   - component: {fileID: 1427420956471616121}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: ammo_crate
   m_TagString: Untagged
   m_Icon: {fileID: 0}

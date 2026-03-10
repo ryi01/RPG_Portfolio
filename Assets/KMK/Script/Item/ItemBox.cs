@@ -8,7 +8,7 @@ public struct ItemInfo
     public int itemId;
     public int itemCount;
 }
-public class ItemBox : MonoBehaviour
+public class ItemBox : InteractionObject
 {
     [SerializeField] private List<ItemInfo> itemInfoList = new List<ItemInfo>();
     public List<ItemInfo> ItemInfoList => itemInfoList;
@@ -81,5 +81,10 @@ public class ItemBox : MonoBehaviour
 
         itemInfoList.Add(info);
         GameManager.Instance.UIManager.UpdateItemBoxUI();
+    }
+
+    public override void Interact(PlayerController player)
+    {
+        player.OpenBox(this);
     }
 }

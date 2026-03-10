@@ -40,6 +40,8 @@ public class SceneLoadManager : MonoBehaviour
         if (loadSceneName == "GameScene")
         {
             GameManager.Instance.DungeonGenerator.GenerateDungeon();
+            Scene dungeonScene = SceneManager.GetSceneByName(loadSceneName);
+
         }
         finalPos = (loadSceneName == "GameScene") ? GameManager.Instance.DungeonGenerator.WorldStartPoint : new Vector3(0, 0.5f, 0);
         GameObject.FindWithTag("Player").transform.position = finalPos;

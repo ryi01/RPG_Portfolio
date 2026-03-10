@@ -7,6 +7,7 @@ public class QuestManager : MonoBehaviour
 {
     [SerializeField]private List<QuestInstance> activeQuest = new List<QuestInstance>();
     public static Action OnQuestUpdate;
+    public static Action<QuestData> OnQuestCompleted;
     public EnumTypes.QUEST GetQueestState(QuestData data)
     {
         var quest = activeQuest.Find(p => p.Data == data);
@@ -39,12 +40,13 @@ public class QuestManager : MonoBehaviour
         {
             quest.SetState(EnumTypes.QUEST.COMPLETED);
             OnQuestUpdate?.Invoke();
+            OnQuestCompleted?.Invoke(data);
         }
     }
 
     public QuestInstance GetActiveInstance()
     {
-        if (activeQuest.Count > 0) return activeQuest[0];
-        return null;
+        return activeQuest.Find(q=>q.State == EnumTypes.QUEST.IN_PROGRESS ||
+                                q.State == EnumTypes.QUEST.OBJECTIVE_DONE);
     }
 }

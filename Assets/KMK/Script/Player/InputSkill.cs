@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class InputSkill : MonoBehaviour
 {
     private PlayerController pc;
     private int[] hashSkillAttacks;
-    public enum SKILLS { SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, SKILL6};
 
+    public enum SKILLS { SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, SKILL6 };
     [SerializeField] private PlayerSkillAttack[] skillAttacks;
 
     private void Awake()
@@ -21,6 +22,7 @@ public class InputSkill : MonoBehaviour
         {
             hashSkillAttacks[i] = Animator.StringToHash(skillAttacks[i].skillHashName);
         }
+        
     }
 
     public void ActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
@@ -44,6 +46,19 @@ public class InputSkill : MonoBehaviour
                 skillAttacks[i].UnLockSkill();
             }
         }
+    }
+
+    public void HandleQuestComplete(QuestData data)
+    {
+        if(data.QuestID == 1001)
+        {
+            OnAoeSkill(data.RewardSkill);
+        }
+    }
+
+    private void OnAoeSkill(SKILLS skill)
+    {
+        skillAttacks[(int)skill].UnLockSkill();
     }
     public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
@@ -76,5 +91,11 @@ public class InputSkill : MonoBehaviour
             // 아이콘 세팅
             skillAttacks[i].SetSkillIcon();
         }
+
+        QuestManager.OnQuestCompleted += HandleQuestComplete;
+    }
+    private void OnDisable()
+    {
+        QuestManager.OnQuestCompleted -= HandleQuestComplete;
     }
 }

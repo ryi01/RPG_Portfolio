@@ -60,8 +60,13 @@ public class DialogueUI : MonoBehaviour
         ClearDilogueUI(false);
         bool isLast = data.isEnd;
         int dirIndex = (int)data.direction;
-        npcImages[dirIndex].enabled = true;
-        npcImages[dirIndex].sprite = so.NPCSprites[data.imageId];
+        for(int i = 0; i < npcNames.Length; i++)
+        {
+            npcImages[i].sprite = so.NPCSprites[i];
+            npcImages[i].enabled = true;
+            if (i == dirIndex) npcImages[i].color = new Color(1, 1, 1, 1);
+            else npcImages[i].color = new Color(1, 1, 1, 0.7f);
+        }
         npcNames[dirIndex].SetActive(true);
         nameBlock[dirIndex].SetActive(true);
         npcNames[dirIndex].GetComponentInChildren<Text>().text = so.NCPName[data.nameId];
@@ -98,5 +103,6 @@ public class DialogueUI : MonoBehaviour
         dialogueUI.SetActive(false);
         GameManager.Instance.ChangeState(GameState.Town);
         OnDialogueFinish?.Invoke();
+        QuestManager.OnQuestUpdate?.Invoke();
     }
 }

@@ -8,12 +8,15 @@ public class QuestData : ScriptableObject
     [SerializeField][TextArea] private string description;
     [SerializeField] private int targetCount;
     [SerializeField] private GameObject rewardItem;
+    [SerializeField] private InputSkill.SKILLS rewardSkill;
 
     public int QuestID => questID;
     public string QuestTitle => questTitle;
     public string Description => description;
     public int TargetCount => targetCount;
     public GameObject RewardItem => rewardItem;
+
+    public InputSkill.SKILLS RewardSkill => rewardSkill;
 }
 
 public class QuestInstance
@@ -26,5 +29,8 @@ public class QuestInstance
         this.State = EnumTypes.QUEST.IN_PROGRESS;
     }
 
-    public void SetState(EnumTypes.QUEST newState) => State = newState;
+    public void SetState(EnumTypes.QUEST newState)
+    {
+        this.State = newState;
+    }
 }

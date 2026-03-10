@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: 1StageDialogueDatas
   m_EditorClassIdentifier: Assembly-CSharp::DialogueDatas
   npcSprites:
-  - {fileID: 21300000, guid: 2d089513ae4adfc48a683c362ad9992c, type: 3}
-  - {fileID: 21300000, guid: d659f7396cd57754eba78763cf986c51, type: 3}
+  - {fileID: 21300000, guid: 8e741ef5785b2194083a16b2381c35f7, type: 3}
+  - {fileID: 21300000, guid: 38a0d5acbebf21040bf5f27ebf17470e, type: 3}
   npcNames:
-  - Jack
+  - Elf
   - Player
   dialogueDatas:
   - direction: 0

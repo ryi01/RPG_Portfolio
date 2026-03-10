@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -29,6 +31,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private NPCInteraction currentNPC;
 
+    private InteractionObject targetInteractable;
     protected override void Awake()
     {
         base.Awake();
@@ -47,12 +50,14 @@ public class PlayerController : BaseController<PlayerStatComponent>
             MovementComp.StopMove();
             return;
         }
+        
         HandleInput();
         HandleMovement();   
         HandleRotation();
         HandleUseItem();
         if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
         CheckInteractionDistance();
+        CheckBox();
     }
     private void HandleUseItem()
     {
@@ -70,81 +75,57 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(1))
         {
-            int layerMask = ~LayerMask.GetMask("Player");
+            
+            int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Obstacle"));
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
             {
-                Vector3 targetPos = hitInfo.point;
-                targetPos.y = transform.position.y;
-                MovementComp.SetTarget(targetPos);
-                if (hitInfo.collider.CompareTag("Item"))
+                Debug.Log($"{hitInfo.collider.name}");
+                InteractionObject interactable = hitInfo.collider.GetComponentInParent<InteractionObject>();
+                if (interactable != null)
                 {
-                    ItemBox box = hitInfo.collider.GetComponent<ItemBox>();
-                    // 람다식 사용 이유 : 상자에 도착시에 오픈하는 단발성 이벤트임
-                    // 람다식 : 이름없는 함수 => 짧은 기능이나 콜백 등의 용도로 사용됨
-                    // OnArrival = (매개변수) => {식 / 함수 몸체}
-                    // 매개변수를 입력받아 오른쪽처럼 행동해라
-                    MovementComp.OnArrival = () =>
-                    {
-                        if (box != null)
-                        {
-                            openBox = box;
-                            PickUpComp.OpenItemBox(box);
-                        }
-                    };
+                    targetInteractable = interactable;
+                    MovementComp.FindPath(interactable.GetTransform().position);
                     return;
                 }
-                else if(hitInfo.collider.CompareTag("NPC"))
-                {
-                    currentNPC = hitInfo.collider.GetComponent<NPCInteraction>();
-                    
-                    MovementComp.OnArrival = () =>
-                    {
-                        TryInteract(currentNPC);
-                    };
-                    return;
-                } 
+                targetInteractable = null;
+                Vector3 groundPos = hitInfo.point;
+                groundPos.y = transform.position.y;
+                MovementComp.FindPath(groundPos);
             }
-            Vector3 groundPos = MovementComp.GetMouseWorldPos();
-            MovementComp.OnArrival = null;
-            MovementComp.SetTarget(groundPos);
         }
-
-        offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
-        offsetToMouse.y = 0;
-        AttackComp.UpdateAttackProgress();
-        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
-        if (Input.GetMouseButtonDown(0))
-        {
-            MovementComp.StopMove();
-            AttackComp.TriggerAttack(MovementComp.GetMouseWorldPos());
-            UpdateAttackDir();
-        }
+        HandleAttackInput();
     }
-
     private void CheckInteractionDistance()
     {
-        if (openBox != null)
+        if(targetInteractable != null)
         {
-            if (Vector3.Distance(transform.position, openBox.transform.position) > interactionDistance)
-            {
-                PickUpComp.CloseUI();
-                openBox = null;
-            }
-        }
-
-        if(currentNPC != null)
-        {
-            float dist = Vector3.Distance(transform.position, currentNPC.transform.position);
-            if(dist <= interactionDistance)
+            float dist = Vector3.Distance(transform.position, targetInteractable.transform.position);
+            if(dist<= interactionDistance)
             {
                 MovementComp.StopMove();
-                TryInteract(currentNPC);
+                targetInteractable.Interact(this);
+                targetInteractable = null;
             }
         }
     }
-
-    private void TryInteract(NPCInteraction npc)
+    public void OpenBox(ItemBox box)
+    {
+        if (openBox != null) PickUpComp.CloseUI();
+        openBox = box;
+        PickUpComp.OpenItemBox(box);
+    }
+    private void CheckBox()
+    {
+        if (openBox == null) return;
+        float dist = Vector3.Distance(transform.position, openBox.transform.position);
+        if(dist > interactionDistance)
+        {
+            PickUpComp.CloseUI();
+            openBox = null;
+        }
+    }
+    public void TryInteract(NPCInteraction npc)
     {
         if (npc == null) return;
         GameManager.Instance.ChangeState(GameState.Dialogue);
@@ -167,19 +148,39 @@ public class PlayerController : BaseController<PlayerStatComponent>
             return;
         }
         MovementComp.GravityDown();
-        float animMoveValue;
         if (AttackComp.IsAttackAnimation())
         {
-            animMoveValue = 2.0f;
             MovementComp.StopMove();
+            Animator.SetFloat("Move", 2);
         }
         else
         {
-            animMoveValue = MovementComp.IsMoving ? 1f : 0f;
-            MovementComp.UpdateClickMove();
+            // 3. 이동 중일 때만 업데이트 (중복 호출 제거됨)
+            if (MovementComp.IsMoving)
+            {
+                MovementComp.UpdateClickMove();
+                Animator.SetFloat("Move", 1f);
+            }
+            else
+            {
+                Animator.SetFloat("Move", 0f);
+            }
         }
 
-        Animator.SetFloat("Move", animMoveValue);
+        
+    }
+    private void HandleAttackInput()
+    {
+        offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
+        offsetToMouse.y = 0;
+        AttackComp.UpdateAttackProgress();
+        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
+        if (Input.GetMouseButtonDown(0))
+        {
+            MovementComp.StopMove();
+            AttackComp.TriggerAttack(MovementComp.GetMouseWorldPos());
+            UpdateAttackDir();
+        }
     }
     private void HandleRotation()
     {

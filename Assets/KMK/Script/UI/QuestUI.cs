@@ -26,8 +26,21 @@ public class QuestUI : MonoBehaviour
         else
         {
             questTitle.text = quest.Data.QuestTitle;
-            if (quest.State == EnumTypes.QUEST.OBJECTIVE_DONE) questDescription.text = "목표 달성! 의뢰인에게 돌아가세요.";
-            else questDescription.text = quest.Data.Description;
+
+            // 상태값별 텍스트 출력 로직
+            if (quest.State == EnumTypes.QUEST.OBJECTIVE_DONE)
+            {
+                questDescription.text = "목표 달성! 의뢰인에게 돌아가세요.";
+            }
+            else if (quest.State == EnumTypes.QUEST.IN_PROGRESS)
+            {
+                questDescription.text = quest.Data.Description;
+            }
+            else
+            {
+                // 의도치 않은 상태일 때 확인용
+                questDescription.text = $"상태 확인 필요: {quest.State}";
+            }
         }
     }
 }

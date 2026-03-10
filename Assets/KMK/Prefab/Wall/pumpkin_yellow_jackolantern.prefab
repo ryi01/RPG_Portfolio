@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8034446291126022373}
   - component: {fileID: 1863776188015051379}
   - component: {fileID: 721135593531003122}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: pumpkin_yellow_jackolantern
   m_TagString: Untagged
   m_Icon: {fileID: 0}
