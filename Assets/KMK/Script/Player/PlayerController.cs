@@ -78,7 +78,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
             {
-                Debug.Log($"{hitInfo.collider.name}");
                 InteractionObject interactable = hitInfo.collider.GetComponentInParent<InteractionObject>();
                 if (interactable != null)
                 {
@@ -88,8 +87,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
                 }
                 targetInteractable = null;
                 Vector3 groundPos = hitInfo.point;
+                Debug.DrawLine(Camera.main.transform.position, groundPos, Color.green, 2f); // 2초간 표시
+                Debug.DrawRay(groundPos, Vector3.up * 2, Color.yellow, 2f);
                 groundPos.y = transform.position.y;
-                MovementComp.FindPath(groundPos);
+                if(GameManager.Instance.CurrentState == GameState.Town) MovementComp.FindPath(groundPos, false);
+                else MovementComp.FindPath(groundPos);
             }
         }
         HandleAttackInput();

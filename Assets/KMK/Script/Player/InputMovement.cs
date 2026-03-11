@@ -30,11 +30,11 @@ public class InputMovement : MonoBehaviour
         pc = GetComponent<PlayerController>();
         targetPos = transform.position;
     }
-    public void FindPath(Vector3 pos)
+    public void FindPath(Vector3 pos, bool isGrid = true)
     {
         // 이동 시작 시 이전 로직 정리
         StopMove();
-        if (GameManager.Instance.IsPathFindingEnable)
+        if (isGrid && GameManager.Instance.IsPathFindingEnable)
         {
             // 경로 탐색 시작
             currentPath = pathfinder.FindPath(transform.position, pos);
@@ -65,7 +65,7 @@ public class InputMovement : MonoBehaviour
         dir.y = 0;
         Debug.DrawLine(transform.position, targetPos, Color.red); // 플레이어에서 목표까지 선 그리기
         Debug.DrawRay(targetPos, Vector3.up * 2, Color.green);    // 목표 지점에 기둥 세우기
-        if (dir.magnitude < 0.5f)
+        if (dir.magnitude < 0.3f)
         {
             if(GameManager.Instance.IsPathFindingEnable)
             {

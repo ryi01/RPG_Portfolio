@@ -17,13 +17,24 @@ public class GridAStar : MonoBehaviour
     private int gridSizeX, gridSizeY;
     public int GridSizeX => gridSizeX;
     public int GridSizeY => gridSizeY;
-
-    public void Init(Vector2 mapSize, float nodeRadius)
+    private Vector3 originPoint;
+    private void OnEnable()
+    {
+        GameManager.Instance.OnSpawnPortal += HandleSpawnObject;
+        DungeonGenerator.OnSpawnItemBox += HandleSpawnObject;
+    }
+    private void OnDisable()
+    {
+        GameManager.Instance.OnSpawnPortal -= HandleSpawnObject;
+        DungeonGenerator.OnSpawnItemBox -= HandleSpawnObject;
+    }
+    public void Init(Vector2 mapSize, float nodeRadius, Vector3 origin)
     {
         gridWorldSize = mapSize;
         this.nodeRadius = nodeRadius;
         // 실제 노드 크기
         nodeDiameter = nodeRadius * 2;
+        this.originPoint = origin;
         // 전체 맵 크기를 노드크기로 나눠 x,y축의 노드를 결정
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
@@ -38,7 +49,7 @@ public class GridAStar : MonoBehaviour
 
         // 현재 오브젝트 기준으로 왼쪽 아래 모서리 좌표
         // 현재오브젝트(정중앙) - 가로 절반 - 세로절반
-        Vector3 worldBootmLeft = Vector3.zero;
+        Vector3 worldBootmLeft = originPoint;
         // 모든 좌표에 대해 노드 생성
         for (int x = 0; x < gridSizeX; x++)
         {
@@ -53,30 +64,72 @@ public class GridAStar : MonoBehaviour
                 // 반지름 범위내에 장애물 레이어가 있는가
                 // 중앙 좌표를 쓰는 이유 : 노드 중앙에서 nodeRadius 범위 안에 있는가
                 float radius = checkRadius * nodeRadius;
+               
                 bool isNoWall = !(Physics.CheckSphere(worldPoint, radius, obstacleLayer));
                 // 노드 생성
                 grid[x, y] = new Node(isNoWall, worldPoint, x, y);
             }
         }
-        Debug.Log($"그리드 생성");
+
     }
 
     // 월드 좌표를 받아 해당하는 gridNode 반환
     public Node NodeFromWorldPoint(Vector3 worldPos)
     {
+        if (grid == null) return null;
         // 월드 좌표를 0~1비율로 변환
         // 맵 안에 X위치가 몇 %인지 구함 
         // ex) -5~5 : -5 = 0%, 0 = 50%, 5 = 100%
         // + gridWorldSize.x / 2 : -5~5가 아닌 0~10으로 변경 
-        float percentX = Mathf.Clamp01(worldPos.x / gridWorldSize.x);
-        float percentY = Mathf.Clamp01(worldPos.z / gridWorldSize.y);
+        float percentX = Mathf.Clamp01((worldPos.x - originPoint.x) / gridWorldSize.x);
+        float percentY = Mathf.Clamp01((worldPos.z - originPoint.z) / gridWorldSize.y);
         // 비율을 이용해 실재 grid index 계산
         // percent를 통해 grid index를 구함
         // ex) gridSizeX = 10, percentX = 0.7 => (10 - 1) * 0.7 =6.3 = 6
         int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+
+        x = Mathf.Clamp(x, 0, gridSizeX - 1);
+        y = Mathf.Clamp(y, 0, gridSizeY - 1);
+
         // 해당 노드 반환 
         return grid[x, y];
     }
+    public void RegisterObjectNode(Vector3 portalPos, bool isWalkable)
+    {
+        Node targetNode = NodeFromWorldPoint(portalPos);
+        if (targetNode != null) targetNode.isWalkable = isWalkable;
+    }
 
+    private void HandleSpawnObject(Vector3 pos)
+    {
+        RegisterObjectNode(pos, true);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (grid != null)
+        {
+            foreach (Node n in grid)
+            {
+                Gizmos.color = (n.isWalkable) ? Color.white : Color.red; // 갈 수 있으면 흰색, 막혔으면 빨간색
+                Gizmos.DrawCube(n.worldPos, Vector3.one * (nodeDiameter - .1f));
+            }
+        }
+    }
+
+    public void ClearGrid()
+    {
+        if(grid != null)
+        {
+            for(int x = 0; x < gridSizeX; x++)
+            {
+                for(int y = 0; y < gridSizeY; y++)
+                {
+                    grid[x, y] = null;
+                }
+            }
+            grid = null;
+        }
+    }
 }

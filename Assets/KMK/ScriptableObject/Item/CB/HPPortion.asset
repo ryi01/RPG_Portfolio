@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd166bc9932dbf64dbe67ccba9695de3, type: 3}
   m_Name: HPPortion
   m_EditorClassIdentifier: Assembly-CSharp::HpConsumableItem
-  itemType: 1
+  itemType: 0
   itemId: 2003
   itemName: "\uCCB4\uB825\uBB3C\uC57D"
   itemDescription: "\uCCB4\uB825\uBB3C\uC57D \uC544\uC774\uD15C\uC785\uB2C8\uB2E4."
-  itemIconImage: {fileID: 21300042, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  itemIconImage: {fileID: -1844851830, guid: 81a09b10b55cc0b4ea8452c10e23c891, type: 3}
   itemPrice: 10
   itemCount: 1
   isEquip: 0

@@ -5,6 +5,7 @@ public class EnemyRoamingState : EnemyState
 {
     protected Vector3 targetPos = Vector3.positiveInfinity;
     protected float targetDis = Mathf.Infinity;
+    protected float roamDelay;
 
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -29,26 +30,33 @@ public class EnemyRoamingState : EnemyState
         }
         if (targetPos != Vector3.positiveInfinity)
         {
-            targetDis = Vector3.Distance(transform.position, targetPos);
-            if (targetDis < 1f || !navMeshAgent.hasPath)
+            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 1f)
             {
                 NavigationStop();
+                targetPos = Vector3.positiveInfinity;
+                targetDis = Mathf.Infinity;
                 controller.TransactionToState(EnumTypes.STATE.IDLE);
-                return;
             }
         }
-        else NewRandDestination();
+
     }
 
     protected virtual void NewRandDestination(bool retry = true)
     {
-        Vector3 randDir = Random.insideUnitSphere * fsmInfo.NextPoint;
-        randDir.y = 0;
-        targetPos = fsmInfo.WayPoint.position + randDir;
-        if (NavMesh.SamplePosition(targetPos, out NavMeshHit navCheck, 2.0f, NavMesh.AllAreas))
+        Vector2 rand = Random.insideUnitCircle * fsmInfo.NextPoint;
+        Vector3 randDir = new Vector3(rand.x, 0, rand.y);
+        Vector3 candidate = controller.StatComp.RoamCenter + randDir;
+
+
+        if (NavMesh.SamplePosition(candidate, out NavMeshHit navCheck, 2.0f, NavMesh.AllAreas))
         {
+            targetPos = navCheck.position;
             navMeshAgent.isStopped = false;
             navMeshAgent.SetDestination(navCheck.position);
+        }
+        else if(retry)
+        {
+            NewRandDestination(false);
         }
     }
 

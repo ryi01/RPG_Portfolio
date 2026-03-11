@@ -1,20 +1,23 @@
 using UnityEngine;
 
-public class Portal : MonoBehaviour
+public class Portal : InteractionObject
 {
     [SerializeField] private string targetSceneName = "GameScene";
     public Vector3 SpawnPlayerPos { get; set; }
+    private bool isChangeScene = false;
     public void ChangeTargetSceneName(string name)
     {
         targetSceneName = name;
     }
-    private void OnTriggerEnter(Collider other)
+
+    public override void Interact(PlayerController player)
     {
-        if(other.CompareTag("Player"))
-        {
-            string currentSceneName = gameObject.scene.name;
-            if (!currentSceneName.Contains("VillageScene")) currentSceneName = "VillageScene";
-            GameManager.Instance.ChangeScene(currentSceneName, targetSceneName);
-        }
+        if (isChangeScene) return;
+
+        string currentSceneName = gameObject.scene.name;
+
+        GameManager.Instance.ChangeScene(currentSceneName, targetSceneName);
+
+        isChangeScene = true;
     }
 }

@@ -18,7 +18,6 @@ public class EnemyStatUI : StatUI
             Destroy(gameObject);
             return;
         }
-        if(cam == null) cam = Camera.main;
         UpdateUIPos();
     }
     public void UpdateUIPos()

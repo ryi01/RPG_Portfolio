@@ -16,6 +16,11 @@ public class SceneLoadManager : MonoBehaviour
     {
         loadingCanvas.SetActive(true);
         loadingImage.fillAmount = 0;
+        var dungeon = GameManager.Instance.DungeonGenerator;
+        if (dungeon != null)
+        {
+            dungeon.ClearDungeon();
+        }
 
         AsyncOperation op = SceneManager.LoadSceneAsync(loadSceneName, LoadSceneMode.Additive);
         op.allowSceneActivation = false;
@@ -33,26 +38,40 @@ public class SceneLoadManager : MonoBehaviour
         op.allowSceneActivation = true;
         while(!op.isDone) yield return null;
 
-        yield return SceneManager.UnloadSceneAsync(unloadSceneName);
+        Scene nextScene = SceneManager.GetSceneByName(loadSceneName);
+        if(nextScene.IsValid() && nextScene.isLoaded)
+        {
+            SceneManager.SetActiveScene(nextScene);
+        }
 
-        Vector3 finalPos = Vector3.zero;
-        var dungeon = GameManager.Instance.DungeonGenerator;
-        dungeon.ClearDungeon();
-        if (loadSceneName == "GameScene")
+        Scene sceneToUnload = SceneManager.GetSceneByName(unloadSceneName);
+        if(sceneToUnload.IsValid()&& sceneToUnload.isLoaded)
+        {
+            yield return SceneManager.UnloadSceneAsync(sceneToUnload);
+        }
+        else
+        {
+            Debug.LogWarning($"언로드하려는 씬({unloadSceneName})이 이미 없거나 유효하지 않습니다.");
+        }
+
+        if (loadSceneName.Contains("GameScene") && dungeon != null)
         {
             dungeon.GenerateDungeon();
             // [중요] 던전 생성이 끝난 후, 물리 엔진이 한 프레임 업데이트되도록 대기
             yield return new WaitForEndOfFrame();
         }
-        finalPos = (loadSceneName.Contains("Game")) ? GameManager.Instance.DungeonGenerator.WorldStartPoint : new Vector3(0, 0.1f, 0);
-        GameObject.FindWithTag("Player").transform.position = finalPos;
+        Vector3 finalPos = (loadSceneName.Contains("Game")) ? dungeon.WorldStartPoint : new Vector3(0, 0.2f, 0);
+        yield return new WaitForEndOfFrame();
+        Debug.Log($"{finalPos}");
+        var player = GameObject.FindWithTag("Player");
+        if (player == null) Debug.LogError("Player not found!");
+        else player.transform.position = finalPos;
         var vcam = GameObject.FindFirstObjectByType<CinemachineCamera>();
         if (vcam != null)
         {
             vcam.PreviousStateIsValid = false;
             vcam.transform.position = finalPos + new Vector3(0, 10, -10);
         }
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(loadSceneName));
         yield return new WaitForSeconds(0.2f);
         loadingCanvas.SetActive(false);
     }

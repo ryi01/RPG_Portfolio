@@ -36,7 +36,7 @@ public class BossController : EnemyController
             }
         }
         base.Update();
-
+        
         float hpRatio = StatComp.CurrentHP / StatComp.MaxHP;
         if(hpRatio < 0.4f && !isPhaseTwo)
         {

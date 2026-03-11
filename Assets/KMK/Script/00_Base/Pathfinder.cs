@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Node
 {
-    public bool isNotWall;
+    public bool isWalkable;
     public Vector3 worldPos;
     public int gridX, gridY;
 
@@ -16,7 +16,7 @@ public class Node
 
     public Node(bool _w, Vector3 _wp, int _gX, int _gY)
     {
-        isNotWall = _w;
+        isWalkable = _w;
         worldPos = _wp;
         gridX = _gX;
         gridY = _gY;
@@ -64,7 +64,7 @@ public class Pathfinder : MonoBehaviour
             foreach(Node neighbor in GetNeighbors(currentNode))
             {
                 // 벽이거나 이미 탐색한 위치라면 패스
-                if (!neighbor.isNotWall || closeSet.Contains(neighbor)) continue;
+                if (!neighbor.isWalkable || closeSet.Contains(neighbor)) continue;
                 // 총 비용 계산 : F = G + H
                 // newMoveCostToNeighbor : 새로운 경로의 비용
                 int newMoveCostToNeighbor = currentNode.gCost + GetDistnaceNode(currentNode, neighbor);
@@ -134,10 +134,10 @@ public class Pathfinder : MonoBehaviour
                     Node neighbor = grid.GridNode[checkX, checkY];
                     if (Mathf.Abs(x) == 1 && Mathf.Abs(y) == 1)
                     {
-                        if (!grid.GridNode[node.gridX + x, node.gridY].isNotWall ||
-                            !grid.GridNode[node.gridX, node.gridY + y].isNotWall) continue;
+                        if (!grid.GridNode[node.gridX + x, node.gridY].isWalkable ||
+                            !grid.GridNode[node.gridX, node.gridY + y].isWalkable) continue;
                     }
-                    if(neighbor.isNotWall)
+                    if(neighbor.isWalkable)
                     {
                         neighbors.Add(neighbor);
                     }

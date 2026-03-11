@@ -6,7 +6,6 @@ public class EnemyStatComponent : CharacterStatComponent
     private EnemyStatInfo enemyStatInfo;
 
     private float currentGroggy;
-    private Transform[] wanderPoints;
     private float currentStunTime;
 
     public bool IsStun { get => currentStunTime > 0; }
@@ -19,6 +18,8 @@ public class EnemyStatComponent : CharacterStatComponent
     public float DeathDelayTime { get => enemyStatInfo.deathDelayTime; }
     public bool IsBoss { get => enemyStatInfo.isBoss; }
 
+    public Vector3 RoamCenter { get; set; }
+
     public float Exp { get => enemyStatInfo.exp; }
     public Transform WayPoint { get; set; }
     public float WanderNavCheckRadius { get => enemyStatInfo.wanderNavCheckRadius; }
@@ -30,7 +31,7 @@ public class EnemyStatComponent : CharacterStatComponent
     }
     private void Start()
     {
-        if(enemyStatInfo.isBoss) GameManager.Instance.OnBindEnemy(this, 4);
+        if (enemyStatInfo.isBoss) GameManager.Instance.BindBoss(this);
         else GameManager.Instance.OnBindEnemy(this);
     }
     private void ApplyStun(float duration)
@@ -68,6 +69,8 @@ public class EnemyStatComponent : CharacterStatComponent
 
     private void OnDestroy()
     {
-        GameManager.Instance.OnUnBindEnemy(this);        
+        if (!enemyStatInfo.isBoss)
+            GameManager.Instance.OnUnBindEnemy(this);
+        else GameManager.Instance.OnUnBindBoss(this);
     }
 }

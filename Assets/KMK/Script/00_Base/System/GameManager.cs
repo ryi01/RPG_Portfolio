@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public enum GameState { Pause, Playing, Town, Dungeon, BossPhase, Dialogue }
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState {  get; private set; }
 
     public Action<float> OnDieEnemy;
+    public Action<Vector3> OnSpawnPortal;
 
     private void Awake()
     {
@@ -64,6 +66,11 @@ public class GameManager : MonoBehaviour
     {
         UIManager.UnBindPlayerUI(player);
     }
+
+    public void BindBoss(CharacterStatComponent enemy)
+    {
+        EnemyUIManager.ShowBossHP(enemy);
+    }
     public void OnBindEnemy(CharacterStatComponent enemy, float y = 2.5f)
     {
         EnemyUIManager.CreateEnemyHPBar(enemy, y);
@@ -71,6 +78,10 @@ public class GameManager : MonoBehaviour
     public void OnUnBindEnemy(CharacterStatComponent enemy)
     {
         EnemyUIManager.UnBindEnemyUI(enemy);
+    }
+    public void OnUnBindBoss(CharacterStatComponent enemy)
+    {
+        EnemyUIManager.UnBindBoss(enemy);
     }
     #endregion
     #region 인벤토리
@@ -126,6 +137,7 @@ public class GameManager : MonoBehaviour
             if (go.TryGetComponent<Portal>(out Portal portal))
             {
                 portal.ChangeTargetSceneName(sceneName);
+                OnSpawnPortal?.Invoke(pos);
             }
         }
     }
