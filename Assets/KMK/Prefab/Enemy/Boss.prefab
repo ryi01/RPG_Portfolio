@@ -10769,7 +10769,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossTakeDownSkill
   bc: {fileID: 4252350844062464}
   attackTransform: {fileID: 7979156390852942068}
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 1462327970484030, guid: f01c1eba69de19e44b04d8d651aaac37, type: 3}
   skillInfo: {fileID: 11400000, guid: 247ee757198b95f4893b62547963a195, type: 2}
 --- !u!114 &9099805597834273846
 MonoBehaviour:

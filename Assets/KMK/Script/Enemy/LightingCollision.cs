@@ -8,6 +8,7 @@ public class LightingCollision : MonoBehaviour
         {
             if (statComp.CurrentHP <= 0) return;
             statComp.TakeDamage(10);
+            Destroy(gameObject, 0.5f);
         }
     }
 }
