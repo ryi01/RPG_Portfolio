@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class SceneLoadManager : MonoBehaviour
 {
     [SerializeField] private GameObject loadingCanvas;
+    [SerializeField] private GameObject player;
     [SerializeField] private Image loadingImage;
     private void Start()
     {
@@ -63,7 +64,6 @@ public class SceneLoadManager : MonoBehaviour
         Vector3 finalPos = (loadSceneName.Contains("Game")) ? dungeon.WorldStartPoint : new Vector3(0, 0.2f, 0);
         yield return new WaitForEndOfFrame();
         Debug.Log($"{finalPos}");
-        var player = GameObject.FindWithTag("Player");
         if (player == null) Debug.LogError("Player not found!");
         else player.transform.position = finalPos;
         var vcam = GameObject.FindFirstObjectByType<CinemachineCamera>();

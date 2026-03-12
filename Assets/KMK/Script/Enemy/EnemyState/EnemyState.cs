@@ -49,4 +49,14 @@ public abstract class EnemyState : MonoBehaviour
         
     }
 
+    protected virtual bool CheckDeath()
+    {
+        if(controller.StatComp.CurrentHP <= 0)
+        {
+            controller.TransactionToState(EnumTypes.STATE.DEATH);
+            return true;
+        }
+        return false;   
+    }
+
 }

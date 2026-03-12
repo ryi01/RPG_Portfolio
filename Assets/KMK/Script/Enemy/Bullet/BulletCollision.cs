@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BulletCollision : MonoBehaviour
 {
@@ -22,8 +23,9 @@ public class BulletCollision : MonoBehaviour
 
     protected virtual void Awake()
     {
-        mesh = GetComponentInChildren<MeshRenderer>();
+        mesh = GetComponentInChildren<MeshRenderer>(true);
         mesh.enabled = true;
+  
     }
     protected virtual void OnCollisionEnter(Collision collision)
     {
@@ -52,12 +54,14 @@ public class BulletCollision : MonoBehaviour
     }
     protected virtual void OnHitTarget(Collider other, Vector3 hitPoint)
     {
+        PlayEffect(hitPoint);
         mesh.enabled = false;
         DamageTarget(other);
         FinishBullet();
     }
     protected virtual void OnHitObstacle(Collider other, Vector3 hitPoint)
     {
+        PlayEffect(hitPoint);
         FinishBullet();
     }
 
@@ -78,5 +82,11 @@ public class BulletCollision : MonoBehaviour
         if (mesh != null) mesh.enabled = false;
         var movement = GetComponent<MonoBehaviour>().enabled = false;
         Destroy(gameObject, destroyTime);
+    }
+
+    protected virtual void PlayEffect(Vector3 pos)
+    {
+        if(bulletParticle != null)
+            Instantiate(bulletParticle, pos, Quaternion.identity);
     }
 }

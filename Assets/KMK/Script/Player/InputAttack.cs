@@ -8,7 +8,7 @@ public class InputAttack : MonoBehaviour
     private int hashAttack = Animator.StringToHash("Attack");
     private bool isBufferActive = false;
     private float bufferTimer = 0;
-    private const float BUFFER_DURATION = 0.5f;
+    private const float BUFFER_DURATION = 0.25f;
     [SerializeField] private float autoTargetRadius = 3.0f;
     [SerializeField] private LayerMask enemyLayer;
     private Vector3 mousePos;
@@ -31,7 +31,7 @@ public class InputAttack : MonoBehaviour
             // 공격중이라면, 일정 시간이 지났을때 트리거 투입
             if (stateInfo.IsTag("Attack"))
             {
-                if (normalizedTime > 0.4f)
+                if (normalizedTime > 0.18f)
                 {
                     ExecuteAttak();
                 }

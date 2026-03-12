@@ -1,10 +1,15 @@
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
+using System.Collections;
+using Unity.VisualScripting;
 
 
 public class PlayerStatComponent : CharacterStatComponent
 {
+    [SerializeField] private GameObject levelUpEffectPrefab;
+    [SerializeField] private GameObject hpEffectPrefab;
+    [SerializeField] private GameObject coinEffectPrefab;
     private PlayerStatInfo playerInfo;
     private float currentST;
     public float CurrentExp { get; private set; }
@@ -17,6 +22,8 @@ public class PlayerStatComponent : CharacterStatComponent
     public Action<float, float> OnChangeST;
     public Action<float, float> OnChangeExp;
     public Action<int> OncChangeLevel;
+
+    private Coroutine currentEffectCoroutine;
     protected override void Awake()
     {
         GameManager.Instance.OnBindPlayer(this);
@@ -33,6 +40,10 @@ public class PlayerStatComponent : CharacterStatComponent
         OnChangeExp?.Invoke(CurrentExp, playerInfo.exp[0]);
         GameManager.Instance.OnDieEnemy += TakeExp;
     }
+    private void OnEnable()
+    {
+        GameManager.Instance.GoldSystem.OnChangedGold += GetGold;
+    }
     private void Start()
     {
         OncChangeLevel?.Invoke(CurrentLevel);
@@ -41,12 +52,19 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         return Random.value < playerInfo.criticalChance;
     }
-
+    public void RecoveryHP(float recovery)
+    {
+        currentHP = Mathf.Clamp(currentHP + recovery, 0, statinfo.maxHP);
+        if (currentEffectCoroutine != null) StopCoroutine(currentEffectCoroutine);
+        currentEffectCoroutine = StartCoroutine(EffectCoroutine(hpEffectPrefab, 0.3f));
+        OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
+    }
     public void TakeExp(float amount)
     {
         CurrentExp += amount;
         float maxExp = playerInfo.exp[CurrentLevel - 1];
         OnChangeExp?.Invoke(CurrentExp, maxExp);
+       
         if(CurrentExp >= maxExp)
         {
             LevelUp(maxExp);
@@ -58,11 +76,25 @@ public class PlayerStatComponent : CharacterStatComponent
         CurrentExp -= usedExp;
         CurrentLevel++;
         OnChangeExp?.Invoke(CurrentExp, playerInfo.exp[CurrentLevel - 1]);
+        if (currentEffectCoroutine != null) StopCoroutine(currentEffectCoroutine);
+        currentEffectCoroutine = StartCoroutine(EffectCoroutine(levelUpEffectPrefab, 0.5f));
         OncChangeLevel?.Invoke(CurrentLevel);
+    }
+    private void GetGold(int gold)
+    {
+        if (currentEffectCoroutine != null) StopCoroutine(currentEffectCoroutine);
+        currentEffectCoroutine = StartCoroutine(EffectCoroutine(coinEffectPrefab, 0.5f));
     }
     private void OnDisable()
     {
         GameManager.Instance.OnUnBindPlayer(this);
         GameManager.Instance.OnDieEnemy -= TakeExp;
+        GameManager.Instance.GoldSystem.OnChangedGold -= GetGold;
+    }
+    private IEnumerator EffectCoroutine(GameObject effect, float duration)
+    {
+        effect.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        effect.SetActive(false);
     }
 }

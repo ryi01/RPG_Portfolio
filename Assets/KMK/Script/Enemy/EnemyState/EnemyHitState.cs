@@ -5,7 +5,6 @@ public class EnemyHitState : EnemyState
 {
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        if (state != EnumTypes.STATE.DEATH && controller.StatComp.CurrentHP <= 0) return;
         base.EnterState(state, data);
         float force = fsmInfo.NockbackForce;
         if (data != null)

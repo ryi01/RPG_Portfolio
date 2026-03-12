@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TreeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -73,25 +74,39 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(1))
         {
-            
             int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Obstacle"));
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f, layerMask))
+            RaycastHit[] hits = Physics.RaycastAll(ray, 100, layerMask).OrderBy(h => h.distance).ToArray();
+
+            InteractionObject foundInteraction = null;
+            RaycastHit groundHit = default;
+            bool isGround = false;
+            foreach(var hit in hits)
             {
-                InteractionObject interactable = hitInfo.collider.GetComponentInParent<InteractionObject>();
-                if (interactable != null)
+                Debug.Log($"{hit.transform.name}");
+                var interactable = hit.collider.GetComponentInParent<InteractionObject>();
+                if(interactable != null)
                 {
-                    targetInteractable = interactable;
-                    MovementComp.FindPath(interactable.GetTransform().position);
-                    return;
+                    foundInteraction = interactable;
+                    break;
                 }
+                else
+                {
+                    groundHit = hit;
+                    isGround = true;
+                }
+            }
+
+            if(foundInteraction != null)
+            {
+                targetInteractable = foundInteraction;
+                MovementComp.FindPath(foundInteraction.GetTransform().position);
+            }
+            else if(isGround)
+            {
                 targetInteractable = null;
-                Vector3 groundPos = hitInfo.point;
-                Debug.DrawLine(Camera.main.transform.position, groundPos, Color.green, 2f); // 2초간 표시
-                Debug.DrawRay(groundPos, Vector3.up * 2, Color.yellow, 2f);
-                groundPos.y = transform.position.y;
-                if(GameManager.Instance.CurrentState == GameState.Town) MovementComp.FindPath(groundPos, false);
-                else MovementComp.FindPath(groundPos);
+                if (GameManager.Instance.CurrentState == GameState.Town) MovementComp.FindPath(groundHit.point, false);
+                else MovementComp.FindPath(groundHit.point);
             }
         }
         HandleAttackInput();
@@ -267,7 +282,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
             dir.y = 0;
             Animator.SetTrigger("Damage");
             transform.forward = -dir;
-            MovementComp.Push(dir, force, 0.1f);
+            MovementComp.Push(dir, force, 0.08f);
         }
         else
         {

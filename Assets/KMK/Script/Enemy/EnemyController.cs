@@ -28,13 +28,11 @@ public class EnemyController : BaseController<EnemyStatComponent>
     protected virtual void Update()
     {
         currentState?.UpdateState();
-        StatComp?.UpdateStunStatus();
     }
     public override void Damage(float damage, float force, Transform attacker)
     {
-        if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH) return;
         base.Damage(damage, force, attacker);
-
+        if (currentState.StateType == EnumTypes.STATE.DEATH) return;
         if (StatComp.CurrentHP <= 0)
         {
             GameManager.Instance.SendEnemyKilled(StatComp.Exp);
@@ -45,13 +43,11 @@ public class EnemyController : BaseController<EnemyStatComponent>
         {
             return;
         }
-        bool isStun = StatComp.AddGroogy(damage);
-        if(isStun)
+        if(StatComp.AddGroogy(damage))
         {
             TransactionToState(EnumTypes.STATE.STUN);
-            return;
         }
-        TransactionToState(EnumTypes.STATE.DAMAGE, force);
+        else TransactionToState(EnumTypes.STATE.DAMAGE, force);
     }
     public void ForceStun(float duration)
     {
@@ -69,6 +65,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         if (currentState == nextState && data == null) return;
         if (state == EnumTypes.STATE.STUN && currentState == nextState) return;
         currentState?.ExitState();
+        currentState = null;
         currentState = nextState;
         currentState?.EnterState(state, data);
     }

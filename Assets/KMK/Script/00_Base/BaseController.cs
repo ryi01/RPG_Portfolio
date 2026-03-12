@@ -32,7 +32,6 @@ public abstract class BaseController<T> : BaseController where T : CharacterStat
     }
     public override void Damage(float damage, float force, Transform attacker)
     {
-        if (StatComp.CurrentHP <= 0) return;
         StatComp.TakeDamage(damage);
     }
 }

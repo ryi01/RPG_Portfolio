@@ -8,7 +8,6 @@ public class EnemyStatComponent : CharacterStatComponent
     private float currentGroggy;
     private float currentStunTime;
 
-    public bool IsStun { get => currentStunTime > 0; }
     public float NextPoint { get => enemyStatInfo.nextPointSelectDistance; }
     public float DetectRange { get => enemyStatInfo.detectRange; }
     public float WanderRange { get => enemyStatInfo.wanderRange; }
@@ -34,37 +33,16 @@ public class EnemyStatComponent : CharacterStatComponent
         if (enemyStatInfo.isBoss) GameManager.Instance.BindBoss(this);
         else GameManager.Instance.OnBindEnemy(this);
     }
-    private void ApplyStun(float duration)
+
+    public bool AddGroogy(float amount)
     {
-        currentStunTime = duration;
-    }
-    public void UpdateStunStatus()
-    {
-        if(IsStun)
-        {
-            currentStunTime -= Time.deltaTime;
-            if(currentStunTime <= 0)
-            {
-                currentStunTime = 0;
-            }
-        }
-    }
-    public bool AddGroogy(float amount, float duration = 3.0f)
-    {
-        if (IsStun) return false;
         currentGroggy += amount;
         if (currentGroggy >= MaxGroogy)
         {
             currentGroggy = 0;
-            ApplyStun(duration);
             return true;
         }
         return false;
-    }
-
-    public void ReganGroogy(float deltaTime)
-    {
-        currentGroggy = Mathf.Clamp(currentGroggy + enemyStatInfo.reganGroggy * Time.deltaTime, 0, enemyStatInfo.maxGroggy);
     }
 
     private void OnDestroy()

@@ -126,13 +126,17 @@ public class BossController : EnemyController
 
     public EnemySkillAttack GetAvailableSkill(float dis)
     {
+        List<EnemySkillAttack> available = new List<EnemySkillAttack>();
+
         foreach(var skill in skillList)
         {
-            if(dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
+            if (skill.SkillIndex == 2) continue;
+            if (dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
             {
-                return skill;
+                available.Add(skill);
             }
         }
-        return null;
+        if (available.Count == 0) return null;
+        return available[UnityEngine.Random.Range(0, available.Count)];
     }
 }

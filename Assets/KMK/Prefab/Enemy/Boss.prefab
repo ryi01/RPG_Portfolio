@@ -10691,11 +10691,10 @@ MonoBehaviour:
   - {fileID: 7935481086905424464}
   - {fileID: 9099805597834273846}
   wariningPrefab: {fileID: 348291441642749557, guid: 72ed267a04bf396419f3230844bb29f1, type: 3}
-  lightningPrefab: {fileID: 5627696518775099638, guid: 6839a8d6998e86d4282063ffdacb0c15, type: 3}
-  lightningInterval: 5
+  lightningPrefab: {fileID: 3621742557520858094, guid: ef6a3a73cbe7ac2498093c78c4348228, type: 3}
+  lightningInterval: 2
   strikeDelay: 2
   ax: {fileID: 2661349016130008077}
-  questData: {fileID: 0}
 --- !u!114 &4259703107291983310
 MonoBehaviour:
   m_ObjectHideFlags: 0

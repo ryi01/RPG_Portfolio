@@ -8,17 +8,18 @@ public class BombCollision : BulletCollision
     [SerializeField] protected Material flashMat;
     [SerializeField] protected int flashCount = 4;
     private Material originMat;
-    private MeshRenderer meshRenderer;
+
     private bool isExploding = false;
     protected override void Awake()
     {
         base.Awake();
         originMat = mesh.material;
+        Debug.Log($"{originMat}");
     }
 
     protected override void OnHitTarget(Collider other, Vector3 hitPoint)
     {
-        OnHitObstacle(other, hitPoint);
+
     }
     protected override void OnHitObstacle(Collider other, Vector3 hitPoint)
     {
@@ -37,9 +38,10 @@ public class BombCollision : BulletCollision
         float interval = destroyTime / (flashCount * 2);
         for(int i = 0; i < flashCount; i++)
         {
-            if (meshRenderer != null) meshRenderer.material = flashMat;
+
+            if (mesh != null) mesh.material = flashMat;
             yield return new WaitForSeconds(interval);
-            if (meshRenderer != null) meshRenderer.material = originMat;
+            if (mesh != null) mesh.material = originMat;
             yield return new WaitForSeconds(interval);
 
         }

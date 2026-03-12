@@ -61,11 +61,7 @@ public class CharacterStatComponent : MonoBehaviour
         speedMutlfile = value;
         return MoveSpeed;
     }
-    public void RecoveryHP(float recovery)
-    {
-        currentHP = Mathf.Clamp(currentHP + recovery, 0, statinfo.maxHP);
-        OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
-    }
+
     public virtual void TakeDamage(float damage)
     {
         currentHP -= damage;
