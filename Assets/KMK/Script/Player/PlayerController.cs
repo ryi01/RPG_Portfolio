@@ -29,17 +29,20 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private ItemBox openBox;
     [SerializeField] private float interactionDistance = 3f;
+    [SerializeField] private TrailRenderer trail;
 
     private InteractionObject targetInteractable;
     protected override void Awake()
     {
         base.Awake();
+        
         MovementComp = GetComponent<InputMovement>();
         AttackComp = GetComponent<InputAttack>();
         SkillComp = GetComponent<InputSkill>();
         PickUpComp = GetComponent<InputPickUp>();
         CameraShakeController = GetComponentInChildren<CameraShakeController>();
         StatComp.OncChangeLevel += SkillComp.OnLockSkill;
+        trail.emitting = false;
     }
     // Update is called once per frame
     void Update()
@@ -83,7 +86,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
             bool isGround = false;
             foreach(var hit in hits)
             {
-                Debug.Log($"{hit.transform.name}");
                 var interactable = hit.collider.GetComponentInParent<InteractionObject>();
                 if(interactable != null)
                 {
@@ -168,7 +170,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
             Animator.SetFloat("Move", 2);
         }
         else
-        {
+        { 
             // 3. 이동 중일 때만 업데이트 (중복 호출 제거됨)
             if (MovementComp.IsMoving)
             {
@@ -191,6 +193,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
         if (Input.GetMouseButtonDown(0))
         {
+            trail.emitting = true;
             MovementComp.StopMove();
             AttackComp.TriggerAttack(MovementComp.GetMouseWorldPos());
             UpdateAttackDir();
@@ -231,6 +234,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
                 InputSkill.SKILLS select = (InputSkill.SKILLS)i;
                 if (!SkillComp.CurrentSkillActive(select))
                 {
+                    if(select < InputSkill.SKILLS.SKILL3) trail.emitting = true;
                     ExcuteSkillLogic(select);
                 }
                 break;
@@ -306,5 +310,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
         StatComp.OncChangeLevel -= SkillComp.OnLockSkill;
     }
 
-
+    public void TrailOff()
+    {
+        trail.emitting = false;
+    }
 }

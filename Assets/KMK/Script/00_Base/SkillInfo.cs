@@ -17,4 +17,9 @@ public class SkillInfo: ScriptableObject
     public string animTrigger;
     [Header("Level")]
     public int openLevel;
+    [Header("AI")]
+    public bool needLookAtTarget = true;
+    public bool needDash = false;
+    public int nextSkillIndex = 1;
+    public bool chainNextSkill = false;
 }

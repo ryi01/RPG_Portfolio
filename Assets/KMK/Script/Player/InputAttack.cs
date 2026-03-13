@@ -43,7 +43,6 @@ public class InputAttack : MonoBehaviour
             }
             if (bufferTimer <= 0) isBufferActive = false;
         }
-        
     }
     private void ExecuteAttak()
     {

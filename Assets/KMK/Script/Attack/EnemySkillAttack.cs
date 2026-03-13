@@ -9,6 +9,10 @@ public class EnemySkillAttack : EnemyMeleeAttack
     public bool IsSkill { get => isSkill; set => isSkill = value; }
     public bool IsReady => Time.time - lastUseTime >= skillInfo.coolTime;
     private float lastUseTime = -100f;
+    public bool NeedLookAtTarget { get => skillInfo.needLookAtTarget; }
+    public bool NeedDash { get => skillInfo.needDash; }
+    public int NextSkillIndex { get => skillInfo.nextSkillIndex; }
+    public bool ChainNextSkill { get => skillInfo.chainNextSkill; }   
     public float WaitSkillTime { get => skillInfo.coolTime; }
     public float AttackMinRange { get => skillInfo.attackMinRange; }
     public float AttackMaxRange { get => skillInfo.attackMaxRange; }

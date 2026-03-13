@@ -2,29 +2,27 @@ using UnityEngine;
 
 public class BossIdleState : EnemyIdleState
 {
+    private float nextAttackTime = 0f;
+    private const float ATTACK_COOLDOWN = 1;
+
+    public override void EnterState(EnumTypes.STATE state, object data = null)
+    {
+        base.EnterState(state, data);
+        nextAttackTime = Time.time + ATTACK_COOLDOWN;
+    }
     public override void UpdateState()
     {
-        BossController boss = controller as BossController;
+        if (Time.time < nextAttackTime) return;
+
         float dis = controller.GetPlayerDis();
-
-        EnemySkillAttack dash = boss.SkillList[2];
-        if (dis >= dash.AttackMinRange && dis <= dash.AttackMaxRange)
-        {
-            boss.ExccuteAttack(dash, navMeshAgent);
-            return;
-        }
-
-        if (boss.CoolTimeAttack) return;
-
-        EnemySkillAttack availableSkill = boss.GetAvailableSkill(dis);
-        if (availableSkill != null)
-        {
-            boss.ExccuteAttack(availableSkill, navMeshAgent);
-            return;
-        }
         if (dis <= fsmInfo.DetectRange)
         {
             controller.TransactionToState(EnumTypes.STATE.DETECT);
+            return;
+        }
+        if(dis <= fsmInfo.AttackRange)
+        {
+            controller.TransactionToState(EnumTypes.STATE.ATTACK);
             return;
         }
 

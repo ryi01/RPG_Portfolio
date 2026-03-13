@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f0472b71db7864dae53216e904dd1c, type: 3}
   m_Name: BossSkillInfo3
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  attackMultifle: 0
-  attackMinRange: 5
+  attackMultifle: 0.8
+  attackMinRange: 8
   attackMaxRange: 10
   attackRadius: 4
   hitAngle: 360
@@ -22,3 +22,7 @@ MonoBehaviour:
   coolTime: 10
   animTrigger: 2
   openLevel: 0
+  needLookAtTarget: 0
+  needDash: 1
+  nextSkillIndex: 1
+  chainNextSkill: 1

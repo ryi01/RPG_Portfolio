@@ -11,7 +11,21 @@ public class MeleeAttack : CommonAttack
     {
         RangeAngleTargetAttack();
     }
+    public virtual void PlayEffect()
+    {
+        if(hitEffectPrefab != null)
+        {
+            hitEffectPrefab.SetActive(true);
+        }
+    }
 
+    public virtual void StopPlayEffect()
+    {
+        if (hitEffectPrefab != null)
+        {
+            hitEffectPrefab.SetActive(false);
+        }
+    }
     public virtual void RangeAngleTargetAttack(SkillInfo data = null)
     {
         float radius = CurrentRadius;

@@ -139,4 +139,13 @@ public class BossController : EnemyController
         if (available.Count == 0) return null;
         return available[UnityEngine.Random.Range(0, available.Count)];
     }
+
+    public override void TransactionToState(EnumTypes.STATE state, object data = null)
+    {
+        if(currentState is BossAttackState && state == EnumTypes.STATE.ATTACK)
+        {
+            return;
+        }
+        base.TransactionToState(state, data);
+    }
 }

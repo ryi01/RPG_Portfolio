@@ -27,7 +27,7 @@ MonoBehaviour:
   nockbackForce: 8.5
   nockbackTime: 0.12
   detectRange: 20
-  attackRange: 2
+  attackRange: 10
   wanderRange: 1
   returnRange: 3
   maxGroggy: 9
