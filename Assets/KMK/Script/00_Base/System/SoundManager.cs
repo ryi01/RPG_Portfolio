@@ -47,6 +47,7 @@ public class SoundManager : MonoBehaviour
     {
         s_BGM.value = 100;
         s_SFX.value = 100;
+        PlayBGM(EBGMType.MAIN_MENU);
     }
     public void PlayBGM(EBGMType type)
     {

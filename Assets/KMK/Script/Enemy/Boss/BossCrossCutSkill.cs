@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class BossCrossCutSkill : EnemySkillAttack
 {
-    protected override void Awake()
+    private void Start()
     {
-        base.Awake();
         if (TryGetComponent<TrailRenderer>(out TrailRenderer trail))
         {
             trail.emitting = false;

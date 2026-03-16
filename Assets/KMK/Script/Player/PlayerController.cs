@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TreeEditor;
@@ -315,5 +316,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public void TrailOff()
     {
         trail.emitting = false;
+    }
+    public void SlowTime()
+    {
+        StartCoroutine(SlowMoment());
+    }
+    private IEnumerator SlowMoment()
+    {
+        Time.timeScale = 0.2f;
+        yield return new WaitForSecondsRealtime(0.08f);
+        Time.timeScale = 1f;
+
     }
 }

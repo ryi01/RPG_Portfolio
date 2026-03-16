@@ -171,16 +171,19 @@ public class InputMovement : MonoBehaviour
     private Coroutine forceCoroutine;
     public void Push(Vector3 dir, float distance, float duration)
     {
-        if(forceCoroutine != null) StopCoroutine(forceCoroutine); 
+        if(forceCoroutine != null) StopCoroutine(forceCoroutine);
+        dir = dir.normalized;
+        pc.CameraShakeController.ShakeCam(0.1f, 0.2f);
+        pc.SlowTime();
         forceCoroutine = StartCoroutine(OnForce(dir, distance, duration));
     }
     IEnumerator OnForce(Vector3 dir, float distance, float duration)
     {
         float elapsed = 0;
         Vector3 startPos = transform.position;
-        if(Physics.Raycast(startPos, dir, out RaycastHit hit, distance, LayerMask.GetMask("Wall")))
+        if (Physics.Raycast(startPos, dir, out RaycastHit hit, distance, LayerMask.GetMask("Wall")))
         {
-            distance = hit.distance - 0.2f;
+            distance = Mathf.Max(hit.distance - 0.2f, 0);
         }
         Vector3 targetPos = startPos + (dir * distance);
         while (elapsed < duration)

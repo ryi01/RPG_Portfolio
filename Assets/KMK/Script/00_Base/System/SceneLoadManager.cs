@@ -59,13 +59,30 @@ public class SceneLoadManager : MonoBehaviour
         {
             dungeon.GenerateDungeon();
             // [중요] 던전 생성이 끝난 후, 물리 엔진이 한 프레임 업데이트되도록 대기
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
         }
-        Vector3 finalPos = (loadSceneName.Contains("Game")) ? dungeon.WorldStartPoint : new Vector3(0, 0.2f, 0);
-        yield return new WaitForEndOfFrame();
+        Vector3 finalPos = dungeon.WorldStartPoint + Vector3.up * 5f;
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(finalPos, Vector3.down, out hit, 20f))
+        {
+            finalPos = hit.point + Vector3.up * 0.1f;
+        }
+        yield return new WaitForFixedUpdate();
         Debug.Log($"{finalPos}");
-        if (player == null) Debug.LogError("Player not found!");
-        else player.transform.position = finalPos;
+        var controller = player.GetComponent<CharacterController>();
+        if (controller != null)
+        {
+            controller.enabled = false;
+            player.transform.position = finalPos;
+            controller.enabled = true;
+        }
+        else
+        {
+            player.transform.position = finalPos;
+        }
         var vcam = GameObject.FindFirstObjectByType<CinemachineCamera>();
         if (vcam != null)
         {
@@ -74,5 +91,6 @@ public class SceneLoadManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.2f);
         loadingCanvas.SetActive(false);
+        GameManager.Instance.SoundManager.PlayBGM(EBGMType.FIELD_THEME);
     }
 }

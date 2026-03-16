@@ -22,3 +22,7 @@ MonoBehaviour:
   coolTime: 30
   animTrigger: Skill5
   openLevel: 1
+  needLookAtTarget: 1
+  needDash: 0
+  nextSkillIndex: 1
+  chainNextSkill: 0

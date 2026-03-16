@@ -11402,7 +11402,7 @@ MonoBehaviour:
   bc: {fileID: 1738482446}
   attackTransform: {fileID: 1259806126}
   hitEffectPrefab: {fileID: 1545806602296978, guid: 9e4577abe56a95f4a91d29a0473cd30c, type: 3}
-  cameraGain: {x: 5, y: 0.4}
+  cameraGain: {x: 8, y: 0.8}
   skillInfo: {fileID: 11400000, guid: 81bff43e24fc9d846a5a8b61cc0f5aef, type: 2}
   skillBtnSprite: {fileID: 21300000, guid: f29ff94e336e7464bb7d3fc81c028d14, type: 3}
   skillTimer: {fileID: 876958282}
@@ -11422,7 +11422,7 @@ MonoBehaviour:
   bc: {fileID: 1738482446}
   attackTransform: {fileID: 1259806126}
   hitEffectPrefab: {fileID: 1399491476850481373, guid: 7e691a0229efacd4cba2922df3888456, type: 3}
-  cameraGain: {x: 2, y: 0.2}
+  cameraGain: {x: 5, y: 0.5}
   skillInfo: {fileID: 11400000, guid: ae48bf93bba49b6458257941ee2e3d83, type: 2}
   skillBtnSprite: {fileID: 21300000, guid: 95e9e49462a21b04b8830bdfa25b1487, type: 3}
   skillTimer: {fileID: 242635483}
@@ -11441,7 +11441,7 @@ MonoBehaviour:
   bc: {fileID: 1738482446}
   attackTransform: {fileID: 1259806126}
   hitEffectPrefab: {fileID: 7667823990915236268, guid: a21556a0588f335498239bb9c4d295a6, type: 3}
-  cameraGain: {x: 3, y: 0.3}
+  cameraGain: {x: 5, y: 0.5}
   skillInfo: {fileID: 11400000, guid: b795d3813860815449273bc7f0c7ed24, type: 2}
   skillBtnSprite: {fileID: 21300000, guid: 458b43d370e3fbb4589a5ee7acd29cbf, type: 3}
   skillTimer: {fileID: 327687838}
@@ -11461,7 +11461,7 @@ MonoBehaviour:
   bc: {fileID: 1738482446}
   attackTransform: {fileID: 1259806126}
   hitEffectPrefab: {fileID: 100018, guid: a40b64bf23366dc42a892af2c6ff6140, type: 3}
-  cameraGain: {x: 2.5, y: 0.3}
+  cameraGain: {x: 3, y: 0.8}
   skillInfo: {fileID: 11400000, guid: 965e40b456270444cb8f4620a9370721, type: 2}
   skillBtnSprite: {fileID: 21300000, guid: 97d2c53f1ba2e204badcadf20a74f908, type: 3}
   skillTimer: {fileID: 965554910}
@@ -11480,7 +11480,7 @@ MonoBehaviour:
   bc: {fileID: 1738482446}
   attackTransform: {fileID: 1259806126}
   hitEffectPrefab: {fileID: 1845240806346120, guid: b395d5d6eb4b4b846acc021ee036b744, type: 3}
-  cameraGain: {x: 1.5, y: 0.2}
+  cameraGain: {x: 2, y: 0.8}
   skillInfo: {fileID: 11400000, guid: 1c9ed026b0f38b74588eb5ef73897445, type: 2}
   skillBtnSprite: {fileID: 21300000, guid: 9e8cb485a2b377b42a1f4d73c806e3e7, type: 3}
   skillTimer: {fileID: 1219785082}
@@ -11534,7 +11534,7 @@ MonoBehaviour:
   bc: {fileID: 1738482446}
   attackTransform: {fileID: 1259806126}
   hitEffectPrefab: {fileID: 1545806602296978, guid: 9e4577abe56a95f4a91d29a0473cd30c, type: 3}
-  cameraGain: {x: 0.5, y: 0.3}
+  cameraGain: {x: 1, y: 0.5}
 --- !u!114 &1738482443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12838,7 +12838,13 @@ MonoBehaviour:
   bgmSource: {fileID: 1855984216}
   sfxSource: {fileID: 1855984215}
   soundList: []
-  bgmList: []
+  bgmList:
+  - type: 0
+    clip: {fileID: 8300000, guid: 4524f6cc20daa624d8013966ea233aee, type: 3}
+  - type: 1
+    clip: {fileID: 8300000, guid: cabc8209bcf62404bbfb69f3668db1c3, type: 3}
+  - type: 2
+    clip: {fileID: 8300000, guid: 37e03668d1997584eb372937c30eaab2, type: 3}
 --- !u!82 &1855984215
 AudioSource:
   m_ObjectHideFlags: 0
