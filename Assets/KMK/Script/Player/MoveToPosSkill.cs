@@ -29,6 +29,8 @@ public class MoveToPosSkill : PlayerSkillAttack
     IEnumerator ExcuteEvade(Vector3 dir, float dist)
     {
         pc.IsBlink = true;
+        pc.MovementComp.StopMove();
+        pc.MovementComp.LookAtInstant(dir);
         StartSkill();
         pc.MovementComp.LookAtInstant(dir);
         pc.MovementComp.Push(dir, dist, skillInfo.attackTime);

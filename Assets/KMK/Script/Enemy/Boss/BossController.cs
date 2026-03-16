@@ -41,6 +41,12 @@ public class BossController : EnemyController
         if(hpRatio < 0.4f && !isPhaseTwo)
         {
             isPhaseTwo = true;
+            if(TryGetComponent<NavMeshAgent>(out UnityEngine.AI.NavMeshAgent ai))
+            {
+                ai.ResetPath();
+                ai.velocity = Vector3.zero;
+                ai.isStopped = true;
+            }
             StatComp.SetSpeedMultifle(2);
             TransactionToState(EnumTypes.STATE.PATTERN_PHASE);
             OnOffAX(false);
@@ -140,12 +146,4 @@ public class BossController : EnemyController
         return available[UnityEngine.Random.Range(0, available.Count)];
     }
 
-    public override void TransactionToState(EnumTypes.STATE state, object data = null)
-    {
-        if(currentState is BossAttackState && state == EnumTypes.STATE.ATTACK)
-        {
-            return;
-        }
-        base.TransactionToState(state, data);
-    }
 }

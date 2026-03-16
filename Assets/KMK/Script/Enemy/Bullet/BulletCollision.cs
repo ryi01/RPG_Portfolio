@@ -24,8 +24,8 @@ public class BulletCollision : MonoBehaviour
     protected virtual void Awake()
     {
         mesh = GetComponentInChildren<MeshRenderer>(true);
-        mesh.enabled = true;
-  
+        if(mesh != null) mesh.enabled = true;
+
     }
     protected virtual void OnCollisionEnter(Collision collision)
     {
@@ -55,7 +55,7 @@ public class BulletCollision : MonoBehaviour
     protected virtual void OnHitTarget(Collider other, Vector3 hitPoint)
     {
         PlayEffect(hitPoint);
-        mesh.enabled = false;
+        if(mesh != null) mesh.enabled = false;
         DamageTarget(other);
         FinishBullet();
     }
@@ -79,6 +79,13 @@ public class BulletCollision : MonoBehaviour
 
     protected virtual void FinishBullet()
     {
+        ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
+        foreach(var ps in particles)
+        {
+            var emission = ps.emission;
+            Destroy(ps.gameObject);
+        }
+
         if (mesh != null) mesh.enabled = false;
         var movement = GetComponent<MonoBehaviour>().enabled = false;
         Destroy(gameObject, destroyTime);

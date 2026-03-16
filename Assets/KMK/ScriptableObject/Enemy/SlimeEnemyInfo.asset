@@ -18,8 +18,8 @@ MonoBehaviour:
   passLayer:
     serializedVersion: 2
     m_Bits: 512
-  maxHP: 10
-  attack: 2
+  maxHP: 5
+  attack: 1
   attackRadius: 1.5
   hitAngle: 60
   moveSpeed: 1.5

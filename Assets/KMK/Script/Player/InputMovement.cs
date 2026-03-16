@@ -23,11 +23,13 @@ public class InputMovement : MonoBehaviour
     [SerializeField] private float grav = 20;
     private float vSpeed = 0;
     #endregion
-    
+    [SerializeField] private LineRenderer pathVisualizerPrefab;
+    private LineRenderer pathLine;
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
         pc = GetComponent<PlayerController>();
+        pathLine = Instantiate(pathVisualizerPrefab, transform);
         targetPos = transform.position;
     }
     public void FindPath(Vector3 pos, bool isGrid = true)
@@ -42,6 +44,8 @@ public class InputMovement : MonoBehaviour
             {
                 targetIndex = 0;
                 isMoving = true;
+                pathLine.enabled = true;
+                DrawPath();
                 targetPos = currentPath[targetIndex].worldPos;
             }
             else isMoving = false;
@@ -55,16 +59,20 @@ public class InputMovement : MonoBehaviour
     // 강제 이동 중단 => 키입력, 피격, 대화시작 등
     public void StopMove()
     {
+        HidePathLine();
         isMoving = false;
         pc.Animator.SetFloat("Move", 0);
     }
     public void UpdateClickMove()
     {
         if (isMoving == false) return;
+        if (pathLine != null && pathLine.enabled)
+        {
+            pathLine.SetPosition(0, transform.position + Vector3.up * 0.1f);
+        }
         Vector3 dir = targetPos - transform.position;
         dir.y = 0;
-        Debug.DrawLine(transform.position, targetPos, Color.red); // 플레이어에서 목표까지 선 그리기
-        Debug.DrawRay(targetPos, Vector3.up * 2, Color.green);    // 목표 지점에 기둥 세우기
+       
         if (dir.magnitude < 0.3f)
         {
             if(GameManager.Instance.IsPathFindingEnable)
@@ -73,6 +81,7 @@ public class InputMovement : MonoBehaviour
                 if (currentPath != null && targetIndex < currentPath.Count)
                 {
                     targetPos = currentPath[targetIndex].worldPos;
+                    DrawPath();
                 }
                 else
                 {
@@ -109,6 +118,7 @@ public class InputMovement : MonoBehaviour
     // 목적지 도착 여부
     private void CompleteArrive()
     {
+        HidePathLine();
         isMoving = false;
         pc.Animator.SetFloat("Move", 0);
         OnArrival?.Invoke();
@@ -179,6 +189,33 @@ public class InputMovement : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / duration);
             transform.position = Vector3.Lerp(startPos, targetPos, t);
             yield return null;
+        }
+    }
+    private void DrawPath()
+    {
+        if (currentPath == null || currentPath.Count == 0)
+        {
+            pathLine.positionCount = 0;
+            return;
+        }
+
+        int remainNodes = currentPath.Count - targetIndex;
+        pathLine.positionCount = remainNodes + 1;
+        Vector3 startPos = transform.position + (transform.forward * 0.2f) + (Vector3.up * 0.25f);
+        pathLine.SetPosition(0, startPos);
+
+        for(int i = 0; i < remainNodes; i++)
+        {
+            pathLine.SetPosition(i + 1, currentPath[targetIndex + i].worldPos + Vector3.up * 0.25f);
+        }
+    }
+
+    public void HidePathLine()
+    {
+        if(pathLine != null)
+        {
+            pathLine.positionCount = 0;
+            pathLine.enabled = false;
         }
     }
 }

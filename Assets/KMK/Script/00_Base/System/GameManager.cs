@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GoldSystem goldSystem;
     [SerializeField] private DialogueSystem dialogueSystem;
     [SerializeField] private DungeonGenerator dungeonGenerator;
+    [SerializeField] private SoundManager soundManager;
     [SerializeField] private SceneLoadManager sceneLoadManager;
     [SerializeField] private QuestManager questManager;
     [SerializeField] private EnemyUIManager enemyUIManager;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
     public QuestManager QuestManager => questManager;
 
     public DialogueSystem DialogueSystem => dialogueSystem;
+    public SoundManager SoundManager => soundManager;
     public EnemyUIManager EnemyUIManager => enemyUIManager;
 
     public CameraEnviroment CameraEnviroment => cameraEnviroment;

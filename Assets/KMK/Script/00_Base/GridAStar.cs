@@ -1,3 +1,4 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 // A* 알고리즘
 // Node <-> Node 거리를 계산해야함 => 중앙 좌표를 통해 구할 수 있음
@@ -91,7 +92,6 @@ public class GridAStar : MonoBehaviour
 
         x = Mathf.Clamp(x, 0, gridSizeX - 1);
         y = Mathf.Clamp(y, 0, gridSizeY - 1);
-
         // 해당 노드 반환 
         return grid[x, y];
     }
@@ -106,17 +106,6 @@ public class GridAStar : MonoBehaviour
         RegisterObjectNode(pos, true);
     }
 
-    private void OnDrawGizmos()
-    {
-        if (grid != null)
-        {
-            foreach (Node n in grid)
-            {
-                Gizmos.color = (n.isWalkable) ? Color.white : Color.red; // 갈 수 있으면 흰색, 막혔으면 빨간색
-                Gizmos.DrawCube(n.worldPos, Vector3.one * (nodeDiameter - .1f));
-            }
-        }
-    }
 
     public void ClearGrid()
     {
@@ -130,6 +119,16 @@ public class GridAStar : MonoBehaviour
                 }
             }
             grid = null;
+        }
+    }
+
+    public void ResetNode()
+    {
+        foreach(Node node in GridNode)
+        {
+            node.hCost = 0;
+            node.gCost = 0;
+            node.parent = null;
         }
     }
 }

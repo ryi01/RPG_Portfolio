@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Node
@@ -33,6 +34,7 @@ public class Pathfinder : MonoBehaviour
 
     public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
     {
+        grid.ResetNode();
         // 시작점과 타겟 지점의 index를 구함
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
@@ -58,7 +60,11 @@ public class Pathfinder : MonoBehaviour
             closeSet.Add(currentNode);
 
             // 타겟지점에 도달하면
-            if (currentNode == targetNode) return RetracePath(startNode, targetNode);
+            if (currentNode == targetNode)
+            {
+                List<Node> path = RetracePath(startNode, targetNode);
+                return path;
+            }
 
             // 주변 이웃 노드 탐색 => 8방향
             foreach(Node neighbor in GetNeighbors(currentNode))
@@ -81,6 +87,7 @@ public class Pathfinder : MonoBehaviour
                 }
             }
         }
+
         return null;
     }
 
@@ -146,4 +153,6 @@ public class Pathfinder : MonoBehaviour
         }
         return neighbors;
     }
+
+
 }

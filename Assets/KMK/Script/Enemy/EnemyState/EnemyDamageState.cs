@@ -17,14 +17,17 @@ public class EnemyDamageState : EnemyHitState
 
     public override void UpdateState()
     {
-        if (fsmInfo.IsHit) return;
-        if(controller.GetPlayerDis() <= fsmInfo.AttackRadius)
+        if (fsmInfo.IsHit || IsPlayingHit()) return;
+        if(controller.GetPlayerDis() <= fsmInfo.AttackRange)
         {
             controller.TransactionToState(EnumTypes.STATE.ATTACK);
-            return;
         }
-        controller.TransactionToState(EnumTypes.STATE.DETECT);
+        else controller.TransactionToState(EnumTypes.STATE.DETECT);
     }
-
-
+    private bool IsPlayingHit()
+    {
+        AnimatorStateInfo stateInfo = Anim.GetCurrentAnimatorStateInfo(0);
+        // 상태 이름이나 태그로 피격 애니메이션 확인
+        return stateInfo.IsTag("Hit");
+    }
 }

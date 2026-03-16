@@ -165,7 +165,7 @@ public class DungeonGenerator : MonoBehaviour
         CreateMap();
 
         CreateWalls();
-        CreateDoors();
+        // CreateDoors();
         CreateBossRoomTrigger();
 
         SpawnDungeonObjects();
@@ -752,7 +752,7 @@ public class DungeonGenerator : MonoBehaviour
             if (p == EndPoint) continue;
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
-            Debug.Log($"Spawn Room {cx}, {cy}");
+
             Vector2Int roomKey = new Vector2Int(cx, cy);
             if (!wayPoints.TryGetValue(roomKey, out Transform wayPoint)) 
             {

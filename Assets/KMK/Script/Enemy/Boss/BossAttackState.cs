@@ -11,12 +11,16 @@ public class BossAttackState : EnemyAttackState
 {
     private enum AttackPhase { Select, Prepare, Execute, Recover}
     private AttackPhase phase;
+    private Material chargingInstance;
     public Vector3 DashDir { get; set; }
     private EnemySkillAttack currentSkill;
     private bool isDashStart = false;
     private bool isChaniedSkill = false;
     private bool isSetAnim = false;
     [SerializeField] private SkinnedMeshRenderer[] bossRenderer;
+    [SerializeField] private Material chargingMaterial;
+    private List<GameObject> activeGhost = new List<GameObject>();
+    private Dictionary<SkinnedMeshRenderer, Material> originalMats = new Dictionary<SkinnedMeshRenderer, Material>();
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         if (phase == AttackPhase.Execute) return;
@@ -29,6 +33,19 @@ public class BossAttackState : EnemyAttackState
             currentSkill = skillData;
             phase = AttackPhase.Prepare; // 선택 건너뛰고 바로 준비로
         }
+        if (currentSkill != null && currentSkill.NeedDash && bossRenderer != null)
+        {
+            originalMats.Clear();
+            foreach (var skin in bossRenderer)
+            {
+                originalMats[skin] = skin.sharedMaterial;
+            }
+        }
+        if (chargingMaterial != null)
+        {
+            chargingInstance = new Material(chargingMaterial);
+        }
+
     }
     public override void UpdateState()
     {
@@ -135,16 +152,60 @@ public class BossAttackState : EnemyAttackState
     public override void ExitState()
     {
         StopAllCoroutines();
+        foreach(var ghost in activeGhost)
+        {
+            if (ghost != null) Destroy(ghost);
+        }
+        activeGhost.Clear();
         base.ExitState();
         navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1);
         navMeshAgent.acceleration = 8f;
+        foreach (var pair in originalMats)
+        {
+            pair.Key.sharedMaterial = pair.Value;
+        }
+        originalMats.Clear();
     }
 
     IEnumerator WaitDash()
     {
         NavigationStop();
+        LookAtTarget();
+        float chargeDuration = 2;
+        float elapsed = 0;
+        List<GameObject> outlineObj = new List<GameObject>();
+        List<Material> createMats = new List<Material>();
+        foreach(var skin in bossRenderer)
+        {
+            GameObject outline = new GameObject("ChargingOutline");
+            outline.transform.SetParent(skin.transform, false);
+            outline.transform.localScale = Vector3.one * 1.02f;
+            MeshRenderer mr = outline.AddComponent<MeshRenderer>();
+            MeshFilter mf = outline.AddComponent<MeshFilter>();
 
-        yield return new WaitForSeconds(2);
+            Mesh baked = new Mesh();
+            skin.BakeMesh(baked);
+            mf.mesh = baked;
+            Material mat = new Material(chargingMaterial);
+            mr.material = mat;
+            createMats.Add(mat);
+            outlineObj.Add(outline);
+        }
+        while(elapsed < chargeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float ratio = elapsed / chargeDuration;
+
+            foreach (var obj in outlineObj)
+            {
+                Color effectColor = Color.Lerp(Color.red, Color.yellow, ratio);
+                obj.GetComponent<MeshRenderer>().material.SetColor("_GlowColor", effectColor);
+            }
+            yield return null;
+        }
+
+        foreach (var obj in outlineObj) Destroy(obj);
+        foreach (var mat in createMats) Destroy(mat);
 
         float trailTimer = 0f;
         float trailInterval = 0.05f;
@@ -154,7 +215,7 @@ public class BossAttackState : EnemyAttackState
         // 멈춘걸 푼 다음 속도 조절
         navMeshAgent.isStopped = false;
         
-        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(4);
+        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(6);
         navMeshAgent.acceleration = 1000f;
         // 최종 위치 결정
         Vector3 targetPos = transform.position + (DashDir * 10f);
@@ -191,6 +252,7 @@ public class BossAttackState : EnemyAttackState
         foreach(var skin in bossRenderer)
         {
             GameObject ghost = new GameObject("GhostTrail");
+            activeGhost.Add(ghost);
             MeshFilter mf = ghost.AddComponent<MeshFilter>();
             MeshRenderer mr = ghost.AddComponent<MeshRenderer>();
 
@@ -198,12 +260,19 @@ public class BossAttackState : EnemyAttackState
             skin.BakeMesh(bakedMesh);
             mf.mesh = bakedMesh;
 
-            mr.material = new Material(skin.material);
+            mr.sharedMaterial = originalMats[skin];
+
+            MaterialPropertyBlock ghostProp = new MaterialPropertyBlock();
+            ghostProp.SetColor("_BaseColor", Color.cyan * 2f); // 잔상 색상
+            ghostProp.SetFloat("_Alpha", 0.5f);               // 반투명
+            mr.SetPropertyBlock(ghostProp);
             // 2. 렌더링 순서 조정 (본체 뒤에 그려지도록)
             mr.sortingOrder = -1;
 
             ghost.transform.position = skin.transform.position;
             ghost.transform.rotation = skin.transform.rotation;
+
+            mr.material.SetColor("_TintColor", Color.cyan * 2f);
 
             StartCoroutine(FadeOutGhost(mr, 0.5f));
         }
@@ -214,16 +283,23 @@ public class BossAttackState : EnemyAttackState
     {
         float elapsed = 0;
         Material mat = mr.material;
-        Color startColor = mr.material.color;
-        Color emitColor = Color.white * 5f;
+        Color startColor = Color.cyan * 3.0f; // 밝은 하늘색
+        Color endColor = new Color(0.5f, 0f, 1f, 1f) * 3.0f; // 밝은 보라색
+
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(1, 0, elapsed / duration);
-            mat.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            mat.SetColor("_EmissionColor", emitColor * (1f - elapsed / duration));
+            float ratio = elapsed / duration;
+            float alpha = Mathf.Lerp(1, 0, ratio);
+            Color currentColor = Color.Lerp(startColor, endColor, ratio);
+
+            mat.SetFloat("_Alpha", alpha);
+
+            mat.SetColor("_BaseColor", currentColor);
+
             yield return null;
         }
+        activeGhost.Remove(mr.gameObject);
         Destroy(mat);
         Destroy(mr.gameObject);
     }

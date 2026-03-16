@@ -187,6 +187,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     }
     private void HandleAttackInput()
     {
+
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
         offsetToMouse.y = 0;
         AttackComp.UpdateAttackProgress();
@@ -232,6 +233,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
             if (Input.GetKeyDown(skillKeys[i]))
             {
                 InputSkill.SKILLS select = (InputSkill.SKILLS)i;
+
                 if (!SkillComp.CurrentSkillActive(select))
                 {
                     if(select < InputSkill.SKILLS.SKILL3) trail.emitting = true;
