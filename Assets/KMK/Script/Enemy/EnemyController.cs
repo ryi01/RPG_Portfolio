@@ -7,6 +7,8 @@ using UnityEngine;
 public class EnemyController : BaseController<EnemyStatComponent>
 {
     protected EnemyState currentState;
+
+    public EnemyState CurrentState => currentState;
     [SerializeField] protected EnemyState[] enemyStates;
     protected GameObject player;
     public GameObject Player { get => player; set => player = value; }
@@ -32,7 +34,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
     public override void Damage(float damage, float force, Transform attacker)
     {
         base.Damage(damage, force, attacker);
-        if (currentState.StateType == EnumTypes.STATE.DEATH) return;
+        if (currentState == null || currentState.StateType == EnumTypes.STATE.DEATH) return;
         if (StatComp.CurrentHP <= 0)
         {
             GameManager.Instance.SendEnemyKilled(StatComp.Exp);

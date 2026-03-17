@@ -34,10 +34,7 @@ public class MeleeAttack : CommonAttack
             radius = data.attackRadius * data.attackMultifle;
         }
         Collider[] hits = Physics.OverlapSphere(attackTransform.position, radius, CS.TargetLayer);
-        if (hits.Length > 0)
-        {
-            AttackReady();
-        }
+        bool isValidTarget = false;
         
         foreach (Collider hit in hits)
         {
@@ -50,6 +47,11 @@ public class MeleeAttack : CommonAttack
             float targetAngle = (data != null) ? data.hitAngle : CS.HitAngle;
             if (angle < targetAngle)
             {
+                if (!isValidTarget)
+                {
+                    AttackReady();
+                    isValidTarget = true;
+                }
                 AttackHit(hit);
             }
         } 

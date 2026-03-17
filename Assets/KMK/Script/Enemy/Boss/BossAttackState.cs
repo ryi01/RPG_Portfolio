@@ -11,42 +11,34 @@ public class BossAttackState : EnemyAttackState
 {
     private enum AttackPhase { Select, Prepare, Execute, Recover}
     private AttackPhase phase;
-    private Material chargingInstance;
     public Vector3 DashDir { get; set; }
     private EnemySkillAttack currentSkill;
     private bool isDashStart = false;
     private bool isChaniedSkill = false;
     private bool isSetAnim = false;
-    [SerializeField] private SkinnedMeshRenderer[] bossRenderer;
-    [SerializeField] private Material chargingMaterial;
-    private List<GameObject> activeGhost = new List<GameObject>();
-    private Dictionary<SkinnedMeshRenderer, Material> originalMats = new Dictionary<SkinnedMeshRenderer, Material>();
+
+    private Coroutine dashCoroutine;
+
+    [SerializeField]private BossMaterialHandle dashEffectHandler;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        if (phase == AttackPhase.Execute) return;
         // 페이즈 선택 단계로 변경
         phase = AttackPhase.Select;
         isDashStart = false;
+        isSetAnim = false;
+        isChaniedSkill = false;
+        Anim.SetBool("Run", false);
+        dashCoroutine = null;
         // 만약 외부(Idle)에서 주입된 스킬 데이터가 있다면 바로 할당
         if (data is EnemySkillAttack skillData)
         {
             currentSkill = skillData;
             phase = AttackPhase.Prepare; // 선택 건너뛰고 바로 준비로
         }
-        if (currentSkill != null && currentSkill.NeedDash && bossRenderer != null)
-        {
-            originalMats.Clear();
-            foreach (var skin in bossRenderer)
-            {
-                originalMats[skin] = skin.sharedMaterial;
-            }
-        }
-        if (chargingMaterial != null)
-        {
-            chargingInstance = new Material(chargingMaterial);
-        }
-
+        else currentSkill = null;
     }
+    // originMaterial 기억
+
     public override void UpdateState()
     {
         if (CheckDeath()) return;
@@ -70,9 +62,10 @@ public class BossAttackState : EnemyAttackState
                 break;
         }
     }
-
+    // 공격 스킬 선택 단계
     private void SelectAttack()
     {
+        // 컨트롤러를 
         BossController boss = controller as BossController;
         float dis = controller.GetPlayerDis();
         List<EnemySkillAttack> candiateSkills = new List<EnemySkillAttack>();
@@ -85,7 +78,9 @@ public class BossAttackState : EnemyAttackState
         }
         if(candiateSkills.Count == 0)
         {
+            currentSkill = null;
             controller.TransactionToState(EnumTypes.STATE.DETECT);
+            return;
         }
         else
         {
@@ -93,15 +88,24 @@ public class BossAttackState : EnemyAttackState
             int rand = UnityEngine.Random.Range(0, candiateSkills.Count);
             currentSkill = candiateSkills[rand];
         }
-        Debug.Log("Selected Skill : " + currentSkill.SkillIndex);
+
         phase = AttackPhase.Prepare;
     }
     private void PrepareAttack()
     {
+        if (currentSkill == null)
+        {
+            controller.TransactionToState(EnumTypes.STATE.DETECT);
+            return;
+        }
         if (!isSetAnim)
         {
             isSetAnim = true;
             isDashStart = false;
+            if(currentSkill.NeedDash)
+            {
+                dashEffectHandler?.SetOriginMats();
+            }
             if (currentSkill.NeedLookAtTarget && !isChaniedSkill)
             {
                 LookAtTarget();
@@ -114,12 +118,18 @@ public class BossAttackState : EnemyAttackState
     }
     private void ExecuteAttack()
     {
+        if (currentSkill == null)
+        {
+            controller.TransactionToState(EnumTypes.STATE.IDLE);
+            return;
+        }
+
         if (currentSkill.NeedDash)
         {
             if(!isDashStart)
             {
                 isDashStart = true;
-                StartCoroutine(WaitDash());
+                dashCoroutine = StartCoroutine(WaitDash());
             }
             return;
         }
@@ -132,8 +142,8 @@ public class BossAttackState : EnemyAttackState
     private void Recover()
     {
         BossController boss = controller as BossController;
-
-        if (currentSkill.ChainNextSkill)
+     
+        if (currentSkill != null && currentSkill.ChainNextSkill)
         {
             currentSkill = boss.SkillList[currentSkill.NextSkillIndex];
             isDashStart = false;
@@ -143,6 +153,7 @@ public class BossAttackState : EnemyAttackState
         else
         {
             isChaniedSkill = false;
+            currentSkill = null;
             controller.TransactionToState(EnumTypes.STATE.IDLE);
         }
         isSetAnim = false;
@@ -151,61 +162,43 @@ public class BossAttackState : EnemyAttackState
 
     public override void ExitState()
     {
+        if(dashCoroutine != null)
+        {
+            StopCoroutine(dashCoroutine);
+            dashCoroutine = null;
+        }
         StopAllCoroutines();
-        foreach(var ghost in activeGhost)
-        {
-            if (ghost != null) Destroy(ghost);
-        }
-        activeGhost.Clear();
+        ResetAttackState();
+        currentSkill = null;
         base.ExitState();
-        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1);
-        navMeshAgent.acceleration = 8f;
-        foreach (var pair in originalMats)
-        {
-            pair.Key.sharedMaterial = pair.Value;
-        }
-        originalMats.Clear();
+
     }
 
     IEnumerator WaitDash()
     {
         NavigationStop();
-        LookAtTarget();
+        Vector3 dir = controller.Player.transform.position - transform.position;
+        dir.y = 0;
+        DashDir = dir.sqrMagnitude < 0.01f ? transform.forward : dir.normalized;
+        transform.forward = DashDir;
+
         float chargeDuration = 2;
         float elapsed = 0;
-        List<GameObject> outlineObj = new List<GameObject>();
-        List<Material> createMats = new List<Material>();
-        foreach(var skin in bossRenderer)
-        {
-            GameObject outline = new GameObject("ChargingOutline");
-            outline.transform.SetParent(skin.transform, false);
-            outline.transform.localScale = Vector3.one * 1.02f;
-            MeshRenderer mr = outline.AddComponent<MeshRenderer>();
-            MeshFilter mf = outline.AddComponent<MeshFilter>();
+        
 
-            Mesh baked = new Mesh();
-            skin.BakeMesh(baked);
-            mf.mesh = baked;
-            Material mat = new Material(chargingMaterial);
-            mr.material = mat;
-            createMats.Add(mat);
-            outlineObj.Add(outline);
-        }
         while(elapsed < chargeDuration)
         {
+            if (!(controller.CurrentState is BossAttackState))
+            {
+                dashEffectHandler?.ResetAll();
+                dashCoroutine = null;
+                yield break;
+            }
             elapsed += Time.deltaTime;
             float ratio = elapsed / chargeDuration;
-
-            foreach (var obj in outlineObj)
-            {
-                Color effectColor = Color.Lerp(Color.red, Color.yellow, ratio);
-                obj.GetComponent<MeshRenderer>().material.SetColor("_GlowColor", effectColor);
-            }
+            dashEffectHandler?.UpdateCharginColor(ratio);
             yield return null;
         }
-
-        foreach (var obj in outlineObj) Destroy(obj);
-        foreach (var mat in createMats) Destroy(mat);
 
         float trailTimer = 0f;
         float trailInterval = 0.05f;
@@ -223,10 +216,15 @@ public class BossAttackState : EnemyAttackState
         navMeshAgent.SetDestination(targetPos);
         while(navMeshAgent.pathPending || navMeshAgent.remainingDistance > 0.5f)
         {
+            if (!(controller.CurrentState is BossAttackState))
+            {
+                dashCoroutine = null;
+                yield break;
+            }
             trailTimer += Time.deltaTime;
             if(trailTimer >= trailInterval)
             {
-                CreateGhostTrail();
+                dashEffectHandler.CreateGhostTrail();
                 trailTimer = 0;
             }
             if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= 0.5f) break;
@@ -237,70 +235,31 @@ public class BossAttackState : EnemyAttackState
         Anim.SetBool("Run", false);
 
         phase = AttackPhase.Recover;
+
+        dashCoroutine = null;
     }
 
     private bool IsPlayingAttack()
     {
         // 0번 레이어의 현재 상태 정보를 가져옴
         AnimatorStateInfo stateInfo = Anim.GetCurrentAnimatorStateInfo(0);
+        
         // 태그가 "Attack"인가?
-        return stateInfo.IsTag("Attack");
+        if (!stateInfo.IsTag("Attack")) return false;
+
+        return stateInfo.normalizedTime < 1f;
     }
 
-    private void CreateGhostTrail()
+    private void ResetAttackState()
     {
-        foreach(var skin in bossRenderer)
-        {
-            GameObject ghost = new GameObject("GhostTrail");
-            activeGhost.Add(ghost);
-            MeshFilter mf = ghost.AddComponent<MeshFilter>();
-            MeshRenderer mr = ghost.AddComponent<MeshRenderer>();
+        isDashStart = false;
+        isSetAnim = false;
+        isChaniedSkill = false;
+        Anim.SetBool("Run", false);
+        navMeshAgent.isStopped = true;
+        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1);
+        navMeshAgent.acceleration = 8f;
 
-            Mesh bakedMesh = new Mesh();
-            skin.BakeMesh(bakedMesh);
-            mf.mesh = bakedMesh;
-
-            mr.sharedMaterial = originalMats[skin];
-
-            MaterialPropertyBlock ghostProp = new MaterialPropertyBlock();
-            ghostProp.SetColor("_BaseColor", Color.cyan * 2f); // 잔상 색상
-            ghostProp.SetFloat("_Alpha", 0.5f);               // 반투명
-            mr.SetPropertyBlock(ghostProp);
-            // 2. 렌더링 순서 조정 (본체 뒤에 그려지도록)
-            mr.sortingOrder = -1;
-
-            ghost.transform.position = skin.transform.position;
-            ghost.transform.rotation = skin.transform.rotation;
-
-            mr.material.SetColor("_TintColor", Color.cyan * 2f);
-
-            StartCoroutine(FadeOutGhost(mr, 0.5f));
-        }
-
-    }
-
-    private IEnumerator FadeOutGhost(MeshRenderer mr, float duration)
-    {
-        float elapsed = 0;
-        Material mat = mr.material;
-        Color startColor = Color.cyan * 3.0f; // 밝은 하늘색
-        Color endColor = new Color(0.5f, 0f, 1f, 1f) * 3.0f; // 밝은 보라색
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float ratio = elapsed / duration;
-            float alpha = Mathf.Lerp(1, 0, ratio);
-            Color currentColor = Color.Lerp(startColor, endColor, ratio);
-
-            mat.SetFloat("_Alpha", alpha);
-
-            mat.SetColor("_BaseColor", currentColor);
-
-            yield return null;
-        }
-        activeGhost.Remove(mr.gameObject);
-        Destroy(mat);
-        Destroy(mr.gameObject);
+        dashEffectHandler?.ResetAll();
     }
 }

@@ -15,16 +15,17 @@ public class BossIdleState : EnemyIdleState
         if (Time.time < nextAttackTime) return;
 
         float dis = controller.GetPlayerDis();
+        if (dis <= fsmInfo.AttackRange)
+        {
+            controller.TransactionToState(EnumTypes.STATE.ATTACK);
+            return;
+        }
         if (dis <= fsmInfo.DetectRange)
         {
             controller.TransactionToState(EnumTypes.STATE.DETECT);
             return;
         }
-        if(dis <= fsmInfo.AttackRange)
-        {
-            controller.TransactionToState(EnumTypes.STATE.ATTACK);
-            return;
-        }
+
 
     }
 

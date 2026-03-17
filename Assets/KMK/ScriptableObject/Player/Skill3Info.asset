@@ -21,7 +21,7 @@ MonoBehaviour:
   nockbackForce: 2
   coolTime: 15
   animTrigger: Skill3
-  openLevel: 1
+  openLevel: 2
   needLookAtTarget: 1
   needDash: 0
   nextSkillIndex: 1

@@ -15,8 +15,11 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     // 스킬 타이머(이미지) 컴포넌트 참조
     [SerializeField] private Sprite skillBtnSprite;
     [SerializeField] private SkillTimer skillTimer;
+
+    protected bool isHitOnce = false;
     public override void Attack()
     {
+        base.Attack();
         RangeAngleTargetAttack(skillInfo);
     }
     public void StartSkill()

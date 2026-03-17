@@ -43,9 +43,13 @@ public class BossController : EnemyController
             isPhaseTwo = true;
             if(TryGetComponent<NavMeshAgent>(out UnityEngine.AI.NavMeshAgent ai))
             {
-                ai.ResetPath();
-                ai.velocity = Vector3.zero;
-                ai.isStopped = true;
+                if (ai != null && ai.enabled && ai.isOnNavMesh)
+                {
+                    ai.ResetPath();
+                    ai.velocity = Vector3.zero;
+                    ai.isStopped = true;
+                }
+                
             }
             StatComp.SetSpeedMultifle(2);
             TransactionToState(EnumTypes.STATE.PATTERN_PHASE);
@@ -61,18 +65,7 @@ public class BossController : EnemyController
     public void ExccuteAttack(EnemySkillAttack skill, NavMeshAgent navMeshAgent)
     {
         if (CoolTimeAttack) return;
-        if (skill.SkillIndex == 2)
-        {
-            if (TryGetComponent<BossAttackState>(out BossAttackState bossAttack))
-            {
-                Vector3 pPos = Player.transform.position;
-                Vector3 bPos = transform.position;
-                pPos.y = 0;
-                bPos.y = 0;
-                Vector3 dir = (pPos - bPos).normalized;
-                bossAttack.DashDir = dir == Vector3.zero ? transform.forward : dir;
-            }
-        }
+
         navMeshAgent.isStopped = true;
         TransactionToState(EnumTypes.STATE.ATTACK, skill);
         if(lightCoroutine == null) lightCoroutine = StartCoroutine(AttackCoolTimeRoutine(2));

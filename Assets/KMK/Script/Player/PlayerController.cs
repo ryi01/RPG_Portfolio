@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 
 // 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
 [RequireComponent(typeof(PlayerStatComponent))]
+[RequireComponent(typeof(CombatFeedback))]
 // 추가로 할일
 // 조준 보정 => 마우스포인터와 가장 가까이 있는 Enemy로 회전
 public class PlayerController : BaseController<PlayerStatComponent>
@@ -16,6 +17,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public InputAttack AttackComp { get; private set; }
     public InputSkill SkillComp { get; private set; }
     public InputPickUp PickUpComp { get; private set; }
+
+    public CombatFeedback CombatFeedback { get; private set; }
     public CameraShakeController CameraShakeController { get; private set; }
     private Vector3 moveDir;
     private Vector3 targetLookDir;
@@ -43,6 +46,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         PickUpComp = GetComponent<InputPickUp>();
         CameraShakeController = GetComponentInChildren<CameraShakeController>();
         StatComp.OncChangeLevel += SkillComp.OnLockSkill;
+        CombatFeedback = GetComponent<CombatFeedback>();        
         trail.emitting = false;
     }
     // Update is called once per frame
@@ -55,10 +59,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
         }
         
         HandleInput();
+        //if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
+        HandleSkill();
         HandleMovement();   
         HandleRotation();
         HandleUseItem();
-        if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
         CheckInteractionDistance();
         CheckBox();
     }
@@ -192,7 +197,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
         offsetToMouse.y = 0;
         AttackComp.UpdateAttackProgress();
-        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
+        if (SkillComp.IsSkillAnimation(currentSkill)/* || GameManager.Instance.CurrentState == GameState.Town*/) return;
         if (Input.GetMouseButtonDown(0))
         {
             trail.emitting = true;
@@ -298,11 +303,15 @@ public class PlayerController : BaseController<PlayerStatComponent>
     }
     public void OnAttackDash(float distance)
     {
-        if (currentSkill == InputSkill.SKILLS.SKILL3)
-        {
-            distance = Mathf.Clamp(offsetToMouse.magnitude, 0f, 5f);
-        }
         MovementComp.Push(transform.forward, distance, StatComp.KnckBackTime);
+    }
+    public void OnSkillAttack()
+    {
+        float distance = Mathf.Clamp(offsetToMouse.magnitude, 0f, 5f);
+        Vector3 dir = offsetToMouse;
+        dir.y = 0;
+        dir.Normalize();
+        MovementComp.Push(dir, distance, StatComp.KnckBackTime, true);
     }
     public void OnIsMove(int value)
     {
@@ -317,15 +326,5 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         trail.emitting = false;
     }
-    public void SlowTime()
-    {
-        StartCoroutine(SlowMoment());
-    }
-    private IEnumerator SlowMoment()
-    {
-        Time.timeScale = 0.2f;
-        yield return new WaitForSecondsRealtime(0.08f);
-        Time.timeScale = 1f;
 
-    }
 }

@@ -24,12 +24,14 @@ public class InputMovement : MonoBehaviour
     private float vSpeed = 0;
     #endregion
     [SerializeField] private LineRenderer pathVisualizerPrefab;
+    [SerializeField] private TrailRenderer dashTrail;
     private LineRenderer pathLine;
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
         pc = GetComponent<PlayerController>();
         pathLine = Instantiate(pathVisualizerPrefab, transform);
+        dashTrail.emitting = false;
         targetPos = transform.position;
     }
     public void FindPath(Vector3 pos, bool isGrid = true)
@@ -169,15 +171,17 @@ public class InputMovement : MonoBehaviour
         return transform.position + transform.forward;
     }
     private Coroutine forceCoroutine;
-    public void Push(Vector3 dir, float distance, float duration)
+    public void Push(Vector3 dir, float distance, float duration, bool isJump = false, bool useTrail = false)
     {
         if(forceCoroutine != null) StopCoroutine(forceCoroutine);
+        StopMove();
         dir = dir.normalized;
         pc.CameraShakeController.ShakeCam(0.1f, 0.2f);
-        pc.SlowTime();
-        forceCoroutine = StartCoroutine(OnForce(dir, distance, duration));
+        if(useTrail) dashTrail.emitting = true;
+    
+        forceCoroutine = StartCoroutine(OnForce(dir, distance, duration, isJump));
     }
-    IEnumerator OnForce(Vector3 dir, float distance, float duration)
+    IEnumerator OnForce(Vector3 dir, float distance, float duration, bool isJump = false)
     {
         float elapsed = 0;
         Vector3 startPos = transform.position;
@@ -186,13 +190,24 @@ public class InputMovement : MonoBehaviour
             distance = Mathf.Max(hit.distance - 0.2f, 0);
         }
         Vector3 targetPos = startPos + (dir * distance);
+        float height = isJump ? 1f : 0f;
+        Vector3 prevPos = startPos;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
-            transform.position = Vector3.Lerp(startPos, targetPos, t);
+            Vector3 pos = Vector3.Lerp(startPos, targetPos, t);
+            float yOffset = Mathf.Sin(t * Mathf.PI) * height;
+            float baseY = Mathf.Lerp(startPos.y, targetPos.y, t);
+            pos.y = baseY + yOffset;
+            Vector3 delta = pos - prevPos;
+
+            cc.Move(delta);
+            prevPos = pos;
             yield return null;
         }
+        dashTrail.emitting = false;
+        forceCoroutine = null;
     }
     private void DrawPath()
     {

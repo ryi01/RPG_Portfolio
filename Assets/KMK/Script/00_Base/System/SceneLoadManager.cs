@@ -54,24 +54,39 @@ public class SceneLoadManager : MonoBehaviour
         {
             Debug.LogWarning($"언로드하려는 씬({unloadSceneName})이 이미 없거나 유효하지 않습니다.");
         }
-
+        Vector3 finalPos = new Vector3(0, 0.3f, 0);
         if (loadSceneName.Contains("GameScene") && dungeon != null)
         {
             dungeon.GenerateDungeon();
             // [중요] 던전 생성이 끝난 후, 물리 엔진이 한 프레임 업데이트되도록 대기
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
+            finalPos = dungeon.WorldStartPoint + Vector3.up * 5f;
+
+            RaycastHit hit;
+
+            if (Physics.Raycast(finalPos, Vector3.down, out hit, 20f))
+            {
+                finalPos = hit.point + Vector3.up * 0.1f;
+            }
+            else finalPos = dungeon.WorldStartPoint;
         }
-        Vector3 finalPos = dungeon.WorldStartPoint + Vector3.up * 5f;
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(finalPos, Vector3.down, out hit, 20f))
+        else
         {
-            finalPos = hit.point + Vector3.up * 0.1f;
+            Vector3 rayStart = new Vector3(0f, 5f, 0f);
+
+            RaycastHit hit;
+
+            if (Physics.Raycast(rayStart, Vector3.down, out hit, 20f))
+            {
+                finalPos = hit.point + Vector3.up * 0.1f;
+            }
+            else finalPos = new Vector3(0, 0.3f, 0);
         }
+
         yield return new WaitForFixedUpdate();
-        Debug.Log($"{finalPos}");
+
         var controller = player.GetComponent<CharacterController>();
         if (controller != null)
         {

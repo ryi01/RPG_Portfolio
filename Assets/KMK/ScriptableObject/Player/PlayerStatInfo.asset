@@ -32,8 +32,8 @@ MonoBehaviour:
   regenST: 1
   level: 7
   exp:
-  - 50
-  - 100
+  - 10
+  - 20
   - 150
   - 200
   - 250

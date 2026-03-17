@@ -8,7 +8,11 @@ public class AoESkill : PlayerSkillAttack
     private GameObject effect;
     public void OnAoESkill()
     {
-        effect = Instantiate(hitEffectPrefab, skillEffectPrefabTrans.position, hitEffectPrefab.transform.rotation);
+        pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
+        pc.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y, 0.08f);
+        pc.CombatFeedback.ImpactSlow(impactScaleAndDuration.x, impactScaleAndDuration.y);
+        pc.CombatFeedback.HitStop(stopTime);
+       
         Attack();
     }
     public void OnAoESkillEnd()
@@ -27,6 +31,7 @@ public class AoESkill : PlayerSkillAttack
                 float distB = Vector3.SqrMagnitude(b.transform.position - transform.position);
                 return distA.CompareTo(distB);
             });
+            
             StartCoroutine(DomainRoutine(hits));
         }
     }
@@ -39,5 +44,10 @@ public class AoESkill : PlayerSkillAttack
             yield return new WaitForSeconds(0.03f);
             AttackHit(target);
         }
+    }
+    
+    public void MakeEffect()
+    {
+        effect = Instantiate(hitEffectPrefab, skillEffectPrefabTrans.position, hitEffectPrefab.transform.rotation);
     }
 }

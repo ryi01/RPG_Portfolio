@@ -10708,6 +10708,7 @@ GameObject:
   - component: {fileID: 2975857842935774139}
   - component: {fileID: 2970743494964816080}
   - component: {fileID: 6583787648420894152}
+  - component: {fileID: 1187140646307884197}
   m_Layer: 9
   m_Name: Boss
   m_TagString: Untagged
@@ -10891,16 +10892,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossAttackState
   stateType: 3
   animSpeed: 1
-  bossRenderer:
-  - {fileID: 2391444889335303157}
-  - {fileID: 4965993233245811006}
-  - {fileID: 2902621984851477841}
-  - {fileID: 5551055728264935790}
-  - {fileID: 2460881262230971787}
-  - {fileID: 5684471961196838753}
-  - {fileID: 4674727774864939203}
-  - {fileID: 5568754958082504498}
-  chargingMaterial: {fileID: 2100000, guid: 4d5a4e2a1f1e5ac41a408539e6084bfc, type: 2}
+  dashEffectHandler: {fileID: 1187140646307884197}
 --- !u!114 &3998183434936881460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11007,6 +10999,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathState
   stateType: 7
   animSpeed: 1
+--- !u!114 &1187140646307884197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4338804194200415577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c1f9b1b4471c44eb059dcc83e8e61a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossMaterialHandle
+  bossRenderer:
+  - {fileID: 2391444889335303157}
+  - {fileID: 4965993233245811006}
+  - {fileID: 2902621984851477841}
+  - {fileID: 5551055728264935790}
+  - {fileID: 2460881262230971787}
+  - {fileID: 5684471961196838753}
+  - {fileID: 4674727774864939203}
+  - {fileID: 5568754958082504498}
+  chargingMaterial: {fileID: 2100000, guid: 4d5a4e2a1f1e5ac41a408539e6084bfc, type: 2}
 --- !u!1 &4339469675888082938
 GameObject:
   m_ObjectHideFlags: 0

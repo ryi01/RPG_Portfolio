@@ -33,7 +33,7 @@ public class MoveToPosSkill : PlayerSkillAttack
         pc.MovementComp.LookAtInstant(dir);
         StartSkill();
         pc.MovementComp.LookAtInstant(dir);
-        pc.MovementComp.Push(dir, dist, skillInfo.attackTime);
+        pc.MovementComp.Push(dir, dist, skillInfo.attackTime, false, true);
         yield return new WaitForSeconds(skillInfo.attackTime);
         pc.IsBlink = false;
     }

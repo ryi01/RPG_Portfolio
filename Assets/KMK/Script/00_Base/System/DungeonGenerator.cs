@@ -133,6 +133,8 @@ public class DungeonGenerator : MonoBehaviour
     private Dictionary<Vector2Int, List<Vector3>> roomWayPoints = new Dictionary<Vector2Int, List<Vector3>>();
 
     public static Action<Vector3> OnSpawnItemBox;
+
+    public bool IsGenerationCompleted { get; private set; } = false;
     enum TileType
     {
         Empty = 0,
@@ -175,7 +177,9 @@ public class DungeonGenerator : MonoBehaviour
         BuildNavMesh();
 
         SpawnEnemies();
-        SpawnBossInRoom();   
+        SpawnBossInRoom();
+
+        IsGenerationCompleted = true;
     }
     
     private void GeneratePoint()
@@ -874,6 +878,7 @@ public class DungeonGenerator : MonoBehaviour
 
     public void ClearDungeon()
     {
+        IsGenerationCompleted = false;
         if (dungeonParent != null)
         {
             grid.ClearGrid();
