@@ -24,7 +24,7 @@ public class BossMaterialHandle : MonoBehaviour
 
     public void CreateCharginOutline()
     {
-        ClearChargngOutline();
+        ClearChargingOutline();
         if (bossRenderer == null || chargingMaterial == null) return;
         foreach (var skin in bossRenderer)
         {
@@ -59,7 +59,7 @@ public class BossMaterialHandle : MonoBehaviour
         }
     }
 
-    public void ClearChargngOutline()
+    public void ClearChargingOutline()
     {
         foreach (var obj in outlineObj) Destroy(obj);
         foreach (var mat in createMats) Destroy(mat);
@@ -132,7 +132,7 @@ public class BossMaterialHandle : MonoBehaviour
 
     public void ResetAll()
     {
-        ClearChargngOutline();
+        ClearChargingOutline();
         foreach (var ghost in activeGhost)
         {
             if (ghost != null) Destroy(ghost);

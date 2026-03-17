@@ -177,6 +177,7 @@ public class BossAttackState : EnemyAttackState
     IEnumerator WaitDash()
     {
         NavigationStop();
+        dashEffectHandler?.CreateCharginOutline();
         Vector3 dir = controller.Player.transform.position - transform.position;
         dir.y = 0;
         DashDir = dir.sqrMagnitude < 0.01f ? transform.forward : dir.normalized;
@@ -214,7 +215,8 @@ public class BossAttackState : EnemyAttackState
         Vector3 targetPos = transform.position + (DashDir * 10f);
 
         navMeshAgent.SetDestination(targetPos);
-        while(navMeshAgent.pathPending || navMeshAgent.remainingDistance > 0.5f)
+        dashEffectHandler.ClearChargingOutline();
+        while (navMeshAgent.pathPending || navMeshAgent.remainingDistance > 0.5f)
         {
             if (!(controller.CurrentState is BossAttackState))
             {
