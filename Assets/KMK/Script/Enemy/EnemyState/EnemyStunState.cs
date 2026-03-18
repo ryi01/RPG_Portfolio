@@ -11,7 +11,7 @@ public class EnemyStunState : EnemyState
         stunParticle.Play();
         float duration = (data != null) ? (float)data : 3.0f;
         stunTimer = duration;
-        NavigationStop();
+        controller.NavigationStop();
         Anim.SetInteger("State", (int)state);
         Anim.SetTrigger("Stun");
     }

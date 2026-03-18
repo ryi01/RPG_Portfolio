@@ -14,7 +14,6 @@ public class BombCollision : BulletCollision
     {
         base.Awake();
         originMat = mesh.material;
-        Debug.Log($"{originMat}");
     }
 
     protected override void OnHitTarget(Collider other, Vector3 hitPoint)
@@ -38,16 +37,15 @@ public class BombCollision : BulletCollision
         float interval = destroyTime / (flashCount * 2);
         for(int i = 0; i < flashCount; i++)
         {
-
             if (mesh != null) mesh.material = flashMat;
             yield return new WaitForSeconds(interval);
             if (mesh != null) mesh.material = originMat;
             yield return new WaitForSeconds(interval);
-
         }
 
         if(bulletParticle != null) Instantiate(bulletParticle, transform.position, bulletParticle.transform.rotation);
         ExplodeDamage();
+        GameManager.Instance.SoundManager.PlaySFX(sfxString);
         Destroy(gameObject);
     }
     private void ExplodeDamage()

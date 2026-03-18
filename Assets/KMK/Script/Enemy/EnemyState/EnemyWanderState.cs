@@ -4,7 +4,7 @@ public class EnemyWanderState : EnemyRoamingState
 {
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        navMeshAgent.speed = fsmInfo.MoveSpeed;
+        controller.NavMeshAgent.speed = fsmInfo.MoveSpeed;
         base.EnterState(state, data);
         NewRandDestination();
     }

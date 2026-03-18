@@ -8,7 +8,7 @@ public class EnemyDeathState : EnemyHitState
     
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        if (navMeshAgent != null) navMeshAgent.enabled = false;
+        if (controller.NavMeshAgent != null) controller.NavMeshAgent.enabled = false;
         
         Anim.SetInteger("State", UnityEngine.Random.Range(7, 9));
         Anim.SetBool("Death", true);

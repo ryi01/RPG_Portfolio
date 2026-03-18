@@ -227,6 +227,7 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 4352
+  sfxString: Portion
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536

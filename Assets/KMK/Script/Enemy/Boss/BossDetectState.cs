@@ -15,17 +15,17 @@ public class BossDetectState : EnemyDetectState
         EnemySkillAttack dash = boss.SkillList[2];
         if (dis >= dash.AttackMinRange && dis <= dash.AttackMaxRange)
         {
-            boss.ExccuteAttack(dash, navMeshAgent);
+            boss.ExccuteAttack(dash, controller.NavMeshAgent);
             return;
         }
         if(dis <= boss.SkillList[0].AttackMaxRange)
         {
             int rnd = Random.Range(0, 2);
-            boss.ExccuteAttack(boss.SkillList[rnd], navMeshAgent);
+            boss.ExccuteAttack(boss.SkillList[rnd], controller.NavMeshAgent);
             return;
         }
-        navMeshAgent.isStopped = false;
-        navMeshAgent.SetDestination(controller.Player.transform.position);
+        controller.NavMeshAgent.isStopped = false;
+        controller.NavMeshAgent.SetDestination(controller.Player.transform.position);
         if (dis > fsmInfo.DetectRange)
         {
             controller.TransactionToState(EnumTypes.STATE.IDLE);

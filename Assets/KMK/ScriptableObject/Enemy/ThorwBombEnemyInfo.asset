@@ -22,7 +22,7 @@ MonoBehaviour:
   attack: 8
   attackRadius: 1.5
   hitAngle: 0
-  moveSpeed: 1.5
+  moveSpeed: 2.5
   rotSpeed: 600
   nockbackForce: 8.5
   nockbackTime: 0.12

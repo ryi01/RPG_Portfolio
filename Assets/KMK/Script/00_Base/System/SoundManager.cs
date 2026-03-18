@@ -22,6 +22,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private Slider s_BGM;
     [SerializeField] private Slider s_SFX;
     [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private AudioSource loopSFXSource;
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private List<SoundData> soundList;
@@ -77,5 +78,19 @@ public class SoundManager : MonoBehaviour
         audioMixer.SetFloat("SFXAudio", Mathf.Log10(safeVolume / 100) * 20);
     }
 
-
+    public void PlayLoopSFX(string name)
+    {
+        if(soundDict.TryGetValue(name, out AudioClip clip))
+        {
+            if (loopSFXSource.clip == clip && loopSFXSource.isPlaying) return;
+            loopSFXSource.clip = clip;
+            loopSFXSource.loop = true;
+            loopSFXSource.Play();
+        }
+    }
+    public void StopLoopSFX()
+    {
+        loopSFXSource.Stop();
+        loopSFXSource.clip = null;
+    }
 }

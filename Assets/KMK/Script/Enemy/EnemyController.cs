@@ -2,23 +2,29 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(EnemyStatComponent))]
 public class EnemyController : BaseController<EnemyStatComponent>
 {
     protected EnemyState currentState;
+    protected NavMeshAgent navMeshAgent;
 
     public EnemyState CurrentState => currentState;
     [SerializeField] protected EnemyState[] enemyStates;
     protected GameObject player;
     public GameObject Player { get => player; set => player = value; }
+    public NavMeshAgent NavMeshAgent => navMeshAgent;
 
     protected Dictionary<EnumTypes.STATE, EnemyState> stateDict = new();
     
     private void Start()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgent.avoidancePriority = UnityEngine.Random.Range(0, 99);
         player = GameObject.FindGameObjectWithTag("Player");
-        foreach(var state in enemyStates)
+        foreach (var state in enemyStates)
         {
             if(state != null)
             {
@@ -76,4 +82,14 @@ public class EnemyController : BaseController<EnemyStatComponent>
         return Vector3.Distance(transform.position, Player.transform.position);
     }
 
+    public virtual void NavigationStop()
+    {
+        if (navMeshAgent != null && navMeshAgent.gameObject.activeSelf && navMeshAgent.isOnNavMesh)
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.velocity = Vector3.zero;
+            navMeshAgent.speed = 0;
+        }
+
+    }
 }

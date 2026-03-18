@@ -6,13 +6,13 @@ public class BossChangePhaseState : EnemyState
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
-        NavigationStop();
+        controller.NavigationStop();
         Anim.SetInteger("State", 10);
         Anim.SetTrigger("Phase");
     }
     public override void UpdateState()
     {
-        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(3);
+        controller.NavMeshAgent.speed = controller.StatComp.SetSpeedMultifle(3);
     }
 
     public void OnJumpEnd()

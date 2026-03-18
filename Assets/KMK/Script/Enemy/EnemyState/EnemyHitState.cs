@@ -11,9 +11,9 @@ public class EnemyHitState : EnemyState
         {
             force = (float)data;
         }
-        if (navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh)
+        if (controller.NavMeshAgent.isActiveAndEnabled && controller.NavMeshAgent.isOnNavMesh)
         {
-            navMeshAgent.isStopped = true;
+            controller.NavMeshAgent.isStopped = true;
         }
         // 파티클 
         // 애니메이션
@@ -34,21 +34,21 @@ public class EnemyHitState : EnemyState
     public IEnumerator ApllyHitKnockback(Vector3 hitDir, float force)
     {
         fsmInfo.IsHit = true;
-        NavigationStop();
+        controller.NavigationStop();
         float time = 0;
         while (time < fsmInfo.KnckBackTime)
         {
-            if (navMeshAgent.isActiveAndEnabled)
+            if (controller.NavMeshAgent.isActiveAndEnabled)
             {
-                navMeshAgent.Move(hitDir * force * Time.deltaTime);
+                controller.NavMeshAgent.Move(hitDir * force * Time.deltaTime);
             }
 
             time += Time.deltaTime;
             yield return null;
         }
-        if (navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh)
+        if (controller.NavMeshAgent.isActiveAndEnabled && controller.NavMeshAgent.isOnNavMesh)
         {
-            navMeshAgent.isStopped = false;
+            controller.NavMeshAgent.isStopped = false;
         }
         fsmInfo.IsHit = false;
     }

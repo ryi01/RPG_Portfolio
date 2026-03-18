@@ -73,4 +73,10 @@ public class CameraShakeController : MonoBehaviour
         cam.Lens.FieldOfView = defaultOrthoSize;
         zoomCoroutine = null;
     }
+    public void ShakeCamDirectional(Vector3 hitDir, float intesity, float time)
+    {
+        perNoise.AmplitudeGain = intesity;
+        transform.position += hitDir * 0.2f;
+        StartCoroutine(WaitTime(time));
+    }
 }

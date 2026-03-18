@@ -10892,7 +10892,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossAttackState
   stateType: 3
   animSpeed: 1
-  dashEffectHandler: {fileID: 1187140646307884197}
 --- !u!114 &3998183434936881460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10941,6 +10940,7 @@ MonoBehaviour:
   attackTransform: {fileID: 7979156390852942068}
   hitEffectPrefab: {fileID: 0}
   skillInfo: {fileID: 11400000, guid: cad4911df3ed6c4458d763351d8a3356, type: 2}
+  dashEffectHandler: {fileID: 1187140646307884197}
 --- !u!114 &1529057015592436524
 MonoBehaviour:
   m_ObjectHideFlags: 0

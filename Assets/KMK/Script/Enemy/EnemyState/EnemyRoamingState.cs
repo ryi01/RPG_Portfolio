@@ -30,9 +30,9 @@ public class EnemyRoamingState : EnemyState
         }
         if (targetPos != Vector3.positiveInfinity)
         {
-            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 1f)
+            if (!controller.NavMeshAgent.pathPending && controller.NavMeshAgent.remainingDistance < 1f)
             {
-                NavigationStop();
+                controller.NavigationStop();
                 targetPos = Vector3.positiveInfinity;
                 targetDis = Mathf.Infinity;
                 controller.TransactionToState(EnumTypes.STATE.IDLE);
@@ -51,8 +51,8 @@ public class EnemyRoamingState : EnemyState
         if (NavMesh.SamplePosition(candidate, out NavMeshHit navCheck, 2.0f, NavMesh.AllAreas))
         {
             targetPos = navCheck.position;
-            navMeshAgent.isStopped = false;
-            navMeshAgent.SetDestination(navCheck.position);
+            controller.NavMeshAgent.isStopped = false;
+            controller.NavMeshAgent.SetDestination(navCheck.position);
         }
         else if(retry)
         {
@@ -62,9 +62,9 @@ public class EnemyRoamingState : EnemyState
 
     public override void ExitState()
     {
-        navMeshAgent.isStopped = true;
+        controller.NavMeshAgent.isStopped = true;
         targetPos = Vector3.positiveInfinity;
         targetDis = Mathf.Infinity;
-        navMeshAgent.speed = fsmInfo.SetSpeedMultifle(1); 
+        controller.NavMeshAgent.speed = fsmInfo.SetSpeedMultifle(1); 
     }
 }

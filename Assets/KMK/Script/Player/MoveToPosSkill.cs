@@ -36,6 +36,8 @@ public class MoveToPosSkill : PlayerSkillAttack
         pc.MovementComp.Push(dir, dist, skillInfo.attackTime, false, true);
         yield return new WaitForSeconds(skillInfo.attackTime);
         pc.IsBlink = false;
+        pc.CameraShakeController.ShakeCam(0.3f, 0.1f);
+        pc.CameraShakeController.Zoom(4.5f, 0.08f);
     }
 
 }

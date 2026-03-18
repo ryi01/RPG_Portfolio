@@ -25,6 +25,8 @@ public class BossController : EnemyController
     private Coroutine lightCoroutine;
 
     public static Action OnBossDeath;
+
+    private List<GameObject> lightList = new List<GameObject>();
     protected override void Update()
     {
         if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH)
@@ -92,6 +94,8 @@ public class BossController : EnemyController
     private IEnumerator ExecuteLightning(Vector3 pos)
     {
         GameObject warning = Instantiate(wariningPrefab, pos, Quaternion.identity);
+        GameManager.Instance.SoundManager.PlaySFX("Light");
+        lightList.Add(warning);
         warning.transform.localScale = Vector3.zero;
         float targetScale = 1;
         float elapsed = 0;
@@ -107,6 +111,8 @@ public class BossController : EnemyController
         Destroy(warning);
         GameObject bolt = Instantiate(lightningPrefab, pos, Quaternion.identity);
         Destroy(bolt, 2);
+
+        lightList.Remove(warning);
     }
 
     public void OnOffAX(bool isOn)
@@ -118,25 +124,17 @@ public class BossController : EnemyController
     {
         if (GameManager.Instance.QuestManager != null && QuestData != null)
         {
+            if(lightList.Count > 0)
+            {
+                foreach (var obj in lightList)
+                {
+                    if (obj != null) Destroy(obj);
+                }
+            }
+            lightList.Clear();
             OnBossDeath?.Invoke();
             GameManager.Instance.QuestManager.CheckObjectiveComplete(QuestData);
         }
-    }
-
-    public EnemySkillAttack GetAvailableSkill(float dis)
-    {
-        List<EnemySkillAttack> available = new List<EnemySkillAttack>();
-
-        foreach(var skill in skillList)
-        {
-            if (skill.SkillIndex == 2) continue;
-            if (dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
-            {
-                available.Add(skill);
-            }
-        }
-        if (available.Count == 0) return null;
-        return available[UnityEngine.Random.Range(0, available.Count)];
     }
 
 }

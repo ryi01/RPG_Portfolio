@@ -112,6 +112,7 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 768
+  sfxString: Arrow
   noHitLayer:
     serializedVersion: 2
     m_Bits: 5120

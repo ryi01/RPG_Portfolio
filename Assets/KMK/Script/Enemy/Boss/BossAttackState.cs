@@ -11,24 +11,20 @@ public class BossAttackState : EnemyAttackState
 {
     private enum AttackPhase { Select, Prepare, Execute, Recover}
     private AttackPhase phase;
-    public Vector3 DashDir { get; set; }
+
     private EnemySkillAttack currentSkill;
-    private bool isDashStart = false;
     private bool isChaniedSkill = false;
     private bool isSetAnim = false;
 
-    private Coroutine dashCoroutine;
-
-    [SerializeField]private BossMaterialHandle dashEffectHandler;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         // 페이즈 선택 단계로 변경
         phase = AttackPhase.Select;
-        isDashStart = false;
+
         isSetAnim = false;
         isChaniedSkill = false;
         Anim.SetBool("Run", false);
-        dashCoroutine = null;
+
         // 만약 외부(Idle)에서 주입된 스킬 데이터가 있다면 바로 할당
         if (data is EnemySkillAttack skillData)
         {
@@ -101,10 +97,9 @@ public class BossAttackState : EnemyAttackState
         if (!isSetAnim)
         {
             isSetAnim = true;
-            isDashStart = false;
-            if(currentSkill.NeedDash)
+            if(currentSkill is BossDashSkillAttack dashSkill)
             {
-                dashEffectHandler?.SetOriginMats();
+                dashSkill.PrepareSkill();
             }
             if (currentSkill.NeedLookAtTarget && !isChaniedSkill)
             {
@@ -124,19 +119,19 @@ public class BossAttackState : EnemyAttackState
             return;
         }
 
-        if (currentSkill.NeedDash)
+        if (currentSkill is BossDashSkillAttack dashSkill)
         {
-            if(!isDashStart)
+            if (!dashSkill.IsRunning && !dashSkill.IsFinished) return;
+            if(dashSkill.IsFinished)
             {
-                isDashStart = true;
-                dashCoroutine = StartCoroutine(WaitDash());
+                phase = AttackPhase.Recover;
             }
             return;
         }
         if (!IsPlayingAttack())
         {
-            phase = AttackPhase.Recover;
             currentSkill?.StopPlayEffect();
+            phase = AttackPhase.Recover;
         }
     }
     private void Recover()
@@ -146,7 +141,6 @@ public class BossAttackState : EnemyAttackState
         if (currentSkill != null && currentSkill.ChainNextSkill)
         {
             currentSkill = boss.SkillList[currentSkill.NextSkillIndex];
-            isDashStart = false;
             isChaniedSkill = true;
             phase = AttackPhase.Prepare;
         }
@@ -162,83 +156,15 @@ public class BossAttackState : EnemyAttackState
 
     public override void ExitState()
     {
-        if(dashCoroutine != null)
+        if(currentSkill is BossDashSkillAttack dashSkill)
         {
-            StopCoroutine(dashCoroutine);
-            dashCoroutine = null;
+            dashSkill.ResetSkillState();
         }
-        StopAllCoroutines();
+
         ResetAttackState();
         currentSkill = null;
+
         base.ExitState();
-
-    }
-
-    IEnumerator WaitDash()
-    {
-        NavigationStop();
-        dashEffectHandler?.CreateCharginOutline();
-        Vector3 dir = controller.Player.transform.position - transform.position;
-        dir.y = 0;
-        DashDir = dir.sqrMagnitude < 0.01f ? transform.forward : dir.normalized;
-        transform.forward = DashDir;
-
-        float chargeDuration = 2;
-        float elapsed = 0;
-        
-
-        while(elapsed < chargeDuration)
-        {
-            if (!(controller.CurrentState is BossAttackState))
-            {
-                dashEffectHandler?.ResetAll();
-                dashCoroutine = null;
-                yield break;
-            }
-            elapsed += Time.deltaTime;
-            float ratio = elapsed / chargeDuration;
-            dashEffectHandler?.UpdateCharginColor(ratio);
-            yield return null;
-        }
-
-        float trailTimer = 0f;
-        float trailInterval = 0.05f;
-        // 대쉬기능
-        // 애니메이션을 3으로 세팅해주고
-        Anim.SetBool("Run", true);
-        // 멈춘걸 푼 다음 속도 조절
-        navMeshAgent.isStopped = false;
-        
-        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(6);
-        navMeshAgent.acceleration = 1000f;
-        // 최종 위치 결정
-        Vector3 targetPos = transform.position + (DashDir * 10f);
-
-        navMeshAgent.SetDestination(targetPos);
-        dashEffectHandler.ClearChargingOutline();
-        while (navMeshAgent.pathPending || navMeshAgent.remainingDistance > 0.5f)
-        {
-            if (!(controller.CurrentState is BossAttackState))
-            {
-                dashCoroutine = null;
-                yield break;
-            }
-            trailTimer += Time.deltaTime;
-            if(trailTimer >= trailInterval)
-            {
-                dashEffectHandler.CreateGhostTrail();
-                trailTimer = 0;
-            }
-            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= 0.5f) break;
-            yield return null;
-        }
-        yield return new WaitForSeconds(0.2f);
-        isAttack = false;
-        Anim.SetBool("Run", false);
-
-        phase = AttackPhase.Recover;
-
-        dashCoroutine = null;
     }
 
     private bool IsPlayingAttack()
@@ -254,14 +180,13 @@ public class BossAttackState : EnemyAttackState
 
     private void ResetAttackState()
     {
-        isDashStart = false;
         isSetAnim = false;
         isChaniedSkill = false;
-        Anim.SetBool("Run", false);
-        navMeshAgent.isStopped = true;
-        navMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1);
-        navMeshAgent.acceleration = 8f;
 
-        dashEffectHandler?.ResetAll();
+        Anim.SetBool("Run", false);
+        controller.NavMeshAgent.isStopped = true;
+        controller.NavMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1f);
+        controller.NavMeshAgent.acceleration = 8f;
+
     }
 }

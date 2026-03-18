@@ -20,6 +20,7 @@ public class BossMaterialHandle : MonoBehaviour
     [SerializeField] private SkinnedMeshRenderer[] bossRenderer;
     [SerializeField] private Material chargingMaterial;
     private Dictionary<SkinnedMeshRenderer, Material> originalMats = new Dictionary<SkinnedMeshRenderer, Material>();
+    private Dictionary<GameObject, Coroutine> ghostCoroutines = new Dictionary<GameObject, Coroutine>();
     private List<GameObject> activeGhost = new List<GameObject>();
     private List<GameObject> outlineObj = new List<GameObject>();
     private List<Material> createMats = new List<Material>();
@@ -86,8 +87,14 @@ public class BossMaterialHandle : MonoBehaviour
     // ¸Þ¸ð¸® Á¤¸®
     public void ClearChargingOutline()
     {
-        foreach (var obj in outlineObj) Destroy(obj);
-        foreach (var mat in createMats) Destroy(mat);
+        foreach (var obj in outlineObj)
+        {
+            if (obj != null) Destroy(obj);
+        }
+        foreach (var mat in createMats)
+        {
+            if(mat != null) Destroy(mat);
+        }
         outlineObj.Clear();
         createMats.Clear();
     }
@@ -126,22 +133,26 @@ public class BossMaterialHandle : MonoBehaviour
             ghost.transform.position = skin.transform.position;
             ghost.transform.rotation = skin.transform.rotation;
 
-            mr.material.SetColor("_TintColor", Color.cyan * 2f);
+            Material runtimeMat = mr.material;
+            runtimeMat.SetColor("_TintColor", Color.cyan * 2f);
 
-            StartCoroutine(FadeOutGhost(mr, 0.5f));
+            Coroutine co = StartCoroutine(FadeOutGhost(ghost, mr, runtimeMat, 0.5f));
+            ghostCoroutines[ghost] = co;
         }
 
     }
 
-    private IEnumerator FadeOutGhost(MeshRenderer mr, float duration)
+    private IEnumerator FadeOutGhost(GameObject ghost, MeshRenderer mr, Material mat, float duration)
     {
+        if (ghost == null || mr == null || mat == null) yield break;
         float elapsed = 0;
-        Material mat = mr.material;
+
         Color startColor = Color.cyan * 3.0f; // ¹àÀº ÇÏ´Ã»ö
         Color endColor = new Color(0.5f, 0f, 1f, 1f) * 3.0f; // ¹àÀº º¸¶ó»ö
 
         while (elapsed < duration)
         {
+            if (ghost == null || mr == null || mat == null) yield break;
             elapsed += Time.deltaTime;
             float ratio = elapsed / duration;
             float alpha = Mathf.Lerp(1, 0, ratio);
@@ -153,14 +164,22 @@ public class BossMaterialHandle : MonoBehaviour
 
             yield return null;
         }
-        activeGhost.Remove(mr.gameObject);
-        Destroy(mat);
-        Destroy(mr.gameObject);
+        ghostCoroutines.Remove(ghost);
+        activeGhost.Remove(ghost);
+        if(mat != null) Destroy(mat);
+        if (ghost != null) Destroy(ghost);
     }
 
     public void ResetAll()
     {
         ClearChargingOutline();
+
+        foreach(var pair in ghostCoroutines)
+        {
+            if (pair.Value != null) StopCoroutine(pair.Value);
+        }
+        ghostCoroutines.Clear();
+
         foreach (var ghost in activeGhost)
         {
             if (ghost != null) Destroy(ghost);
@@ -175,5 +194,9 @@ public class BossMaterialHandle : MonoBehaviour
             }
         }
         originalMats.Clear();
+    }
+    private void OnDisable()
+    {
+        ResetAll();
     }
 }

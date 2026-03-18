@@ -5,8 +5,7 @@ public class EnemySkillAttack : EnemyMeleeAttack
     [SerializeField] protected SkillInfo skillInfo;
 
     private float currentRadiusMult = 1.0f;
-    private bool isSkill;
-    public bool IsSkill { get => isSkill; set => isSkill = value; }
+
     public bool IsReady => Time.time - lastUseTime >= skillInfo.coolTime;
     private float lastUseTime = -100f;
     public bool NeedLookAtTarget { get => skillInfo.needLookAtTarget; }
@@ -35,7 +34,6 @@ public class EnemySkillAttack : EnemyMeleeAttack
     }
     public override void Attack()
     {
-        if (IsSkill) return;
         RangeAngleTargetAttack(skillInfo);
     }
 

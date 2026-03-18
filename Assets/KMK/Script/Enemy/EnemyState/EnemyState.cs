@@ -15,12 +15,9 @@ public abstract class EnemyState : MonoBehaviour
     protected EnemyStatComponent fsmInfo;
     protected Animator Anim { get => controller.Animator; }
 
-    protected NavMeshAgent navMeshAgent;
-
     private void Awake()
     {
         controller = GetComponent<EnemyController>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
     }
     private void Start()
     {
@@ -28,7 +25,7 @@ public abstract class EnemyState : MonoBehaviour
         {
             fsmInfo = controller.StatComp;
         }
-        navMeshAgent.avoidancePriority = Random.Range(0, 99);
+        
     }
     public virtual void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -37,17 +34,6 @@ public abstract class EnemyState : MonoBehaviour
 
     public abstract void UpdateState();
     public virtual void ExitState() { }
-
-    protected virtual void NavigationStop()
-    {
-        if(navMeshAgent != null && navMeshAgent.gameObject.activeSelf && navMeshAgent.isOnNavMesh )
-        {
-            navMeshAgent.isStopped = true;
-            navMeshAgent.velocity = Vector3.zero;
-            navMeshAgent.speed = 0;
-        }
-        
-    }
 
     protected virtual bool CheckDeath()
     {

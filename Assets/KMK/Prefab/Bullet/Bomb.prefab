@@ -204,6 +204,7 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 768
+  sfxString: Bomb
   noHitLayer:
     serializedVersion: 2
     m_Bits: 4096

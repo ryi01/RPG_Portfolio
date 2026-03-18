@@ -11573,7 +11573,7 @@ MonoBehaviour:
   hitShake: {x: 1.8, y: 0.25}
   attackShake: {x: 2.5, y: 1}
   impactScaleAndDuration: {x: 0.2, y: 0.25}
-  zoomSizeAndDuration: {x: 42, y: 0.35}
+  zoomSizeAndDuration: {x: 43, y: 0.3}
   stopTime: 0.12
   isAttackShake: 0
   isHitShake: 0
@@ -11806,8 +11806,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae8dee59e91d18c47b1acd46faf51871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  interactionDistance: 2
+  interactionDistance: 2.5
   trail: {fileID: 1769000821}
+  interval: 0.4
 --- !u!143 &1738482447
 CharacterController:
   m_ObjectHideFlags: 0
@@ -13059,9 +13060,34 @@ MonoBehaviour:
   s_BGM: {fileID: 1092439552}
   s_SFX: {fileID: 399387762}
   audioMixer: {fileID: 24100000, guid: af72379efcb0fac499911ba1860fb009, type: 2}
+  loopSFXSource: {fileID: 0}
   bgmSource: {fileID: 1855984216}
   sfxSource: {fileID: 1855984215}
-  soundList: []
+  soundList:
+  - name: HP
+    clip: {fileID: 8300000, guid: cfce0cea076109f478783201b2a9f57f, type: 3}
+  - name: PlayerStep
+    clip: {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
+  - name: NormalAttack1
+    clip: {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
+  - name: NormalAttack2
+    clip: {fileID: 8300000, guid: 83829ff414f47a048b5387e4ab33571c, type: 3}
+  - name: NormalAttack3
+    clip: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+  - name: NormalAttack4
+    clip: {fileID: 8300000, guid: fd25a15f9797641458336cccfb445343, type: 3}
+  - name: Skill1
+    clip: {fileID: 8300000, guid: 323e15cfe809e114ab92c9f4b25e8bc2, type: 3}
+  - name: Skill2
+    clip: {fileID: 8300000, guid: 8b23b175a78d6b5458322e3a6c9905d0, type: 3}
+  - name: Light
+    clip: {fileID: 8300000, guid: f1cb5d83282f2904a85f73111d068616, type: 3}
+  - name: Bomb
+    clip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
+  - name: Portion
+    clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
+  - name: Arrow
+    clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
   bgmList:
   - type: 0
     clip: {fileID: 8300000, guid: 4524f6cc20daa624d8013966ea233aee, type: 3}
@@ -13179,7 +13205,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0

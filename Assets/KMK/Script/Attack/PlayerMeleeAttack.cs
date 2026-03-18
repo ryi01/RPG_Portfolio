@@ -45,5 +45,25 @@ public class PlayerMeleeAttack : MeleeAttack
     public void SetComboIndex(int n)
     {
         comboIndex = n;
+        PlayComboAttackSFX(comboIndex);
     }
+
+    private void PlayComboAttackSFX(int comboIndex)
+    {
+        switch(comboIndex)
+        {
+            case 0: 
+                GameManager.Instance.SoundManager.PlaySFX("NormalAttack1");
+                break;
+            case 1:
+                GameManager.Instance.SoundManager.PlaySFX("NormalAttack2");
+                break;
+            case 2:
+                GameManager.Instance.SoundManager.PlaySFX("NormalAttack3");
+                break;
+            case 3:
+                GameManager.Instance.SoundManager.PlaySFX("NormalAttack4");
+                break;
+        }
+    }    
 }

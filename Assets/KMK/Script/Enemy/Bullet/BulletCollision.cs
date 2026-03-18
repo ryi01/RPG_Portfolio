@@ -8,6 +8,7 @@ public class BulletCollision : MonoBehaviour
     // 피격 대상 태그
     [SerializeField] protected LayerMask hitLayer;
     protected MeshRenderer mesh;
+    [SerializeField] protected string sfxString;
 
     // 피격 제한 대상 태그 (복수 대상일 경우 레이어로 제어할 것)
     [SerializeField] protected LayerMask noHitLayer;
@@ -17,6 +18,8 @@ public class BulletCollision : MonoBehaviour
 
     [SerializeField] protected GameObject bulletParticle;
 
+    [SerializeField] protected bool isArrow = true;
+
     protected HashSet<CharacterStatComponent> hitTargets = new HashSet<CharacterStatComponent>();
 
     public GameObject Owner { get; set; }
@@ -25,7 +28,10 @@ public class BulletCollision : MonoBehaviour
     {
         mesh = GetComponentInChildren<MeshRenderer>(true);
         if(mesh != null) mesh.enabled = true;
-
+    }
+    private void Start()
+    {
+        if (sfxString != "" && isArrow) GameManager.Instance.SoundManager.PlaySFX(sfxString);
     }
     protected virtual void OnCollisionEnter(Collision collision)
     {
@@ -88,6 +94,7 @@ public class BulletCollision : MonoBehaviour
 
         if (mesh != null) mesh.enabled = false;
         var movement = GetComponent<MonoBehaviour>().enabled = false;
+        if(sfxString != "" && !isArrow) GameManager.Instance.SoundManager.PlaySFX(sfxString);
         Destroy(gameObject, destroyTime);
     }
 

@@ -7,7 +7,7 @@ public class EnemyAttackState : EnemyState
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
-        NavigationStop();
+        controller.NavigationStop();
         Anim.SetInteger("State", (int)state);
     }
     public override void UpdateState()

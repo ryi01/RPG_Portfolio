@@ -36,6 +36,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
     [SerializeField] private TrailRenderer trail;
 
     private InteractionObject targetInteractable;
+
+    private bool isMoveToInteraction = false;
+
+    private float stepTimer = 0;
+    [SerializeField] private float interval = 0.4f;
     protected override void Awake()
     {
         base.Awake();
@@ -59,8 +64,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         }
         
         HandleInput();
-        //if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
-        HandleSkill();
+        if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
         HandleMovement();   
         HandleRotation();
         HandleUseItem();
@@ -108,11 +112,13 @@ public class PlayerController : BaseController<PlayerStatComponent>
             if(foundInteraction != null)
             {
                 targetInteractable = foundInteraction;
+                isMoveToInteraction = true;
                 MovementComp.FindPath(foundInteraction.GetTransform().position);
             }
             else if(isGround)
             {
                 targetInteractable = null;
+                isMoveToInteraction = false;
                 if (GameManager.Instance.CurrentState == GameState.Town) MovementComp.FindPath(groundHit.point, false);
                 else MovementComp.FindPath(groundHit.point);
             }
@@ -121,15 +127,15 @@ public class PlayerController : BaseController<PlayerStatComponent>
     }
     private void CheckInteractionDistance()
     {
-        if(targetInteractable != null)
+        if (targetInteractable == null || !isMoveToInteraction) return;
+        if (CheckAttackSkillDamage()) return;
+
+        float dist = Vector3.Distance(transform.position, targetInteractable.transform.position);
+        if (dist <= interactionDistance)
         {
-            float dist = Vector3.Distance(transform.position, targetInteractable.transform.position);
-            if(dist<= interactionDistance)
-            {
-                MovementComp.StopMove();
-                targetInteractable.Interact(this);
-                targetInteractable = null;
-            }
+            MovementComp.StopMove();
+            targetInteractable.Interact(this);
+            targetInteractable = null;
         }
     }
     public void OpenBox(ItemBox box)
@@ -182,24 +188,37 @@ public class PlayerController : BaseController<PlayerStatComponent>
             {
                 MovementComp.UpdateClickMove();
                 Animator.SetFloat("Move", 1f);
+                HandleFootStepTiming();
             }
             else
             {
                 Animator.SetFloat("Move", 0f);
+                stepTimer = 0;
             }
-        }
+        }   
+    }
+    private void HandleFootStepTiming()
+    {
+        if (CheckAttackSkillDamage()) return;
 
+        stepTimer += Time.deltaTime;
         
+        if(stepTimer >= interval)
+        {
+            stepTimer = 0;
+            interval = UnityEngine.Random.Range(0.34f, 0.42f);
+            GameManager.Instance.SoundManager.PlaySFX("PlayerStep");
+        }
     }
     private void HandleAttackInput()
     {
-
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
         offsetToMouse.y = 0;
         AttackComp.UpdateAttackProgress();
-        if (SkillComp.IsSkillAnimation(currentSkill)/* || GameManager.Instance.CurrentState == GameState.Town*/) return;
+        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
         if (Input.GetMouseButtonDown(0))
         {
+            ClearTarget();
             trail.emitting = true;
             MovementComp.StopMove();
             AttackComp.TriggerAttack(MovementComp.GetMouseWorldPos());
@@ -242,7 +261,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
                 if (!SkillComp.CurrentSkillActive(select))
                 {
-                    if(select < InputSkill.SKILLS.SKILL3) trail.emitting = true;
+                    ClearTarget();
+                    if (select < InputSkill.SKILLS.SKILL3) trail.emitting = true;
                     ExcuteSkillLogic(select);
                 }
                 break;
@@ -294,12 +314,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
             dir.y = 0;
             Animator.SetTrigger("Damage");
             transform.forward = -dir;
+            CameraShakeController.ShakeCamDirectional(dir, 0.5f, 0.15f);
+            CombatFeedback.HitStop(0.05f);
             MovementComp.Push(dir, force, 0.08f);
         }
         else
         {
             CameraShakeController.ShakeCam(0.3f, 0.2f);
+            CombatFeedback.HitStop(0.02f);
         }
+        
     }
     public void OnAttackDash(float distance)
     {
@@ -325,6 +349,17 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public void TrailOff()
     {
         trail.emitting = false;
+    }
+
+    private void ClearTarget()
+    {
+        targetInteractable = null;
+        isMoveToInteraction = false;
+    }
+
+    private bool CheckAttackSkillDamage()
+    {
+        return AttackComp.IsAttackAnimation() || SkillComp.IsSkillAnimation(currentSkill) || IsDamage;
     }
 
 }

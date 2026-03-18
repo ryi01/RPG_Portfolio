@@ -10,7 +10,7 @@ public class EnemyIdleState : EnemyState
     {
         base.EnterState(state, data);
         StandWait();
-        NavigationStop();
+        controller.NavigationStop();
         // 애니메이션 호출 => 컨트롤러에 존재
         Anim.SetInteger("State", (int)state);
     }
