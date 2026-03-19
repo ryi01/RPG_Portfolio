@@ -94,7 +94,7 @@ public class BossController : EnemyController
     private IEnumerator ExecuteLightning(Vector3 pos)
     {
         GameObject warning = Instantiate(wariningPrefab, pos, Quaternion.identity);
-        GameManager.Instance.SoundManager.PlaySFX("Light");
+
         lightList.Add(warning);
         warning.transform.localScale = Vector3.zero;
         float targetScale = 1;

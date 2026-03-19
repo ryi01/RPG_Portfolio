@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
             MovementComp.StopMove();
             return;
         }
+        UpdateMouseOffset();
+        UpdateAttackLogic();
         
         HandleInput();
         if (GameManager.Instance.CurrentState != GameState.Town) HandleSkill();
@@ -70,6 +73,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
         HandleUseItem();
         CheckInteractionDistance();
         CheckBox();
+    }
+
+    private void UpdateAttackLogic()
+    {
+        if (AttackComp.IsAttackAnimation() || AttackComp.IsBufferActive()) AttackComp.UpdateAttackProgress();
+    }
+    private void UpdateMouseOffset()
+    {
+        offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
+        offsetToMouse.y = 0;
     }
     private void HandleUseItem()
     {
@@ -85,45 +98,49 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private void HandleInput()
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
-        if (Input.GetMouseButtonDown(1))
+        HandleMoveAndInteractInput();
+        HandleAttackInput();
+    }
+    private void HandleMoveAndInteractInput()
+    {
+        if (!Input.GetMouseButtonDown(1)) return;
+
+        int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Obstacle"));
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hits = Physics.RaycastAll(ray, 100, layerMask).OrderBy(h => h.distance).ToArray();
+
+        InteractionObject foundInteraction = null;
+        RaycastHit groundHit = default;
+        bool isGround = false;
+        foreach (var hit in hits)
         {
-            int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Obstacle"));
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray, 100, layerMask).OrderBy(h => h.distance).ToArray();
-
-            InteractionObject foundInteraction = null;
-            RaycastHit groundHit = default;
-            bool isGround = false;
-            foreach(var hit in hits)
+            var interactable = hit.collider.GetComponentInParent<InteractionObject>();
+            if (interactable != null)
             {
-                var interactable = hit.collider.GetComponentInParent<InteractionObject>();
-                if(interactable != null)
-                {
-                    foundInteraction = interactable;
-                    break;
-                }
-                else
-                {
-                    groundHit = hit;
-                    isGround = true;
-                }
+                foundInteraction = interactable;
+                break;
             }
-
-            if(foundInteraction != null)
+            else
             {
-                targetInteractable = foundInteraction;
-                isMoveToInteraction = true;
-                MovementComp.FindPath(foundInteraction.GetTransform().position);
-            }
-            else if(isGround)
-            {
-                targetInteractable = null;
-                isMoveToInteraction = false;
-                if (GameManager.Instance.CurrentState == GameState.Town) MovementComp.FindPath(groundHit.point, false);
-                else MovementComp.FindPath(groundHit.point);
+                groundHit = hit;
+                isGround = true;
             }
         }
-        HandleAttackInput();
+
+        if (foundInteraction != null)
+        {
+            targetInteractable = foundInteraction;
+            isMoveToInteraction = true;
+            MovementComp.FindPath(foundInteraction.GetTransform().position);
+        }
+        else if (isGround)
+        {
+            targetInteractable = null;
+            isMoveToInteraction = false;
+            if (GameManager.Instance.CurrentState == GameState.Town) MovementComp.FindPath(groundHit.point, false);
+            else MovementComp.FindPath(groundHit.point);
+        }
+
     }
     private void CheckInteractionDistance()
     {
@@ -182,7 +199,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
             Animator.SetFloat("Move", 2);
         }
         else
-        { 
+        {
             // 3. 이동 중일 때만 업데이트 (중복 호출 제거됨)
             if (MovementComp.IsMoving)
             {
@@ -207,23 +224,34 @@ public class PlayerController : BaseController<PlayerStatComponent>
         {
             stepTimer = 0;
             interval = UnityEngine.Random.Range(0.34f, 0.42f);
-            GameManager.Instance.SoundManager.PlaySFX("PlayerStep");
+            // GameManager.Instance.SoundManager.PlaySFXWithCooldown("PlayerStep", 0.08f, 0.8f);
         }
     }
     private void HandleAttackInput()
     {
         offsetToMouse = MovementComp.GetMouseWorldPos() - transform.position;
         offsetToMouse.y = 0;
-        AttackComp.UpdateAttackProgress();
         if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
-        if (Input.GetMouseButtonDown(0))
-        {
-            ClearTarget();
-            trail.emitting = true;
-            MovementComp.StopMove();
-            AttackComp.TriggerAttack(MovementComp.GetMouseWorldPos());
-            UpdateAttackDir();
-        }
+        if (!Input.GetMouseButtonDown(0)) return;
+        Vector3 lookDir = GetMouseDir();
+        if (lookDir == Vector3.zero) return;
+
+        ClearTarget();
+        trail.emitting = true;
+        MovementComp.StopMove();
+
+        SetAttackLookDir(-lookDir);
+        RotateToAttackDir();
+
+        AttackComp.RequestAttack(MovementComp.GetMouseWorldPos(), lookDir);
+
+    }
+
+    private Vector3 GetMouseDir()
+    {
+        Vector3 dir = offsetToMouse;
+        if (dir.sqrMagnitude < 0.001f) return Vector3.zero;
+        return dir.normalized;
     }
     private void HandleRotation()
     {
@@ -274,7 +302,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         currentSkill = skill;
         
-        UpdateAttackDir();
+        RotateToAttackDir();
         if(skill == InputSkill.SKILLS.SKILL5) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL5);
         else if(skill == InputSkill.SKILLS.SKILL6) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL6);
         else
@@ -290,12 +318,18 @@ public class PlayerController : BaseController<PlayerStatComponent>
             }
         }
     }
-
-    private void UpdateAttackDir()
+    public void SetAttackLookDir(Vector3 dir)
     {
-        if(offsetToMouse.sqrMagnitude > 0.001f)
+        if(dir.sqrMagnitude > 0.001f)
         {
-            targetLookDir = offsetToMouse.normalized;
+            targetLookDir = dir.normalized;
+        }
+    }
+
+    private void RotateToAttackDir()
+    {
+        if(targetLookDir.sqrMagnitude > 0.001f)
+        {
             MovementComp.LookAtInstant(targetLookDir);
         }
     }

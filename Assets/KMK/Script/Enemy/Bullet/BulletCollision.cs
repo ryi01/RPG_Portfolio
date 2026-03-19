@@ -31,7 +31,7 @@ public class BulletCollision : MonoBehaviour
     }
     private void Start()
     {
-        if (sfxString != "" && isArrow) GameManager.Instance.SoundManager.PlaySFX(sfxString);
+       
     }
     protected virtual void OnCollisionEnter(Collision collision)
     {
@@ -94,7 +94,7 @@ public class BulletCollision : MonoBehaviour
 
         if (mesh != null) mesh.enabled = false;
         var movement = GetComponent<MonoBehaviour>().enabled = false;
-        if(sfxString != "" && !isArrow) GameManager.Instance.SoundManager.PlaySFX(sfxString);
+
         Destroy(gameObject, destroyTime);
     }
 

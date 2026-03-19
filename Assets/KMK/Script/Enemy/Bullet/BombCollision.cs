@@ -45,7 +45,7 @@ public class BombCollision : BulletCollision
 
         if(bulletParticle != null) Instantiate(bulletParticle, transform.position, bulletParticle.transform.rotation);
         ExplodeDamage();
-        GameManager.Instance.SoundManager.PlaySFX(sfxString);
+
         Destroy(gameObject);
     }
     private void ExplodeDamage()

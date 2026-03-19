@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 
 public class PlayerMeleeAttack : MeleeAttack
 {
     protected PlayerController pc => bc as PlayerController;
-    private bool isHitShakeSwing = false;
-    private int comboIndex = 0;
+    protected bool isHitShakeSwing = false;
+    protected int comboIndex = 0;
     [SerializeField] protected Vector2 hitShake;
     [SerializeField] protected Vector2 attackShake;
     [SerializeField] protected Vector2 impactScaleAndDuration;
@@ -28,42 +29,18 @@ public class PlayerMeleeAttack : MeleeAttack
     {
         base.AttackHit(hit);
             
-        if (isHitShake && !isHitShakeSwing)
+        if (!isHitShakeSwing)
         {
             float multifle = 1f + comboIndex * 0.25f;
-            pc.CameraShakeController.ShakeCam(attackShake.x * multifle, attackShake.y);
-            pc.CombatFeedback.HitStop(stopTime);
+            if(isHitShake)pc.CameraShakeController.ShakeCam(attackShake.x * multifle, attackShake.y);
+            if(isHitStop)pc.CombatFeedback.HitStop(stopTime);
             isHitShakeSwing = true;
         }
-        if(isHitStop) pc.CombatFeedback.HitStop(stopTime);
         if (hit.TryGetComponent<BaseController>(out var target))
         {
             target.Damage(CS.FinalAttack, CS.NockbackForce, transform);
         }
     }
 
-    public void SetComboIndex(int n)
-    {
-        comboIndex = n;
-        PlayComboAttackSFX(comboIndex);
-    }
 
-    private void PlayComboAttackSFX(int comboIndex)
-    {
-        switch(comboIndex)
-        {
-            case 0: 
-                GameManager.Instance.SoundManager.PlaySFX("NormalAttack1");
-                break;
-            case 1:
-                GameManager.Instance.SoundManager.PlaySFX("NormalAttack2");
-                break;
-            case 2:
-                GameManager.Instance.SoundManager.PlaySFX("NormalAttack3");
-                break;
-            case 3:
-                GameManager.Instance.SoundManager.PlaySFX("NormalAttack4");
-                break;
-        }
-    }    
 }

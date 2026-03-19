@@ -11545,13 +11545,13 @@ MonoBehaviour:
   attackTransform: {fileID: 0}
   hitEffectPrefab: {fileID: 0}
   hitShake: {x: 0, y: 0}
-  attackShake: {x: 0, y: 0}
+  attackShake: {x: 0.2, y: 0.15}
   impactScaleAndDuration: {x: 0, y: 0}
-  zoomSizeAndDuration: {x: 0, y: 0}
+  zoomSizeAndDuration: {x: 44, y: 0.01}
   stopTime: 0
-  isAttackShake: 1
-  isHitShake: 1
-  isHitStop: 1
+  isAttackShake: 0
+  isHitShake: 0
+  isHitStop: 0
   skillInfo: {fileID: 11400000, guid: f651b42445d6ea5479c169cd209a51d7, type: 2}
   skillBtnSprite: {fileID: 21300000, guid: 4904acb58a6aa8748b99507e9e7f600c, type: 3}
   skillTimer: {fileID: 1888356507}
@@ -11718,6 +11718,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c156fc18c0a6411489668ae8fa2ec983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputAttack
+  comboBufferDuration: 0.25
+  maxComboCount: 4
   autoTargetRadius: 3
   enemyLayer:
     serializedVersion: 2
@@ -13038,6 +13040,7 @@ GameObject:
   - component: {fileID: 1855984214}
   - component: {fileID: 1855984216}
   - component: {fileID: 1855984215}
+  - component: {fileID: 1855984218}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -13060,33 +13063,41 @@ MonoBehaviour:
   s_BGM: {fileID: 1092439552}
   s_SFX: {fileID: 399387762}
   audioMixer: {fileID: 24100000, guid: af72379efcb0fac499911ba1860fb009, type: 2}
-  loopSFXSource: {fileID: 0}
   bgmSource: {fileID: 1855984216}
   sfxSource: {fileID: 1855984215}
+  combatSource: {fileID: 1855984218}
   soundList:
   - name: HP
     clip: {fileID: 8300000, guid: cfce0cea076109f478783201b2a9f57f, type: 3}
   - name: PlayerStep
     clip: {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
   - name: NormalAttack1
-    clip: {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
+    clip: {fileID: 8300000, guid: bf0cdc3a795335a4cb6f80957096374a, type: 3}
   - name: NormalAttack2
-    clip: {fileID: 8300000, guid: 83829ff414f47a048b5387e4ab33571c, type: 3}
+    clip: {fileID: 8300000, guid: 9516212bec92ea54bb24bbc04adace60, type: 3}
   - name: NormalAttack3
-    clip: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+    clip: {fileID: 8300000, guid: 4fbbdd0377a974a4bbb94259476f881a, type: 3}
   - name: NormalAttack4
-    clip: {fileID: 8300000, guid: fd25a15f9797641458336cccfb445343, type: 3}
+    clip: {fileID: 8300000, guid: 8ec1f5a2cf7ebde4ebe5fcafc5eb22d6, type: 3}
   - name: Skill1
     clip: {fileID: 8300000, guid: 323e15cfe809e114ab92c9f4b25e8bc2, type: 3}
   - name: Skill2
     clip: {fileID: 8300000, guid: 8b23b175a78d6b5458322e3a6c9905d0, type: 3}
+  - name: Skill3
+    clip: {fileID: 8300000, guid: eaae8fe8d600e1f459f34aa5757fa3b8, type: 3}
+  - name: Skill4
+    clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
+  - name: Skill5
+    clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
+  - name: Skill6
+    clip: {fileID: 8300000, guid: 6071e4957c4e5db4999302ea9d869b7f, type: 3}
+  - name: Arrow
+    clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
   - name: Light
     clip: {fileID: 8300000, guid: f1cb5d83282f2904a85f73111d068616, type: 3}
   - name: Bomb
     clip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
   - name: Portion
-    clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
-  - name: Arrow
     clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
   bgmList:
   - type: 0
@@ -13108,7 +13119,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -13205,7 +13216,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -13304,6 +13315,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1855984218
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855984213}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 8229186412407591638, guid: af72379efcb0fac499911ba1860fb009, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1861730533
 GameObject:
   m_ObjectHideFlags: 0
