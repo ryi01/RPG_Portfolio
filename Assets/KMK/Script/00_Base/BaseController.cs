@@ -20,10 +20,7 @@ public abstract class BaseController<T> : BaseController where T : CharacterStat
 {
     public T StatComp { get; protected set; }
 
-    public override CharacterStatComponent GetStat()
-    {
-        return StatComp;
-    }
+    public override CharacterStatComponent GetStat() => StatComp;
 
     protected virtual void Awake()
     {
