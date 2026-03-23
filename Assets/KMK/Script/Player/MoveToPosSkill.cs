@@ -11,18 +11,17 @@ public class MoveToPosSkill : PlayerSkillAttack
         
         if (pc.StatComp.CurrentST >= evadeCost)
         {
-            Vector3 mouseWorldPos = pc.MovementComp.GetMouseWorldPos();
-            Vector3 evadeDir = mouseWorldPos - transform.position;
-            evadeDir.y = 0;
+            Vector3 evadeDir = pc.LockedAimDir;
 
-            float distance = evadeDir.magnitude;
-            Vector3 dir = evadeDir.normalized;
+            if (evadeDir.sqrMagnitude < 0.001f) return;
+            float distance = Vector3.Distance(transform.position, pc.AimPoint);
+
             if(distance > skillInfo.attackMaxRange)
             {
                 distance = skillInfo.attackMaxRange;
             }
             
-            StartCoroutine(ExcuteEvade(dir, distance));
+            StartCoroutine(ExcuteEvade(evadeDir, distance));
         }
     }
 
@@ -31,13 +30,16 @@ public class MoveToPosSkill : PlayerSkillAttack
         pc.IsBlink = true;
         pc.MovementComp.StopMove();
         pc.MovementComp.LookAtInstant(dir);
+
         StartSkill();
-        pc.MovementComp.LookAtInstant(dir);
+
+        pc.CameraShakeController.PlayMotionBlur(0.75f, skillInfo.attackTime);
         pc.MovementComp.Push(dir, dist, skillInfo.attackTime, false, true);
+        pc.CameraShakeController.GenerateImpulseDirection(dir, 0.4f);
+
         yield return new WaitForSeconds(skillInfo.attackTime);
+
         pc.IsBlink = false;
-        pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
-        pc.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y);
     }
 
 }

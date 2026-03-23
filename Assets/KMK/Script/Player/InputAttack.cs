@@ -14,9 +14,11 @@ public class InputAttack : MonoBehaviour
 
     private bool isBuffered;
     private float bufferTimer;
-    private Vector3 mouseWorldPos;
 
     private int comboStep = 0;
+
+    private Vector3 mouseWorldPos;
+    private Vector3 lookDir;
 
 
     private void Awake()
@@ -27,15 +29,42 @@ public class InputAttack : MonoBehaviour
     // pc에서 공격 입력이 들어온 경우
     public void RequestAttack(Vector3 mousePos, Vector3 lookDir)
     {
-        pc.SetAttackLookDir(lookDir);
+        this.mouseWorldPos = mousePos;
+        lookDir.y = 0;
+        this.lookDir = lookDir.sqrMagnitude > 0.001f ? lookDir.normalized : Vector3.zero;
+        if (this.lookDir == Vector3.zero) return;
+        // 바라보는 방향 저장
+        pc.SetAttackLookDir(this.lookDir);
+        // 이미 공격 중이라면 다음 공격 예약
         if(IsAttackAnimation())
         {
-            QueueNextAttack(mousePos);
+            QueueNextAttack(mousePos, this.lookDir);
             return;
         }
-        StartAttack(mousePos);
+        // 공격중이 아니라면 바로 시작
+        StartAttack(mousePos, this.lookDir);
+    }
+    // 첫 공격 시작
+    private void StartAttack(Vector3 mousePos, Vector3 lookDir)
+    {
+        mouseWorldPos = mousePos;
+        this.lookDir = lookDir;
+
+        comboStep = 0;
+        isBuffered = false;
+        bufferTimer = 0;
+
+        ExecuteAttak();
     }
 
+    // 다음 공격 예약
+    public void QueueNextAttack(Vector3 mousePos, Vector3 lookDir)
+    {
+        mouseWorldPos = mousePos;
+        this.lookDir = lookDir;
+        isBuffered = true;
+        bufferTimer = comboBufferDuration;
+    }
     // 매프레임 공격 버퍼 갱신
     // 공격중 + 버퍼 있는 경우 호출
     public void UpdateAttackProgress()
@@ -59,32 +88,23 @@ public class InputAttack : MonoBehaviour
         }
         if (bufferTimer <= 0) isBuffered = false;
     }
-    // 첫 공격 시작
-    private void StartAttack(Vector3 mousePos)
-    {
-        mouseWorldPos = mousePos;
+ 
 
-        comboStep = 0;
-        isBuffered = false;
-        bufferTimer = 0;
-
-        ExecuteAttak();
-    }
-    // 다음 공격 예약
-    public void QueueNextAttack(Vector3 mousePos)
-    {
-        mouseWorldPos = mousePos;
-        isBuffered = true;
-        bufferTimer = comboBufferDuration;
-    }
     // 실제 공격
     private void ExecuteAttak()
     {
-        ApplyAutoTargeting();
+        // 입력방향에 적이 있는 쪽으로 보정
+        Vector3 finalLookDir = ApplyAutoTargeting(this.lookDir);
+        if (finalLookDir == Vector3.zero) finalLookDir = lookDir;
+        // 최종 회전
+        pc.SetAttackLookDir(finalLookDir);
+        pc.MovementComp.LookAtInstant(finalLookDir);
+
         // 트리거 리셋후 다시 실행
         pc.Animator.SetInteger("Combo", comboStep);
         pc.Animator.ResetTrigger(hashAttack);
         pc.Animator.SetTrigger(hashAttack);
+
         isBuffered = false;
     }
 
@@ -92,6 +112,7 @@ public class InputAttack : MonoBehaviour
     // 공격이 완전히 끝난경우
     public void ResetCombo()
     {
+        pc.TrailOff();
         comboStep = 0;
         isBuffered = false;
         bufferTimer = 0;
@@ -102,35 +123,38 @@ public class InputAttack : MonoBehaviour
         return pc.Animator.GetCurrentAnimatorStateInfo(1).IsTag("Attack");
     }
     // 공격 방향 보정
-    private void ApplyAutoTargeting()
+    private Vector3 ApplyAutoTargeting(Vector3 inputLookDir)
     {
-        Collider[] closeEnemies = Physics.OverlapSphere(mouseWorldPos, autoTargetRadius, enemyLayer);
+        Collider[] closeEnemies = Physics.OverlapSphere(transform.position, autoTargetRadius, enemyLayer);
         Transform bestTarget = null;
         float closeDist = float.MaxValue;
 
         foreach (var enemy in closeEnemies)
         {
-            float dis = Vector3.Distance(new Vector3(mouseWorldPos.x, 0, mouseWorldPos.z), new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z));
-            if (dis < closeDist)
+            Vector3 dirToEnemy = enemy.transform.position - transform.position;
+            dirToEnemy.y = 0;
+            if (dirToEnemy.sqrMagnitude < 0.001f) continue;
+            dirToEnemy.Normalize();
+
+            // 입력 방향과 근처 적 방향확인
+            float dot = Vector3.Dot(inputLookDir, dirToEnemy);
+            // 옆이나 뒤면 보정 대상 제외
+            if (dot < 0.4f) continue;
+            float dist = Vector3.Distance(transform.position, enemy.transform.position);
+            // 방향 유사도와 거리 가중치에 따라
+            float score = dot * 2f - dist * 0.2f;
+            // 에임 보정
+            if(score > closeDist)
             {
-                closeDist = dis;
+                closeDist = score;
                 bestTarget = enemy.transform;
             }
         }
-        Vector3 targetLookDir;
-        if (bestTarget != null)
-        {
-            targetLookDir = (bestTarget.position - transform.position).normalized;
-        }
-        else
-        {
-            targetLookDir = (mouseWorldPos - transform.position).normalized;
-        }
-        targetLookDir.y = 0;
-        if (targetLookDir != Vector3.zero)
-        {
-            pc.MovementComp.LookAtInstant(targetLookDir);
-        }
+        if (bestTarget == null) return inputLookDir;
+        Vector3 result = bestTarget.position - pc.transform.position;
+        result.y = 0;
+        if (result.sqrMagnitude < 0.001f) return inputLookDir;
+        return result.normalized;
     }
     public bool IsBufferActive()
     {

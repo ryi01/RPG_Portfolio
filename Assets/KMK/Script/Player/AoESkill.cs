@@ -5,18 +5,26 @@ using UnityEngine;
 public class AoESkill : PlayerSkillAttack
 {
     [SerializeField] protected Transform skillEffectPrefabTrans;
+    [SerializeField] protected GameObject groundEffect;
     private GameObject effect;
+
+    public void OnAoEeffect()
+    {
+        if (groundEffect != null) groundEffect.SetActive(true);
+    }
     public void OnAoESkill()
     {
+        pc.CameraShakeController.PlayMotionBlur(0.35f, 0.1f);
+
         pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
         pc.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y, 0.08f);
-        pc.CombatFeedback.ImpactSlow(impactScaleAndDuration.x, impactScaleAndDuration.y);
-        pc.CombatFeedback.HitStop(stopTime);
-       
+        pc.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
+        
         Attack();
     }
     public void OnAoESkillEnd()
     {
+        groundEffect.SetActive(false);
         Destroy(effect);
     }
     public override void RangeAngleTargetAttack(SkillInfo data = null)
@@ -41,7 +49,7 @@ public class AoESkill : PlayerSkillAttack
         foreach(Collider target in targets)
         {
             if (target == null) continue;
-            yield return new WaitForSeconds(0.03f);
+            yield return new WaitForSecondsRealtime(0.03f);
             AttackHit(target);
         }
     }

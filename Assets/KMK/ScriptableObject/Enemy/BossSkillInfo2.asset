@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 1
   attackMinRange: 0
-  attackMaxRange: 8
-  attackRadius: 4
+  attackMaxRange: 6
+  attackRadius: 5
   hitAngle: 60
   attackTime: 4
   nockbackForce: 2
@@ -26,3 +26,4 @@ MonoBehaviour:
   needDash: 0
   nextSkillIndex: 1
   chainNextSkill: 0
+  audioClip: {fileID: 0}

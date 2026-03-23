@@ -17,6 +17,7 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     [SerializeField] private SkillTimer skillTimer;
 
     protected bool isHitOnce = false;
+
     public override void Attack()
     {
         base.Attack();

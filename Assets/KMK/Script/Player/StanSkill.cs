@@ -12,10 +12,10 @@ public class StanSkill : PlayerSkillAttack
     }
     public void OnStanSkill()
     {
+        pc.CameraShakeController.GenerateImpulseDirection(pc.LockedAimDir, 1.6f);
         pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
         pc.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y, 0.06f);
-        pc.CombatFeedback.HitStop(stopTime);
-        pc.CombatFeedback.ImpactSlow(impactScaleAndDuration.x, impactScaleAndDuration.y);
+        pc.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
         Instantiate(hitEffectPrefab, stunEffectTrans.position, hitEffectPrefab.transform.rotation);
         Attack();
     }

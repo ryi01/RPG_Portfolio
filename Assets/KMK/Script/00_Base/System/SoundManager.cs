@@ -1,15 +1,8 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-[System.Serializable]
-public struct SoundData
-{
-    public string name;
-    public AudioClip clip;
-}
 public enum EBGMType { MAIN_MENU, BOSS_BATTLE, FIELD_THEME}
 [System.Serializable]
 public struct BGMData
@@ -27,7 +20,6 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource combatSource;
 
-    [SerializeField] private List<SoundData> soundList;
     [SerializeField] private List<BGMData> bgmList;
     private Dictionary<string, AudioClip> soundDict = new Dictionary<string, AudioClip>();
     private Dictionary<EBGMType, AudioClip> bgmDict = new Dictionary<EBGMType, AudioClip>();
@@ -37,10 +29,6 @@ public class SoundManager : MonoBehaviour
         s_BGM.onValueChanged.AddListener(ChangeBGM);
         s_SFX.onValueChanged.AddListener(ChangeSFX);
 
-        foreach(var data in soundList)
-        {
-            soundDict[data.name] = data.clip;
-        }
         foreach(var data in bgmList)
         {
             bgmDict[data.type] = data.clip;
@@ -85,6 +73,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySFXWithCooldown(AudioClip clip, float cooldown, float volumeScale = 1f)
     {
+        if (clip == null) return;
         float now = Time.time;
         if(lastPlayTimeDict.TryGetValue(clip, out float lastTime))
         {
@@ -109,15 +98,14 @@ public class SoundManager : MonoBehaviour
         audioMixer.SetFloat("SFXAudio", Mathf.Log10(safeVolume / 100) * 20);
     }
 
-    public void PlayLoopSFX(string name)
+    public void PlayLoopSFX(AudioClip clip)
     {
-        if(soundDict.TryGetValue(name, out AudioClip clip))
-        {
-            if (sfxSource.clip == clip && sfxSource.isPlaying) return;
-            sfxSource.clip = clip;
-            sfxSource.loop = true;
-            sfxSource.Play();
-        }
+        if (clip == null) return;
+        if (sfxSource.clip == clip && sfxSource.isPlaying) return;
+
+        sfxSource.clip = clip;
+        sfxSource.loop = true;
+        sfxSource.Play();
     }
     public void StopLoopSFX()
     {

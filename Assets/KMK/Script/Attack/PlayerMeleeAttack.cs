@@ -20,7 +20,7 @@ public class PlayerMeleeAttack : MeleeAttack
         if(isAttackShake)
         {
             float multifle = 1f + comboIndex * 0.2f;
-            pc.CameraShakeController.ShakeCam(hitShake.x * multifle, hitShake.y);
+            pc.CameraShakeController.ShakeCam(attackShake.x * multifle, attackShake.y);
         }
         base.Attack();
     }
@@ -32,8 +32,8 @@ public class PlayerMeleeAttack : MeleeAttack
         if (!isHitShakeSwing)
         {
             float multifle = 1f + comboIndex * 0.25f;
-            if(isHitShake)pc.CameraShakeController.ShakeCam(attackShake.x * multifle, attackShake.y);
-            if(isHitStop)pc.CombatFeedback.HitStop(stopTime);
+            if(isHitShake)pc.CameraShakeController.ShakeCam(hitShake.x * multifle, hitShake.y);
+            if (isHitStop) pc.CombatFeedback.HitStopByStrength(GetComboHitStrenght());
             isHitShakeSwing = true;
         }
         if (hit.TryGetComponent<BaseController>(out var target))
@@ -41,6 +41,18 @@ public class PlayerMeleeAttack : MeleeAttack
             target.Damage(CS.FinalAttack, CS.NockbackForce, transform);
         }
     }
-
+    protected CombatFeedback.HitStrength GetComboHitStrenght()
+    {
+        switch(comboIndex)
+        {
+            case 0:
+            case 1:
+                return CombatFeedback.HitStrength.Light;
+            case 2:
+                return CombatFeedback.HitStrength.Medium;
+            default:
+                return CombatFeedback.HitStrength.Heavy;
+        }
+    }
 
 }

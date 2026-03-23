@@ -5,9 +5,14 @@ using UnityEngine;
 public class EnemyDeathState : EnemyHitState
 {
     protected float time = 0;
-    
+    [SerializeField] protected ParticleSystem deathParticle;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
+        if (deathParticle != null)
+        {
+            // ÆÄÆ¼Å¬ 
+            deathParticle.Play();
+        }
         if (controller.NavMeshAgent != null) controller.NavMeshAgent.enabled = false;
         
         Anim.SetInteger("State", UnityEngine.Random.Range(7, 9));

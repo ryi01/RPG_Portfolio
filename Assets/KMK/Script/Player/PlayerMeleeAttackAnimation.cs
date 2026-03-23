@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // 기본 공격
 public class PlayerMeleeAttackAnimation : PlayerMeleeAttack
 {
-
+    [SerializeField] private List<AudioClip> comboSFX;
+    [SerializeField][Range(0, 1)] private float volume = 0.75f;
     protected override void AttackReady()
     {
         base.AttackReady();
@@ -32,20 +34,6 @@ public class PlayerMeleeAttackAnimation : PlayerMeleeAttack
 
     private void PlayComboAttackSFX(int comboIndex)
     {
-        /*        switch (comboIndex)
-              {
-                  case 0:
-                      GameManager.Instance.SoundManager.PlayCombatSFX("NormalAttack1", 0.75f);
-                      break;
-                  case 1:
-                      GameManager.Instance.SoundManager.PlayCombatSFX("NormalAttack2", 0.75f);
-                      break;
-                  case 2:
-                      GameManager.Instance.SoundManager.PlayCombatSFX("NormalAttack3", 0.75f);
-                      break;
-                  case 3:
-                      GameManager.Instance.SoundManager.PlayCombatSFX("NormalAttack4", 0.75f);
-                      break;
-              }*/
+        GameManager.Instance.SoundManager.PlayCombatSFX(comboSFX[comboIndex], volume);
     }
 }

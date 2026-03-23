@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEditor.Build;
@@ -771,12 +772,14 @@ public class DungeonGenerator : MonoBehaviour
             }
 
             int spawnCount = UnityEngine.Random.Range(3, maxEnemiesPerRoom + 1);
+            int enemyindex = 0;
             for(int i = 0; i <spawnCount; i++)
             {
                 if (spawnPoints.Count == 0) break;
                 Vector3 spawnPos = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
-
-                GameObject enemy = Instantiate(enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)], spawnPos, Quaternion.identity, dungeonParent);
+                int index = enemyindex % enemyPrefabs.Length;
+                GameObject enemy = Instantiate(enemyPrefabs[index], spawnPos, Quaternion.identity, dungeonParent);
+                enemyindex++;
                 EnemyStatComponent stat = enemy.GetComponent<EnemyStatComponent>();
                 if (stat != null)
                 {
