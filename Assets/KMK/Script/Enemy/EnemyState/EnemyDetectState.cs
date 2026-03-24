@@ -4,28 +4,33 @@ public class EnemyDetectState : EnemyState
 {
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
-        if (controller.NavMeshAgent == null || !controller.NavMeshAgent.isOnNavMesh) return;
-        controller.NavMeshAgent.speed = fsmInfo.SetSpeedMultifle(1.5f);
         base.EnterState(state, data);
-        Anim.SetInteger("State", (int)state);
-    }
+        if (controller.NavMeshAgent == null || !controller.NavMeshAgent.isOnNavMesh) return;
 
+        controller.NavigationResume();
+        controller.NavMeshAgent.speed = statComp.SetSpeedMultifle(1.5f);
+        if (Anim != null)
+        {
+            Anim.SetInteger("State", (int)state);
+            if(controller.BossQuest != null ) Anim.SetBool("Run", false);
+        }
+    }
     public override void UpdateState()
     {
         if (controller.NavMeshAgent == null || !controller.NavMeshAgent.isOnNavMesh) return;
         float dis = controller.GetPlayerDis();
-        if(dis <= fsmInfo.AttackRange)
+        if(dis <= statComp.AttackRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.ATTACK);
+            controller.TransitionToState(EnumTypes.STATE.ATTACK);
             return;
         }
-        if(dis > fsmInfo.DetectRange)
+        if(dis > statComp.DetectRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.RETURN);
+            controller.TransitionToState(EnumTypes.STATE.RETURN);
             return;
 
         }
-        controller.NavMeshAgent.isStopped = false;
+        controller.NavigationResume();
         controller.NavMeshAgent.SetDestination(controller.Player.transform.position);
     }
 

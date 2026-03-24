@@ -20,18 +20,22 @@ public class EnemySkillAttack : EnemyMeleeAttack
     public float AttackRadius { get => skillInfo.attackRadius; }
     public override float CurrentRadius => skillInfo.attackRadius * currentRadiusMult;
 
-    protected BossController boss;
+    protected EnemyController owner;
+    protected override void Awake()
+    {
+        base.Awake();
+        owner = GetComponent<EnemyController>();
+    }
     protected override void AttackReady()
     {
         base.AttackReady();
-        if (TryGetComponent<BossController>(out boss))
+        if (owner != null && owner.BossPhase != null && owner.BossPhase.IsPhaseTwo)
         {
-            if (boss.IsPhaseTwo)
-            {
-                CS.attackBuffMultifle = 2;
-            }
+            CS.attackBuffMultifle = 2f;
         }
+        else CS.attackBuffMultifle = 1f;
     }
+
     public override void Attack()
     {
         RangeAngleTargetAttack(skillInfo);
@@ -46,7 +50,7 @@ public class EnemySkillAttack : EnemyMeleeAttack
         var target = hit.GetComponent<BaseController>();
         if (target != null)
         {
-            if (target.GetStat().CurrentHP <= 0) return;
+            if (target.GetStat.CurrentHP <= 0) return;
             target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
         }
     }

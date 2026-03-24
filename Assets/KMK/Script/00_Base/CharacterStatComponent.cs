@@ -56,6 +56,7 @@ public class CharacterStatComponent : MonoBehaviour
         originMat[0] = origin;
         renderers[0].material = originMat[0];
     }
+
     public float SetSpeedMultifle(float value)
     {
         speedMutlfile = value;

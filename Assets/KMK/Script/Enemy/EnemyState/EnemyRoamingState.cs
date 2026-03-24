@@ -18,14 +18,14 @@ public class EnemyRoamingState : EnemyState
     public override void UpdateState()
     {
         float dis = controller.GetPlayerDis();
-        if(dis <= fsmInfo.AttackRange)
+        if(dis <= statComp.AttackRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.ATTACK);
+            controller.TransitionToState(EnumTypes.STATE.ATTACK);
             return;
         }
-        if(dis <= fsmInfo.DetectRange)
+        if(dis <= statComp.DetectRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.DETECT);
+            controller.TransitionToState(EnumTypes.STATE.DETECT);
             return;
         }
         if (targetPos != Vector3.positiveInfinity)
@@ -35,7 +35,7 @@ public class EnemyRoamingState : EnemyState
                 controller.NavigationStop();
                 targetPos = Vector3.positiveInfinity;
                 targetDis = Mathf.Infinity;
-                controller.TransactionToState(EnumTypes.STATE.IDLE);
+                controller.TransitionToState(EnumTypes.STATE.IDLE);
             }
         }
 
@@ -43,7 +43,7 @@ public class EnemyRoamingState : EnemyState
 
     protected virtual void NewRandDestination(bool retry = true)
     {
-        Vector2 rand = Random.insideUnitCircle * fsmInfo.NextPoint;
+        Vector2 rand = Random.insideUnitCircle * statComp.NextPoint;
         Vector3 randDir = new Vector3(rand.x, 0, rand.y);
         Vector3 candidate = controller.StatComp.RoamCenter + randDir;
 
@@ -65,6 +65,6 @@ public class EnemyRoamingState : EnemyState
         controller.NavMeshAgent.isStopped = true;
         targetPos = Vector3.positiveInfinity;
         targetDis = Mathf.Infinity;
-        controller.NavMeshAgent.speed = fsmInfo.SetSpeedMultifle(1); 
+        controller.NavMeshAgent.speed = statComp.SetSpeedMultifle(1); 
     }
 }

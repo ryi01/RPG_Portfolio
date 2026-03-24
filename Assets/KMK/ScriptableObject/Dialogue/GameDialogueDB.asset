@@ -15,4 +15,3 @@ MonoBehaviour:
   dialgogueDB:
   - {fileID: 11400000, guid: a0eccf7199871fc4993ce2c1822ebcc5, type: 2}
   - {fileID: 11400000, guid: 812a3ae4b77f7494c829df25a5239b93, type: 2}
-  - {fileID: 11400000, guid: 4b9a0e00cd5ba7e4d9c78667ea9ca8ff, type: 2}

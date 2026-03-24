@@ -42,7 +42,7 @@ public class PlayerSkillAttack : PlayerMeleeAttack
         var target = hit.GetComponent<BaseController>();
         if (target != null)
         {
-            if (target.GetStat().CurrentHP <= 0) return;
+            if (target.GetStat.CurrentHP <= 0) return;
             target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
         }
     }

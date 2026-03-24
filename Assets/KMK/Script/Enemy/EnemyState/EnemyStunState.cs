@@ -3,29 +3,36 @@ using UnityEngine;
 public class EnemyStunState : EnemyState
 {
     [SerializeField] protected ParticleSystem stunParticle;
+    [SerializeField] private float defaultStunDuration = 3f;
 
     private float stunTimer;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
-        stunParticle.Play();
-        float duration = (data != null) ? (float)data : 3.0f;
-        stunTimer = duration;
+        
+        stunTimer = data is float stunDuration ? stunDuration : defaultStunDuration;
         controller.NavigationStop();
-        Anim.SetInteger("State", (int)state);
-        Anim.SetTrigger("Stun");
+        if(stunParticle != null) stunParticle.Play();
+        if(Anim != null)
+        {
+            Anim.SetInteger("State", (int)state);
+            Anim.SetTrigger("Stun");
+        }
     }
     public override void UpdateState()
     {
+        if (CheckDeath()) return;
         stunTimer -= Time.deltaTime;
         if(stunTimer <= 0)
         {
-            controller.TransactionToState(EnumTypes.STATE.IDLE);
+            controller.TransitionToState(EnumTypes.STATE.IDLE);
         }
     }
     public override void ExitState()
     {
-        stunParticle.Stop();
-        base.ExitState();
+        if (stunParticle != null)
+        {
+            stunParticle.Stop();
+        }
     }
 }

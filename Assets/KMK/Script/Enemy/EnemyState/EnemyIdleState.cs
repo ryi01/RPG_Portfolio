@@ -18,14 +18,14 @@ public class EnemyIdleState : EnemyState
     {
         time += Time.deltaTime;
         float dis = controller.GetPlayerDis();
-        if(dis <= fsmInfo.AttackRange)
+        if(dis <= statComp.AttackRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.ATTACK);
+            controller.TransitionToState(EnumTypes.STATE.ATTACK);
             return;
         }
-        if(dis <= fsmInfo.DetectRange)
+        if(dis <= statComp.DetectRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.DETECT);
+            controller.TransitionToState(EnumTypes.STATE.DETECT);
             return;
         }
         if(time > checkTime)
@@ -38,7 +38,7 @@ public class EnemyIdleState : EnemyState
                     StandWait();
                     break;
                 case 1:
-                    controller.TransactionToState(EnumTypes.STATE.WANDER);
+                    controller.TransitionToState(EnumTypes.STATE.WANDER);
                     return;
             }
         }

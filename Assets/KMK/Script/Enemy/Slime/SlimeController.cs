@@ -7,19 +7,39 @@ public class SlimeController : EnemyController
     [SerializeField] private GameObject slimePrefab;
     [SerializeField] private int splitCnt = 2;
 
-    public override void Damage(float damage, float force, Transform attacker)
+    private bool isHasSplit;
+    public void InitalizeSplitSlime(int newLevel, Vector3 newScale)
     {
-        base.Damage(damage, force, attacker);
-        if (StatComp.CurrentHP <= 0)
+        slimeLevel = newLevel;
+        transform.localScale = newScale;
+        isHasSplit = false;
+
+        if (TryGetComponent(out Collider col)) col.enabled = true;
+        if(TryGetComponent(out NavMeshAgent agent))
         {
-            var agent = GetComponent<NavMeshAgent>();
-            if (agent != null && agent.isOnNavMesh) agent.isStopped = true;
-            SplitSlime();
-            GetComponent<Collider>().enabled = false;
-            
+            if (!agent.enabled) agent.enabled = transform;
+            agent.isStopped = false;
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
         }
+        if(Animator != null)
+        {
+            Animator.Rebind();
+            Animator.Update(0);
+            Animator.SetBool("Death", false);
+            Animator.SetInteger("State", 0);
+        }
+        if (StatComp != null)
+        {
+            StatComp.ResetMat();
+            StatComp.ResetStateForSpawn();
+        }
+        TransitionToState(EnumTypes.STATE.IDLE);
     }
 
+    /// <summary>
+    /// 단순하게 자신의 객체를 복사하기에 currentState도 복사함 => 초기화 하는 함수필요
+    /// </summary>
     private void SplitSlime()
     {
         if (slimeLevel > 1)
@@ -31,15 +51,23 @@ public class SlimeController : EnemyController
                 SlimeController sc;
                 if (slime.TryGetComponent<SlimeController>(out sc))
                 {
-                    sc.slimeLevel = slimeLevel - 1;
-                    sc.transform.localScale = transform.localScale * 0.8f;
-                    if (sc.StatComp != null)
-                    {
-                        sc.StatComp.ResetMat();
-                    }
+                    sc.InitalizeSplitSlime(slimeLevel - 1, transform.localScale * 0.8f);
                 }
             }
         }
         Destroy(gameObject, 0.2f);
+    }
+
+    public override void OnDeathEntered(object data = null)
+    {
+        base.OnDeathEntered(data);
+        if (isHasSplit) return;
+        isHasSplit = true;
+        NavigationStop();
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        SplitSlime();
     }
 }

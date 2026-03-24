@@ -298,7 +298,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
         ClearTarget();
         MovementComp.StopMove();
-        if(trail != null) trail.emitting = true;
 
         SetAttackLookDir(lockedAimDir);
         RotateToAttackDir();
@@ -376,6 +375,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public override void Damage(float damage, float force, Transform attacker)
     {
         if (IsBlink || IsDamage) return;
+        TrailOff();
         base.Damage(damage, force, attacker);
         if(SkillComp.IsSkillAnimation(currentSkill)) return;
         bool isBoss = false;
@@ -418,6 +418,10 @@ public class PlayerController : BaseController<PlayerStatComponent>
         isMove = (value != 0);
     }
     #endregion
+    public void TrailOn()
+    {
+        trail.emitting = true;
+    }
     public void TrailOff()
     {
         trail.emitting = false;

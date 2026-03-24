@@ -5,33 +5,73 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
+public struct HitData
+{
+    public float Force;
+    public Transform Attacker;
+    public HitData(float force, Transform attacker)
+    {
+        Force = force;
+        Attacker = attacker;
+    }
+}
 [RequireComponent(typeof(EnemyStatComponent))]
 public class EnemyController : BaseController<EnemyStatComponent>
 {
-    protected EnemyState currentState;
-    protected NavMeshAgent navMeshAgent;
-
-    public EnemyState CurrentState => currentState;
     [SerializeField] protected EnemyState[] enemyStates;
-    protected GameObject player;
-    public GameObject Player { get => player; set => player = value; }
-    public NavMeshAgent NavMeshAgent => navMeshAgent;
 
     protected Dictionary<EnumTypes.STATE, EnemyState> stateDict = new();
-    
-    private void Start()
+    protected EnemyState currentState;
+    protected NavMeshAgent navMeshAgent;
+    protected GameObject player;
+    public NavMeshAgent NavMeshAgent => navMeshAgent;
+    public EnemyState CurrentState => currentState;
+    public GameObject Player { get => player; set => player = value; }
+
+    public BossPhaseComponent BossPhase { get; private set; }
+    public BossSkillComponent BossSkill { get; private set; }
+    public BossQuestComponent BossQuest { get; private set; }
+
+    public BossSummonComponent BossSummon { get; private set; }
+    public BossLightningComponent BossLightning { get; private set; }
+
+
+    protected override void Awake()
     {
+        base.Awake();
+
         navMeshAgent = GetComponent<NavMeshAgent>();
-        navMeshAgent.avoidancePriority = UnityEngine.Random.Range(0, 99);
-        player = GameObject.FindGameObjectWithTag("Player");
+
+        TryGetComponent(out BossPhaseComponent bossPhase);
+        BossPhase = bossPhase;
+        TryGetComponent(out BossSkillComponent bossSkill);
+        BossSkill = bossSkill;
+
+        TryGetComponent(out BossQuestComponent bossQuest);
+        BossQuest = bossQuest;
+
+        TryGetComponent(out BossLightningComponent bossLightning);
+        BossLightning = bossLightning;
+
+        TryGetComponent(out BossSummonComponent bossSummon);
+        BossSummon = bossSummon;
+
         foreach (var state in enemyStates)
         {
-            if(state != null)
+            if (state != null)
             {
+                if (state == null) continue;
+                state.Intialize(this);
                 stateDict[state.StateType] = state;
             }
         }
-        TransactionToState(EnumTypes.STATE.IDLE);
+    }
+    private void Start()
+    {
+        if(navMeshAgent != null) navMeshAgent.avoidancePriority = UnityEngine.Random.Range(0, 99);
+
+        player = GameObject.FindGameObjectWithTag("Player");
+        TransitionToState(EnumTypes.STATE.IDLE);
     }
     protected virtual void Update()
     {
@@ -41,35 +81,31 @@ public class EnemyController : BaseController<EnemyStatComponent>
     {
         base.Damage(damage, force, attacker);
         if (currentState == null || currentState.StateType == EnumTypes.STATE.DEATH) return;
+        if (currentState.StateType == EnumTypes.STATE.PATTERN_PHASE) return;
         if (StatComp.CurrentHP <= 0)
         {
             GameManager.Instance.SendEnemyKilled(StatComp.Exp);
-            TransactionToState(EnumTypes.STATE.DEATH, force);
+            TransitionToState(EnumTypes.STATE.DEATH, force);
             return;
         }
-        if(currentState != null && currentState.StateType == EnumTypes.STATE.STUN)
-        {
-            return;
-        }
+        if(currentState != null && currentState.StateType == EnumTypes.STATE.STUN) return;
+
         if(StatComp.AddGroogy(damage))
         {
-            TransactionToState(EnumTypes.STATE.STUN);
+            TransitionToState(EnumTypes.STATE.STUN);
         }
-        else TransactionToState(EnumTypes.STATE.DAMAGE, force);
+        else TransitionToState(EnumTypes.STATE.DAMAGE, new HitData(force, attacker));
     }
     public void ForceStun(float duration)
     {
         StatComp.AddGroogy(StatComp.MaxGroogy);
-        TransactionToState(EnumTypes.STATE.STUN);
+        TransitionToState(EnumTypes.STATE.STUN);
     }
  
-    public virtual void TransactionToState(EnumTypes.STATE state, object data = null)
+    public virtual void TransitionToState(EnumTypes.STATE state, object data = null)
     {
         if (currentState != null && currentState.StateType == EnumTypes.STATE.DEATH) return;
-        if (!stateDict.TryGetValue(state, out EnemyState nextState))
-        {
-            return;
-        }
+        if (!stateDict.TryGetValue(state, out EnemyState nextState)) return;
         if (currentState == nextState && data == null) return;
         if (state == EnumTypes.STATE.STUN && currentState == nextState) return;
         currentState?.ExitState();
@@ -79,17 +115,41 @@ public class EnemyController : BaseController<EnemyStatComponent>
     }
     public float GetPlayerDis()
     {
+        if (player == null) return float.MaxValue;
         return Vector3.Distance(transform.position, Player.transform.position);
     }
 
     public virtual void NavigationStop()
     {
-        if (navMeshAgent != null && navMeshAgent.gameObject.activeSelf && navMeshAgent.isOnNavMesh)
+        if (navMeshAgent == null) return;
+        if (!navMeshAgent.enabled || !navMeshAgent.isOnNavMesh) return;
+        navMeshAgent.isStopped = true;
+        navMeshAgent.speed = 0;
+        navMeshAgent.ResetPath();
+        navMeshAgent.velocity = Vector3.zero;
+        navMeshAgent.nextPosition = transform.position;
+        if(Animator != null)
         {
-            navMeshAgent.isStopped = true;
-            navMeshAgent.velocity = Vector3.zero;
-            navMeshAgent.speed = 0;
+            if(BossQuest != null) Animator.SetBool("Run", false);
+            Animator.SetInteger("State", 0);
         }
+    }
 
+    public virtual void NavigationResume(float speedMultiplier = 1f)
+    {
+        if (navMeshAgent == null) return;
+        if (!navMeshAgent.enabled || !navMeshAgent.isOnNavMesh) return;
+        navMeshAgent.isStopped = false;
+        navMeshAgent.speed = StatComp.MoveSpeed * speedMultiplier;
+        if (Animator != null)
+        {
+            if (BossQuest != null) Animator.SetBool("Run", false);
+            Animator.SetInteger("State", 2);
+        }
+    }
+
+    public virtual void OnDeathEntered(object data = null)
+    {
+        BossQuest?.HandleBossDeath();
     }
 }

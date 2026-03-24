@@ -7,6 +7,7 @@ public class EnemyStatComponent : CharacterStatComponent
 
     private float currentGroggy;
     private float currentStunTime;
+    [SerializeField] private float yOffset = 2.5f;
 
     public float NextPoint { get => enemyStatInfo.nextPointSelectDistance; }
     public float DetectRange { get => enemyStatInfo.detectRange; }
@@ -31,7 +32,7 @@ public class EnemyStatComponent : CharacterStatComponent
     private void Start()
     {
         if (enemyStatInfo.isBoss) GameManager.Instance.BindBoss(this);
-        else GameManager.Instance.OnBindEnemy(this);
+        else GameManager.Instance.OnBindEnemy(this, yOffset);
     }
 
     public bool AddGroogy(float amount)
@@ -44,7 +45,12 @@ public class EnemyStatComponent : CharacterStatComponent
         }
         return false;
     }
-
+    public void ResetStateForSpawn()
+    {
+        currentHP = MaxHP;
+        currentGroggy = 0;
+        IsHit = false;
+    }
     private void OnDestroy()
     {
         if (!enemyStatInfo.isBoss)

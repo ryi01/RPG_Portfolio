@@ -11,7 +11,7 @@ public abstract class BaseController : MonoBehaviour
 {
     public Animator Animator { get; protected set; }
     // 공통 Stat을 CharacterStatComponent 타입으로 접근 가능하게 함
-    public abstract CharacterStatComponent GetStat();
+    public abstract CharacterStatComponent GetStat { get; }
     public abstract void Damage(float damage, float force, Transform attacker );
 }
 // 제너릭을 통해 자식들마다 가진 StatComp를 변환
@@ -20,7 +20,7 @@ public abstract class BaseController<T> : BaseController where T : CharacterStat
 {
     public T StatComp { get; protected set; }
 
-    public override CharacterStatComponent GetStat() => StatComp;
+    public override CharacterStatComponent GetStat => StatComp;
 
     protected virtual void Awake()
     {

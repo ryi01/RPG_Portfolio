@@ -12,7 +12,7 @@ public class NPCInteraction : InteractionObject
     [SerializeField] private int inProgressDialogueIndex = 1;
     [SerializeField] private int objectiveDoneDialogueIndex = 2;
     [SerializeField] private int completeDialogueIndex = 3;
-
+    [SerializeField] private float yOffset = 4;
     [SerializeField] private GameObject uiPrefab; // 머리 위 아이콘 오브젝트
     [SerializeField] private Sprite notStartSprite; // 수락 가능 아이콘
     [SerializeField] private Sprite doneSprite;     // 완료 보고 아이콘
@@ -28,7 +28,7 @@ public class NPCInteraction : InteractionObject
     {
         uiCanvasRoot = GameObject.Find(uiCanvasRootName).transform;
         npcUI = Instantiate(uiPrefab, uiCanvasRoot).GetComponent<NPCUI>();
-        npcUI.SetUpUi(transform, 3f);
+        npcUI.SetUpUi(transform, yOffset);
     }
     private void OnEnable()
     {

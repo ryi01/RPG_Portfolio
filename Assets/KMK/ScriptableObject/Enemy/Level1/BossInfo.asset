@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52a5d354640047e4693bb64c0636701f, type: 3}
+  m_Name: BossInfo
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStatInfo
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  passLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  maxHP: 50
+  attack: 2
+  attackRadius: 1.5
+  hitAngle: 0
+  moveSpeed: 3
+  rotSpeed: 600
+  nockbackForce: 8.5
+  nockbackTime: 0.12
+  detectRange: 20
+  attackRange: 12
+  wanderRange: 1
+  returnRange: 3
+  maxGroggy: 9
+  reganGroggy: 1
+  wanderNavCheckRadius: 10
+  nextPointSelectDistance: 1
+  deathDelayTime: 2
+  isBoss: 1
+  exp: 10

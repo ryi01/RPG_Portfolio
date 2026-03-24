@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MeleeAttack : CommonAttack
 {
-    protected CharacterStatComponent CS { get => bc.GetStat(); }
+    protected CharacterStatComponent CS { get => bc.GetStat; }
     protected float Force { get => CS.NockbackForce; }
     public virtual float CurrentRadius => CS.AttackRadius;
     [SerializeField] protected GameObject hitEffectPrefab;

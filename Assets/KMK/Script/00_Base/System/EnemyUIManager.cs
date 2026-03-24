@@ -19,7 +19,7 @@ public class EnemyUIManager : MonoBehaviour
         uiCanvasRoot = GameObject.Find(uiCanvasRootName).transform;
         bossUI.gameObject.SetActive(false);
     }
-    public void CreateEnemyHPBar(CharacterStatComponent enemyStat, float y = 1.8f)
+    public void CreateEnemyHPBar(CharacterStatComponent enemyStat, float y = 2f)
     {
         GameObject go = Instantiate(enemyHPBarPrefab, uiCanvasRoot);
         EnemyStatUI enemyUI = go.GetComponent<EnemyStatUI>();

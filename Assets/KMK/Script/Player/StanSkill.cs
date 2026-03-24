@@ -16,7 +16,7 @@ public class StanSkill : PlayerSkillAttack
         pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
         pc.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y, 0.06f);
         pc.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
-        Instantiate(hitEffectPrefab, stunEffectTrans.position, hitEffectPrefab.transform.rotation);
+        PlayEffect();
         Attack();
     }
     protected override void AttackHit(Collider hit)
@@ -26,5 +26,9 @@ public class StanSkill : PlayerSkillAttack
         {
             enemy.ForceStun(2);
         }
+    }
+    public void OnStopStunEffect()
+    {
+        StopPlayEffect();
     }
 }

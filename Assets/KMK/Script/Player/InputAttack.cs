@@ -74,7 +74,7 @@ public class InputAttack : MonoBehaviour
 
         // 타이머활성화
         bufferTimer -= Time.deltaTime;
-        AnimatorStateInfo stateInfo = pc.Animator.GetCurrentAnimatorStateInfo(1);
+        AnimatorStateInfo stateInfo = pc.Animator.GetCurrentAnimatorStateInfo(0);
 
         // 애니메이션 시간을 0~1 사이의 비율
         float normalizedTime = stateInfo.normalizedTime % 1f;
@@ -120,7 +120,7 @@ public class InputAttack : MonoBehaviour
     // animation을 태그로 확인하고 실행중이면 true
     public bool IsAttackAnimation()
     {
-        return pc.Animator.GetCurrentAnimatorStateInfo(1).IsTag("Attack");
+        return pc.Animator.GetCurrentAnimatorStateInfo(0).IsTag("Attack");
     }
     // 공격 방향 보정
     private Vector3 ApplyAutoTargeting(Vector3 inputLookDir)

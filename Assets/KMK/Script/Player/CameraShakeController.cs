@@ -125,7 +125,6 @@ public class CameraShakeController : MonoBehaviour
         if (motionBlur == null) return;
         motionBlur.active = true;
         motionBlur.intensity.value = intensity;
-        Debug.Log(motionBlur.intensity.value);
     }
 
     public void ResetMotionblur()

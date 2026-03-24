@@ -14,9 +14,9 @@ public class EnemyAttackState : EnemyState
     {
         if (CheckDeath()) return;
 
-        if (controller.GetPlayerDis() > fsmInfo.AttackRange)
+        if (controller.GetPlayerDis() > statComp.AttackRange)
         {
-            controller.TransactionToState(EnumTypes.STATE.DETECT);
+            controller.TransitionToState(EnumTypes.STATE.DETECT);
             return;
         }
         if (IsAttack) return;
@@ -26,7 +26,7 @@ public class EnemyAttackState : EnemyState
     {
         Vector3 dir = (controller.Player.transform.position - transform.position).normalized;
         Quaternion lookRot = Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * fsmInfo.RotSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * statComp.RotSpeed);
     }
 
     public override void ExitState()

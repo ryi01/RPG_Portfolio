@@ -150,11 +150,11 @@ public class DungeonGenerator : MonoBehaviour
     }
     private void OnEnable()
     {
-        BossController.OnBossDeath += SpawnPortal;
+        BossQuestComponent.OnBossDeath += SpawnPortal;
     }
     private void OnDisable()
     {
-        BossController.OnBossDeath -= SpawnPortal;
+        BossQuestComponent.OnBossDeath -= SpawnPortal;
     }
     public void GenerateDungeon()
     {
@@ -845,10 +845,10 @@ public class DungeonGenerator : MonoBehaviour
         Vector3 spawnPos = new Vector3(EndPoint.x * tileSize, 0.5f, EndPoint.y * tileSize);
         GameObject bossObj = Instantiate(bossPrefab, spawnPos, Quaternion.identity, dungeonParent);
 
-        BossController boss = bossObj.GetComponent<BossController>();
-        if(boss != null)
+        BossQuestComponent questComp = bossObj.GetComponent<BossQuestComponent>();
+        if(questComp != null)
         {
-            boss.QuestData = dungeonQuestData;
+            questComp.SetQuestData(dungeonQuestData);
         }
     }
     private void CreateBossRoomTrigger()
