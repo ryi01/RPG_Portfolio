@@ -12,11 +12,11 @@ using UnityEngine;
 public class InputPickUp : MonoBehaviour
 {
     [SerializeField] private GameObject itemBoxUI;
-    private InventroySystem inventroySystem;
+    private InventorySystem inventroySystem;
 
     private void Start()
     {
-        inventroySystem = FindAnyObjectByType<InventroySystem>();
+        inventroySystem = FindAnyObjectByType<InventorySystem>();
     }
     public void OpenItemBox(ItemBox box)
     {

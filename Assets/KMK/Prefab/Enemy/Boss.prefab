@@ -432,7 +432,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -15192,7 +15192,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -20275,6 +20275,7 @@ MonoBehaviour:
   origin: {fileID: 0}
   speedMutlfile: 1
   attackBuffMultifle: 1
+  yOffset: 2.5
 --- !u!114 &4948544792273945275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20412,7 +20413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossCrossCutSkill
   bc: {fileID: 4948544792273945275}
   attackTransform: {fileID: 7979156390852942068}
-  hitEffectPrefab: {fileID: 5219595636192731204}
+  hitEffectPrefab: {fileID: 1314978571060153416}
   skillInfo: {fileID: 11400000, guid: a9aa90eef6432ac43882459714320f55, type: 2}
 --- !u!114 &7935481086905424464
 MonoBehaviour:
@@ -20428,7 +20429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossTakeDownSkill
   bc: {fileID: 4948544792273945275}
   attackTransform: {fileID: 7979156390852942068}
-  hitEffectPrefab: {fileID: 5219595636192731204}
+  hitEffectPrefab: {fileID: 1314978571060153416}
   skillInfo: {fileID: 11400000, guid: 247ee757198b95f4893b62547963a195, type: 2}
 --- !u!114 &9099805597834273846
 MonoBehaviour:
@@ -35140,7 +35141,6 @@ GameObject:
   - component: {fileID: 5691672298184061788}
   - component: {fileID: 1314978571060153416}
   - component: {fileID: 4472635097435378337}
-  - component: {fileID: 9202166160838050348}
   - component: {fileID: 941294954924588127}
   m_Layer: 0
   m_Name: CFX2_RockHit
@@ -35185,7 +35185,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -39897,19 +39897,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &9202166160838050348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5219595636192731204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnlyDeactivate: 0
 --- !u!114 &941294954924588127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49947,7 +49934,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -59795,7 +59782,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:

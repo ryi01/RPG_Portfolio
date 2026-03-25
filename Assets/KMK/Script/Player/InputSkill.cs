@@ -8,7 +8,7 @@ public class InputSkill : MonoBehaviour
     private PlayerController pc;
     private int[] hashSkillAttacks;
 
-    public enum SKILLS { SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, SKILL6 };
+    public enum SKILLS { NONE = -1, SKILL1, SKILL2, SKILL3, SKILL4, SKILL5, SKILL6 };
     [SerializeField] private PlayerSkillAttack[] skillAttacks;
 
     private void Awake()
@@ -21,14 +21,16 @@ public class InputSkill : MonoBehaviour
         for (int i = 0; i < skillAttacks.Length; i++)
         {
             hashSkillAttacks[i] = Animator.StringToHash(skillAttacks[i].skillHashName);
+            skillAttacks[i].SetSkillIcon();
         }
         
     }
 
     public void ActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
-        if (!skillAttacks[(int)skillTypes].IsUnlocked) return;
-        skillAttacks[(int)skillTypes].StartSkill();
+        PlayerSkillAttack skill = skillAttacks[(int)skillTypes];
+        if (!skill.IsUnlocked || skill.IsSkill) return;
+        skill.StartSkill();
         pc.Animator.SetBool(hashSkillAttacks[(int)skillTypes], true);
     }
 
@@ -37,28 +39,25 @@ public class InputSkill : MonoBehaviour
         DeActiveSkill();
     }
 
-    public void OnLockSkill(int level)
+    public void UnlockSkill(int level)
     {
         for(int i = 0; i < skillAttacks.Length;i++)
         {
             if (skillAttacks[i].UnLockLevel == level)
             {
                 skillAttacks[i].UnLockSkill();
+                skillAttacks[i].SetSkillIcon();
             }
         }
     }
-
-    public void HandleQuestComplete(QuestData data)
+    public void UnlockByReward(SKILLS skillType)
     {
-        if(data.QuestID == 1001)
-        {
-            OnAoeSkill(data.RewardSkill);
-        }
-    }
-
-    private void OnAoeSkill(SKILLS skill)
-    {
-        skillAttacks[(int)skill].UnLockSkill();
+        if (skillType == SKILLS.NONE) return;
+        int index = (int)skillType;
+        if (index < 0 || index >= skillAttacks.Length) return;
+        if (skillAttacks[index].IsUnlocked) return;
+        skillAttacks[index].UnLockSkill();
+        skillAttacks[index].SetSkillIcon();
     }
     public void DeActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
@@ -80,22 +79,8 @@ public class InputSkill : MonoBehaviour
         yield return new WaitForSeconds(skillAttacks[(int)currentSkill].AttackTime);
         DeActiveSkill(currentSkill);
     }
-    public void ExcuteSkill(SKILLS type)
+    public void ExecuteSkill(SKILLS type)
     {
         skillAttacks[(int)type].Attack();
-    }
-    private void OnEnable()
-    {
-        for (int i = 0; i < skillAttacks.Length; i++)
-        {
-            // 아이콘 세팅
-            skillAttacks[i].SetSkillIcon();
-        }
-
-        QuestManager.OnQuestCompleted += HandleQuestComplete;
-    }
-    private void OnDisable()
-    {
-        QuestManager.OnQuestCompleted -= HandleQuestComplete;
     }
 }

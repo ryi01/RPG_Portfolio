@@ -25,6 +25,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public InputAttack AttackComp { get; private set; }
     public InputSkill SkillComp { get; private set; }
     public InputPickUp PickUpComp { get; private set; }
+
+    public PlayerRewardHandler RewardHandler { get; private set; }
     // 피격 연출 카메라 연출
     public CombatFeedback CombatFeedback { get; private set; }
     public CameraShakeController CameraShakeController { get; private set; }
@@ -69,7 +71,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
         SkillComp = GetComponent<InputSkill>();
         PickUpComp = GetComponent<InputPickUp>();
         CameraShakeController = GetComponentInChildren<CameraShakeController>();
-        StatComp.OncChangeLevel += SkillComp.OnLockSkill;
+        RewardHandler = GetComponent<PlayerRewardHandler>();
+        StatComp.OncChangeLevel += SkillComp.UnlockSkill;
         CombatFeedback = GetComponent<CombatFeedback>();        
         if(trail != null) trail.emitting = false;
         currentStepInterval = UnityEngine.Random.Range(interval.x, interval.y);
@@ -331,8 +334,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
         currentSkill = skill;
         
         RotateToAttackDir();
-        if(skill == InputSkill.SKILLS.SKILL5) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL5);
-        else if(skill == InputSkill.SKILLS.SKILL6) SkillComp.ExcuteSkill(InputSkill.SKILLS.SKILL6);
+        if(skill == InputSkill.SKILLS.SKILL5) SkillComp.ExecuteSkill(InputSkill.SKILLS.SKILL5);
+        else if(skill == InputSkill.SKILLS.SKILL6) SkillComp.ExecuteSkill(InputSkill.SKILLS.SKILL6);
         else
         {
             if (skill == InputSkill.SKILLS.SKILL3)
@@ -425,6 +428,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public void TrailOff()
     {
         trail.emitting = false;
+        trail.Clear();
     }
 
     private void ClearTarget()
@@ -440,7 +444,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private void OnDestroy()
     {
-        StatComp.OncChangeLevel -= SkillComp.OnLockSkill;
+        StatComp.OncChangeLevel -= SkillComp.UnlockSkill;
     }
 
 

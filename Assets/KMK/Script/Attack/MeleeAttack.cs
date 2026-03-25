@@ -5,7 +5,7 @@ public class MeleeAttack : CommonAttack
     protected CharacterStatComponent CS { get => bc.GetStat; }
     protected float Force { get => CS.NockbackForce; }
     public virtual float CurrentRadius => CS.AttackRadius;
-    [SerializeField] protected GameObject hitEffectPrefab;
+    [SerializeField] protected ParticleSystem hitEffectPrefab;
 
     public override void Attack()
     {
@@ -15,7 +15,7 @@ public class MeleeAttack : CommonAttack
     {
         if(hitEffectPrefab != null)
         {
-            hitEffectPrefab.SetActive(true);
+            hitEffectPrefab.Play();
         }
     }
 
@@ -23,7 +23,7 @@ public class MeleeAttack : CommonAttack
     {
         if (hitEffectPrefab != null)
         {
-            hitEffectPrefab.SetActive(false);
+            hitEffectPrefab.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
     }
     public virtual void RangeAngleTargetAttack(SkillInfo data = null)

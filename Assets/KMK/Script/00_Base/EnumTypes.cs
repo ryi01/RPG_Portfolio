@@ -9,7 +9,6 @@ public class EnumTypes
     { 
         IDLE, WANDER, DETECT, ATTACK, RETURN, DAMAGE, STUN, DEATH, PATTERN_PHASE
     }
-
     public enum QUEST
     {
         NOT_START, IN_PROGRESS, OBJECTIVE_DONE, COMPLETED

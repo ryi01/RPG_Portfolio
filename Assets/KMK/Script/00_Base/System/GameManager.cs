@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private InventroySystem inventroySystem;
+    [SerializeField] private InventorySystem inventroySystem;
     [SerializeField] private DataManager dataManager;
     [SerializeField] private GoldSystem goldSystem;
     [SerializeField] private DialogueSystem dialogueSystem;
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CameraEnviroment cameraEnviroment;
 
     public UIManager UIManager => uiManager;
-    public InventroySystem InventroySystem => inventroySystem;
+    public InventorySystem InventroySystem => inventroySystem;
     public DataManager DataManager => dataManager;
     public GoldSystem GoldSystem => goldSystem;
 
@@ -104,14 +104,14 @@ public class GameManager : MonoBehaviour
     #region 데이터 관련
     public void BindGoldSystem()
     {
-        goldSystem.OnChangedGold += DataManager.ChangeGold;
-        goldSystem.OnChangedGold += UIManager.ChangeGold;
+        goldSystem.OnGoldChanged += DataManager.ChangeGold;
+        goldSystem.OnGoldChanged += UIManager.ChangeGold;
     }
 
     public void UnBindGoldSystem()
     {
-        goldSystem.OnChangedGold -= DataManager.ChangeGold;
-        goldSystem.OnChangedGold -= UIManager.ChangeGold;
+        goldSystem.OnGoldChanged -= DataManager.ChangeGold;
+        goldSystem.OnGoldChanged -= UIManager.ChangeGold;
     }
 
     public void SendEnemyKilled(float exp)

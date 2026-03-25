@@ -6,7 +6,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private RectTransform[] itemUISlots;
     [SerializeField] private ItemUI[] itemUIs;
     [SerializeField] private GameObject itemUIPrefab;
-    [SerializeField] private InventroySystem inventroySystem;
+    [SerializeField] private InventorySystem inventroySystem;
     private Item item;
     private void Start()
     {

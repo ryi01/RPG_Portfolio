@@ -10,7 +10,7 @@ public class ItemBoxUI : MonoBehaviour
     [SerializeField] private ItemUI itemBoxItemUIPrefab;
     // 아이템 ui 위치
     [SerializeField] private RectTransform[] itemUISlots;
-    [SerializeField] private InventroySystem inventorySystem;
+    [SerializeField] private InventorySystem inventorySystem;
     private ItemBox currentBox;
     private List<ItemUI> spawnUIs = new List<ItemUI>();
 
@@ -27,7 +27,7 @@ public class ItemBoxUI : MonoBehaviour
             // 아이템 종류 및 아이디 담기
             ItemInfo item = contents[i];
             // 실제 아이템 값 들고오기 
-            Item actualItem = inventorySystem.GetItemData(item.ItemType, item.itemId);
+            Item actualItem = inventorySystem.FindItemData(item.ItemType, item.itemId);
             if(actualItem != null)
             {
                 // 아이템의 정보에 따른 prefab설정

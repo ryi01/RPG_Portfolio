@@ -6,22 +6,27 @@ public class GoldSystem : MonoBehaviour
     private int gold;
     public int CurrentGold => gold;
 
-    public Action<int> OnChangedGold;
+    public Action<int> OnGoldChanged;
 
     public void AddGold(int getGold)
     {
+        if (getGold <= 0) return;
         gold += getGold;
-        OnChangedGold?.Invoke(gold);
+        OnGoldChanged?.Invoke(gold);
     }
 
     public bool IsEnoughGold(int amount)
     {
-        if(gold < amount)
-        {   
-            return false;
-        }
-        gold -= amount;
-        OnChangedGold?.Invoke(gold);
-        return true;
+        if (amount < 0) return false;   
+        return gold >= amount;
     }
+
+    public bool SpendGold(int amount)
+    {
+        if (amount <= 0) return false;
+        if (!IsEnoughGold(amount)) return false;
+        gold -= amount;
+        OnGoldChanged?.Invoke(gold);
+        return true;
+    }    
 }

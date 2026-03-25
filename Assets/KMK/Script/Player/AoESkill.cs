@@ -25,7 +25,7 @@ public class AoESkill : PlayerSkillAttack
     public void OnAoESkillEnd()
     {
         groundEffect.SetActive(false);
-        Destroy(effect);
+        StopPlayEffect();
     }
     public override void RangeAngleTargetAttack(SkillInfo data = null)
     {
@@ -56,6 +56,6 @@ public class AoESkill : PlayerSkillAttack
     
     public void MakeEffect()
     {
-        effect = Instantiate(hitEffectPrefab, skillEffectPrefabTrans.position, hitEffectPrefab.transform.rotation);
+        PlayEffect();
     }
 }

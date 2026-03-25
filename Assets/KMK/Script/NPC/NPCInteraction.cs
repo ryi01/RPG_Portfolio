@@ -7,6 +7,7 @@ public class NPCInteraction : InteractionObject
 {
     [SerializeField] private string uiCanvasRootName;
     [SerializeField] private QuestData myQuestData;
+
     [SerializeField] private int myStageIndex;
     [SerializeField] private int startDialogueIndex = 0;
     [SerializeField] private int inProgressDialogueIndex = 1;
@@ -29,39 +30,55 @@ public class NPCInteraction : InteractionObject
         uiCanvasRoot = GameObject.Find(uiCanvasRootName).transform;
         npcUI = Instantiate(uiPrefab, uiCanvasRoot).GetComponent<NPCUI>();
         npcUI.SetUpUi(transform, yOffset);
+        UpdateIconUI();
     }
     private void OnEnable()
     {
         QuestManager.OnQuestUpdate += UpdateIconUI;
+        QuestManager.OnQuestCompleted += HandleQuestComplete;
     }
     private void OnDisable()
     {
         QuestManager.OnQuestUpdate -= UpdateIconUI;
+        QuestManager.OnQuestCompleted -= HandleQuestComplete;
+    }
+    private void HandleQuestComplete(QuestData completeData)
+    {
+        if (completeData == null || myQuestData == null) return;
+        if(completeData.QuestID == myQuestData.QuestID || completeData.NextQuestID == myQuestData.QuestID)
+        {
+            UpdateIconUI();
+        }
     }
     private void UpdateIconUI()
     {
-        var state = GameManager.Instance.QuestManager.GetQueestState(myQuestData);
-        if (state == EnumTypes.QUEST.NOT_START)
+        if (npcUI == null || myQuestData == null) return;
+        var qm = GameManager.Instance.QuestManager;
+        if (qm == null) return;
+        QuestData currentQuest = qm.GetCurrentQuestData();
+        EnumTypes.QUEST state = qm.GetQuestState(myQuestData);
+        bool isAvailable = qm.IsQuestAvailable(myQuestData);
+        npcUI.SetActiveIcon(false);
+        if(state == EnumTypes.QUEST.NOT_START && isAvailable)
         {
+            npcUI.SetActiveIcon(true);
             npcUI.SetIconSprites(notStartSprite);
-        }
-        else if (state == EnumTypes.QUEST.OBJECTIVE_DONE)
-        {
-            npcUI.SetIconSprites(doneSprite);
         }
         else if(state == EnumTypes.QUEST.IN_PROGRESS)
         {
+            npcUI.SetActiveIcon(true);
             npcUI.SetIconSprites(inProgressSprite);
         }
-        else
+        else if(state == EnumTypes.QUEST.OBJECTIVE_DONE)
         {
-            npcUI.SetActiveIcon(false);
+            npcUI.SetActiveIcon(true);
+            npcUI.SetIconSprites(doneSprite);
         }
     }
     public void Interact()
     {
         var questManager = GameManager.Instance.QuestManager;
-        currentState = questManager.GetQueestState(myQuestData);
+        currentState = questManager.GetQuestState(myQuestData);
         int targetDialogueIndex = GetDialgueIndex(currentState);
 
         DialogueUI.OnDialogueFinish += HandleQuestLogic;

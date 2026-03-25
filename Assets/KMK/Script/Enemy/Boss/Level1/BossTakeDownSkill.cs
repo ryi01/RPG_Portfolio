@@ -6,7 +6,7 @@ public class BossTakeDownSkill : EnemySkillAttack
     protected override void Awake()
     {
         base.Awake();
-        hitEffectPrefab.SetActive(false);
+        hitEffectPrefab.Stop();
     }
     protected override void AttackReady()
     {

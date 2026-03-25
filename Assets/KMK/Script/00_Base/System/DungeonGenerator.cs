@@ -115,7 +115,6 @@ public class DungeonGenerator : MonoBehaviour
 
     [Header("Boss Settings")]
     [SerializeField] private GameObject bossPrefab;
-    [SerializeField] private QuestData dungeonQuestData;
 
     [Header("Grid")]
     [SerializeField] private GridAStar grid;
@@ -848,7 +847,9 @@ public class DungeonGenerator : MonoBehaviour
         BossQuestComponent questComp = bossObj.GetComponent<BossQuestComponent>();
         if(questComp != null)
         {
-            questComp.SetQuestData(dungeonQuestData);
+            var questData = GameManager.Instance.QuestManager.GetCurrentQuestData();
+            if (questData != null) Debug.Log($"{questData.QuestID}");
+            questComp.SetQuestData(questData);
         }
     }
     private void CreateBossRoomTrigger()

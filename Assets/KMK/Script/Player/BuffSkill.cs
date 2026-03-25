@@ -9,9 +9,7 @@ public class BuffSkill : PlayerSkillAttack
     public override void Attack()
     {
         if (isBuff) return;
-        effect = Instantiate(hitEffectPrefab, transform.position, hitEffectPrefab.transform.rotation);
-        effect.transform.SetParent(this.transform);
-        effect.transform.localPosition = Vector3.zero;
+        PlayEffect();
         StartCoroutine(BuffRoutine());
     }
     IEnumerator BuffRoutine()
@@ -22,7 +20,7 @@ public class BuffSkill : PlayerSkillAttack
         yield return new WaitForSeconds(skillInfo.attackTime);
         CS.attackBuffMultifle = 1.0f;
         isBuff = false;
-        Destroy(effect);
+        StopPlayEffect();
     }
 
 }

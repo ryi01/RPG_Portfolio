@@ -7,9 +7,9 @@ using Unity.VisualScripting;
 
 public class PlayerStatComponent : CharacterStatComponent
 {
-    [SerializeField] private GameObject levelUpEffectPrefab;
-    [SerializeField] private GameObject hpEffectPrefab;
-    [SerializeField] private GameObject coinEffectPrefab;
+    [SerializeField] private ParticleSystem levelUpEffectPrefab;
+    [SerializeField] private ParticleSystem hpEffectPrefab;
+    [SerializeField] private ParticleSystem coinEffectPrefab;
     private PlayerStatInfo playerInfo;
     private float currentST;
     public float CurrentExp { get; private set; }
@@ -42,7 +42,7 @@ public class PlayerStatComponent : CharacterStatComponent
     }
     private void OnEnable()
     {
-        GameManager.Instance.GoldSystem.OnChangedGold += GetGold;
+        GameManager.Instance.GoldSystem.OnGoldChanged += GetGold;
     }
     private void Start()
     {
@@ -89,12 +89,12 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         GameManager.Instance.OnUnBindPlayer(this);
         GameManager.Instance.OnDieEnemy -= TakeExp;
-        GameManager.Instance.GoldSystem.OnChangedGold -= GetGold;
+        GameManager.Instance.GoldSystem.OnGoldChanged -= GetGold;
     }
-    private IEnumerator EffectCoroutine(GameObject effect, float duration)
+    private IEnumerator EffectCoroutine(ParticleSystem effect, float duration)
     {
-        effect.SetActive(true);
+        effect.Play();
         yield return new WaitForSeconds(duration);
-        effect.SetActive(false);
+        effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 }
