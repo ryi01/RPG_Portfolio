@@ -37,5 +37,31 @@ public abstract class EnemyState : MonoBehaviour
         }
         return false;   
     }
+    protected void LookAtTarget(float rotateSpeed = -1)
+    {
+        if (controller == null || controller.Player == null) return;
+        LookAtPosition(controller.Player.transform.position, rotateSpeed);
+    }
+    protected void LookAtPosition(Vector3 targetPos, float rotateSpeed = -1f)
+    {
+        Vector3 dir = GetFlatDir(targetPos);
+        if (dir.sqrMagnitude < 0.001f) return;
+        Quaternion lookRot = Quaternion.LookRotation(dir);
+        float speed = (rotateSpeed > 0) ? rotateSpeed : statComp.RotSpeed;
 
+        controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, lookRot, Time.deltaTime * speed);
+    }
+    protected Vector3 GetFlatDir(Vector3 targetPos)
+    {
+        Vector3 dir = targetPos - controller.transform.position;
+        dir.y = 0;
+        return dir.normalized;
+    }
+
+    protected void SnapLookAtPosition(Vector3 target)
+    {
+        Vector3 dir = GetFlatDir(target);
+        if (dir.sqrMagnitude < 0.001f) return;
+        controller.transform.rotation = Quaternion.LookRotation(dir);
+    }
 }

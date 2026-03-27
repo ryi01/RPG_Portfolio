@@ -8,7 +8,7 @@ public class EnemyShotAttack : MeleeAttack
         GameObject obj = CreateSomething(bulletPrefab, attackTransform);
         if (obj)
         {
-            obj.GetComponentInChildren<BulletCollision>().Owner = this.gameObject;
+            obj.GetComponentInChildren<BulletCollision>().Owner = this.GetComponent<BaseController>();
         }
     }
     public void OnShotAttack()

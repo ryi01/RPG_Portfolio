@@ -203,14 +203,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BombCollision
   hitLayer:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 37632
   sfxString: Bomb
   noHitLayer:
     serializedVersion: 2
     m_Bits: 4096
-  attack: 2
   destroyTime: 2
   bulletParticle: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
+  isArrow: 1
   rb: {fileID: 2938928714078515468}
   explosionRadius: 3
   flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}

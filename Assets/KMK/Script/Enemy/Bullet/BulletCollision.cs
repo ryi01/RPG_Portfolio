@@ -13,7 +13,6 @@ public class BulletCollision : MonoBehaviour
     // 피격 제한 대상 태그 (복수 대상일 경우 레이어로 제어할 것)
     [SerializeField] protected LayerMask noHitLayer;
 
-    [SerializeField] protected float attack = 2;
     [SerializeField] protected float destroyTime = 0.5f;
 
     [SerializeField] protected GameObject bulletParticle;
@@ -22,17 +21,14 @@ public class BulletCollision : MonoBehaviour
 
     protected HashSet<CharacterStatComponent> hitTargets = new HashSet<CharacterStatComponent>();
 
-    public GameObject Owner { get; set; }
+    public BaseController Owner { get; set; }
 
     protected virtual void Awake()
     {
         mesh = GetComponentInChildren<MeshRenderer>(true);
         if(mesh != null) mesh.enabled = true;
     }
-    private void Start()
-    {
-       
-    }
+
     protected virtual void OnCollisionEnter(Collision collision)
     {
         HandleEnter(collision.collider, collision.contacts[0].point);
@@ -73,18 +69,27 @@ public class BulletCollision : MonoBehaviour
 
     protected virtual void DamageTarget(Collider other)
     {
-        if (other.TryGetComponent(out CharacterStatComponent statComp))
-        {
-            if (statComp.CurrentHP <= 0) return;
-            if (hitTargets.Add(statComp))
-            {
-                statComp.TakeDamage(attack);
-            }
-        }
+        if (!other.TryGetComponent(out BaseController target)) return;
+        if (Owner == null) return;
+        if (!Owner.TryGetComponent(out BaseController ownerController)) return;
+
+        target.Damage(ownerController.GetStat.Attack, 0, Owner.transform);
     }
 
     protected virtual void FinishBullet()
     {
+        if (mesh != null) mesh.enabled = false;
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if(rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
         ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
         foreach(var ps in particles)
         {
@@ -92,8 +97,8 @@ public class BulletCollision : MonoBehaviour
             Destroy(ps.gameObject);
         }
 
-        if (mesh != null) mesh.enabled = false;
-        var movement = GetComponent<MonoBehaviour>().enabled = false;
+        TargetMovement movement = GetComponentInParent<TargetMovement>();
+        if (movement != null) movement.enabled = false;
 
         Destroy(gameObject, destroyTime);
     }

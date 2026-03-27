@@ -155,13 +155,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BulletCollision
   hitLayer:
     serializedVersion: 2
-    m_Bits: 4864
+    m_Bits: 37632
+  sfxString: 
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1024
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
 --- !u!65 &5650060926043916251
 BoxCollider:
   m_ObjectHideFlags: 0

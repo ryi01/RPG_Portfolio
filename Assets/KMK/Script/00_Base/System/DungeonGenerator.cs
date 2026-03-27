@@ -834,6 +834,8 @@ public class DungeonGenerator : MonoBehaviour
             navSurface = dungeonParent.gameObject.AddComponent<NavMeshSurface>();
 
             navSurface.collectObjects = CollectObjects.Children;
+
+            navSurface.layerMask = LayerMask.GetMask("Environment");
         }
 
         navSurface.BuildNavMesh();

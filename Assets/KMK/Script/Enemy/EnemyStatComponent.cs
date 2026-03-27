@@ -6,7 +6,6 @@ public class EnemyStatComponent : CharacterStatComponent
     private EnemyStatInfo enemyStatInfo;
 
     private float currentGroggy;
-    private float currentStunTime;
     [SerializeField] private float yOffset = 2.5f;
 
     public float NextPoint { get => enemyStatInfo.nextPointSelectDistance; }

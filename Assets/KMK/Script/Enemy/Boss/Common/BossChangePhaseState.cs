@@ -5,6 +5,7 @@ public class BossChangePhaseState : EnemyState
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
+        Debug.Log("페이지 변경");
         controller.NavigationStop();
         Anim.SetInteger("State", 10);
         Anim.SetTrigger("Phase");

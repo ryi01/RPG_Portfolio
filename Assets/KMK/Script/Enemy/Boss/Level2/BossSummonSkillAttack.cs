@@ -4,10 +4,6 @@ public class BossSummonSkillAttack : EnemySkillAttack
 {
     [SerializeField] private bool summonAroundBoss = true;
     [SerializeField] private float summonForwardOffset = 2f;
-    protected override void AttackReady()
-    {
-        base.AttackReady();
-    }
 
     public override void Attack()
     {

@@ -22,12 +22,6 @@ public class EnemyAttackState : EnemyState
         if (IsAttack) return;
         LookAtTarget();
     }
-    protected void LookAtTarget()
-    {
-        Vector3 dir = (controller.Player.transform.position - transform.position).normalized;
-        Quaternion lookRot = Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * statComp.RotSpeed);
-    }
 
     public override void ExitState()
     {

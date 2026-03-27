@@ -226,14 +226,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BulletCollision
   hitLayer:
     serializedVersion: 2
-    m_Bits: 4352
+    m_Bits: 37120
   sfxString: Portion
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 4593184484909914552, guid: 2e1e9506f5904a64b81744324fb7cd50, type: 3}
+  isArrow: 1
 --- !u!114 &6621624955881208750
 MonoBehaviour:
   m_ObjectHideFlags: 0

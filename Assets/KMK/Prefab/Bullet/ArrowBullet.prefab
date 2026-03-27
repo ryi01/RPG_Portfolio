@@ -199,12 +199,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowCollision
   hitLayer:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 37632
   sfxString: Arrow
   noHitLayer:
     serializedVersion: 2
-    m_Bits: 5120
-  attack: 2
+    m_Bits: 1024
   destroyTime: 0.5
   bulletParticle: {fileID: 100018, guid: a40b64bf23366dc42a892af2c6ff6140, type: 3}
   isArrow: 1

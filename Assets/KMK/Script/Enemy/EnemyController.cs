@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
 public struct HitData
@@ -108,6 +109,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         if (!stateDict.TryGetValue(state, out EnemyState nextState)) return;
         if (currentState == nextState && data == null) return;
         if (state == EnumTypes.STATE.STUN && currentState == nextState) return;
+        Debug.Log($"상태 전환: {CurrentState} -> {state}");
         currentState?.ExitState();
         currentState = null;
         currentState = nextState;
@@ -130,7 +132,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         navMeshAgent.nextPosition = transform.position;
         if(Animator != null)
         {
-            if(BossQuest != null) Animator.SetBool("Run", false);
+            if(BossLightning != null) Animator.SetBool("Run", false);
             Animator.SetInteger("State", 0);
         }
     }
@@ -143,7 +145,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         navMeshAgent.speed = StatComp.MoveSpeed * speedMultiplier;
         if (Animator != null)
         {
-            if (BossQuest != null) Animator.SetBool("Run", false);
+            if (BossLightning != null) Animator.SetBool("Run", false);
             Animator.SetInteger("State", 2);
         }
     }
@@ -151,5 +153,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
     public virtual void OnDeathEntered(object data = null)
     {
         BossQuest?.HandleBossDeath();
+        BossSummon?.ClearAll();
+        BossLightning?.StopPattern();
     }
 }

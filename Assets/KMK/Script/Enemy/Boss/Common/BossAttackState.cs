@@ -24,7 +24,7 @@ public class BossAttackState : EnemyAttackState
         controller.NavigationStop();
         isSetAnim = false;
         isChaniedSkill = false;
-        Anim.SetBool("Run", false);
+        if (controller.BossLightning != null) Anim.SetBool("Run", false);
 
         // 만약 외부(Idle)에서 주입된 스킬 데이터가 있다면 바로 할당
         if (data is EnemySkillAttack skillData)
@@ -187,7 +187,7 @@ public class BossAttackState : EnemyAttackState
         isSetAnim = false;
         isChaniedSkill = false;
 
-        Anim.SetBool("Run", false);
+        if (controller.BossLightning != null) Anim.SetBool("Run", false);
         controller.NavMeshAgent.isStopped = true;
         controller.NavMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1f);
         controller.NavMeshAgent.acceleration = 8f;
