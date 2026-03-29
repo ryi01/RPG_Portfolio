@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 56744859a88c923478e1f84f3d224ab3
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288957
+  packageName: Low-Poly Medieval Fantasy Heroes - Basic Pack
+  packageVersion: 1.2.1
+  assetPath: Assets/PolysplitGames/LowPolyMedievalFantasyHeroes/BasicHeroes/F_Knight.fbx
+  uploadId: 710739
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
   externalObjects:
   - first:
@@ -26,8 +33,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -42,7 +47,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
@@ -68,6 +73,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -1233,8 +1241,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: d49c65de9fce66146b5d0e164b1f9d2d,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: d49c65de9fce66146b5d0e164b1f9d2d, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
@@ -1246,10 +1253,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 288957
-  packageName: Low-Poly Medieval Fantasy Heroes - Basic Pack
-  packageVersion: 1.2.1
-  assetPath: Assets/PolysplitGames/LowPolyMedievalFantasyHeroes/BasicHeroes/F_Knight.fbx
-  uploadId: 710739

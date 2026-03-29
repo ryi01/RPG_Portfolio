@@ -183,6 +183,12 @@ public class InputMovement : MonoBehaviour
     }
     IEnumerator OnForce(Vector3 dir, float distance, float duration, bool isJump = false)
     {
+        int playerLayer = pc.gameObject.layer;
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        if (enemyLayer != -1)
+        {
+            Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+        }
         float elapsed = 0;
         Vector3 startPos = transform.position;
         if (Physics.Raycast(startPos, dir, out RaycastHit hit, distance, LayerMask.GetMask("Wall")))
@@ -208,6 +214,11 @@ public class InputMovement : MonoBehaviour
         }
         dashTrail.emitting = false;
         forceCoroutine = null;
+
+        if (enemyLayer != -1)
+        {
+            Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
+        }
     }
     private void DrawPath()
     {

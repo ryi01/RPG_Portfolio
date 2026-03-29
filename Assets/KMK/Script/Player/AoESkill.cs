@@ -5,12 +5,11 @@ using UnityEngine;
 public class AoESkill : PlayerSkillAttack
 {
     [SerializeField] protected Transform skillEffectPrefabTrans;
-    [SerializeField] protected GameObject groundEffect;
-    private GameObject effect;
+    [SerializeField] protected ParticleSystem groundEffect;
 
     public void OnAoEeffect()
     {
-        if (groundEffect != null) groundEffect.SetActive(true);
+        groundEffect.Play();
     }
     public void OnAoESkill()
     {
@@ -24,7 +23,7 @@ public class AoESkill : PlayerSkillAttack
     }
     public void OnAoESkillEnd()
     {
-        groundEffect.SetActive(false);
+        groundEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         StopPlayEffect();
     }
     public override void RangeAngleTargetAttack(SkillInfo data = null)

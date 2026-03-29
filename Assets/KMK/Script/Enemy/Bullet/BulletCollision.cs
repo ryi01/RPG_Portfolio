@@ -72,7 +72,7 @@ public class BulletCollision : MonoBehaviour
         if (!other.TryGetComponent(out BaseController target)) return;
         if (Owner == null) return;
         if (!Owner.TryGetComponent(out BaseController ownerController)) return;
-
+        
         target.Damage(ownerController.GetStat.Attack, 0, Owner.transform);
     }
 

@@ -56,7 +56,6 @@ public class BossSummonComponent : MonoBehaviour
     }
     private Vector3 GetSpawnPos(Vector3 center)
     {
-        
         Vector2 randomCircle = Random.insideUnitCircle * controller.StatComp.AttackRadius;
         Vector3 pos = center + new Vector3(randomCircle.x, 0, randomCircle.y);
         if(Physics.Raycast(pos + Vector3.up *5f, Vector3.down, out RaycastHit hit))

@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52f0472b71db7864dae53216e904dd1c, type: 3}
-  m_Name: AoEInfo
+  m_Name: Boss2SkillInfo4
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  attackMultifle: 10
-  attackMinRange: 2.5
-  attackMaxRange: 20
-  attackRadius: 20
-  hitAngle: 360
-  attackTime: 2
-  nockbackForce: 2
+  attackMultifle: 1
+  attackMinRange: 8.5
+  attackMaxRange: 15
+  attackRadius: 4
+  hitAngle: 60
+  attackTime: 3
+  nockbackForce: 3
   coolTime: 20
-  animTrigger: Skill4
-  openLevel: 1
+  animTrigger: 3
+  openLevel: 0
   needLookAtTarget: 1
   needDash: 0
   nextSkillIndex: 1

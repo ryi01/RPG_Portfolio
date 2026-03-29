@@ -19,7 +19,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   maxHP: 50
-  attack: 2
+  attack: 5
   attackRadius: 1.5
   hitAngle: 0
   moveSpeed: 2.5

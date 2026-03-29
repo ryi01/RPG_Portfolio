@@ -8,18 +8,21 @@ public class BossTakeDownSkill : EnemySkillAttack
         base.Awake();
         hitEffectPrefab.Stop();
     }
-    protected override void AttackReady()
+    private void OnEnable()
     {
-        base.AttackReady();
-        if (owner != null && owner.BossPhase != null && owner.BossPhase.IsPhaseTwo)
-        {
-            AttackRaidusMult = 1.5f;
-        }
-        else
-        {
-            AttackRaidusMult = 1;
-        }
+        AttackRaidusMult = 1;
+        owner.BossPhase.OnPhaseTwoStarted += EnterBossPhase;
     }
+    private void OnDisable()
+    {
+        owner.BossPhase.OnPhaseTwoStarted -= EnterBossPhase;
+    }
+
+    private void EnterBossPhase()
+    {
+        AttackRaidusMult = 1.5f;
+    }
+
     public void OnTakeDown()
     {
         PlayEffect();

@@ -4,16 +4,21 @@ using UnityEngine.Rendering;
 
 public class BossSummonAttackState : EnemyAttackState
 {
+    private EnemySkillAttack summonSkill;
+    private EnemySkillAttack homingSkill;
+    private EnemySkillAttack knockbackSkill;
+    private EnemySkillAttack linearSkill;
+
     private EnemySkillAttack currentSkill;
-    private enum SummonSkill { SUMMON, HOMING, KNOCKBACK };
+    private EnemySkillAttack lastUsedSkill = null;
 
-    private SummonSkill? lastUsedSkill = null;
-    private float lastSummonTime = -100f;
+    [SerializeField] private float summonChance = 0.3f;
     [SerializeField] private bool IsReturnToDetectIsNoSkill = true;
-
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
+        InitSkills();
+
         currentSkill = null;
 
         if (data is EnemySkillAttack skillData)
@@ -52,27 +57,42 @@ public class BossSummonAttackState : EnemyAttackState
         base.ExitState();
         currentSkill = null;
     }
+    private void InitSkills()
+    {
+        var skills = controller.BossSkill.SkillList;
 
+        if (skills == null) return;
+        foreach(var skill in skills)
+        {
+            if (skill == null) continue;
+            if (skill is BossHomingMissileSkillAttack) homingSkill = skill;
+            else if(skill is BossSummonSkillAttack) summonSkill = skill;
+            else if(skill is BossKnockbackBurstSkillAttack) knockbackSkill = skill;
+            else if(skill is BossLinearShotSkillAttack) linearSkill = skill;
+        }
+    }
     private EnemySkillAttack SelectSkillDistance()
     {
         float dis = controller.GetPlayerDis();
 
         EnemySkillAttack[] skills = controller.BossSkill.SkillList;
-        List<EnemySkillAttack> candiates = new List<EnemySkillAttack>();
+        List<EnemySkillAttack> candidates = new List<EnemySkillAttack>();
 
-        if (dis <= 5 && CanUseSkill(skills, SummonSkill.KNOCKBACK, dis, out EnemySkillAttack knockback)) return knockback;
-        if (CanUseSummonSkill(skills, SummonSkill.SUMMON, dis, out EnemySkillAttack summon) && lastUsedSkill != SummonSkill.SUMMON && Random.value < 0.3f) candiates.Add(summon);
-        if (CanUseSkill(skills, SummonSkill.HOMING, dis, out EnemySkillAttack homing)) candiates.Add(homing);
+        if (dis <= 5 && CanUseSkill(knockbackSkill, dis)) return knockbackSkill;
+        if(CanUseSkill(linearSkill, dis)) candidates.Add(linearSkill);
+        if (CanUseSkill(homingSkill, dis)) candidates.Add(homingSkill);
+        if (CanUseSummonSkill(summonSkill, dis) && lastUsedSkill != summonSkill && Random.value < summonChance) candidates.Add(summonSkill);
         
-        if (candiates.Count > 0)
+        if (candidates.Count > 0)
         {
-            int rnd = Random.Range(0, candiates.Count);
-            return candiates[rnd];
+            int rnd = Random.Range(0, candidates.Count);
+            return candidates[rnd];
         }
-        
-        if (CanUseSummonSkill(skills, SummonSkill.SUMMON, dis, out summon) && Random.value < 0.2f) return summon;
-        if (CanUseSkill(skills, SummonSkill.KNOCKBACK, dis, out knockback)) return knockback;
-        if (CanUseSkill(skills, SummonSkill.HOMING, dis, out homing)) return homing;
+
+        if (CanUseSkill(linearSkill, dis)) return linearSkill;
+        if (CanUseSkill(homingSkill, dis)) return homingSkill;
+        if (CanUseSkill(knockbackSkill, dis)) return knockbackSkill;
+        if (CanUseSummonSkill(summonSkill, dis) && Random.value < summonChance) return summonSkill;
         return null;
     }
     private void StartSkill()
@@ -92,57 +112,29 @@ public class BossSummonAttackState : EnemyAttackState
     public void OnSkillCast()
     {
         if (currentSkill == null) return;
-        lastUsedSkill = GetSkillTypeFromIndex(currentSkill.SkillIndex);
+        lastUsedSkill = currentSkill;
 
         currentSkill.SetLastTime();
     }
-    private SummonSkill GetSkillTypeFromIndex(int skillIndex)
-    {
-        return (SummonSkill)skillIndex;
-    }
-    private bool CanUseSummonSkill(EnemySkillAttack[] skills, SummonSkill skillType, float distance, out EnemySkillAttack skill)
-    {
-        skill = null;
-        if (!CanUseSkill(skills, SummonSkill.SUMMON, distance, out skill)) return false;
-        if (!controller.BossSummon.CanSummon()) return false;
 
-        if (Time.time - lastSummonTime < 10) return false;
+    private bool CanUseSummonSkill(EnemySkillAttack skill, float distance)
+    {
+        if(!CanUseSkill(skill, distance)) return false;
+        if(!controller.BossSummon.CanSummon()) return false;
+        if(!skill.IsReady) return false;
         return true;
     }
-    private bool CanUseSkill(EnemySkillAttack[] skills, SummonSkill skillType, float distance, out EnemySkillAttack skill)
+    private bool CanUseSkill(EnemySkillAttack skill, float distance)
     {
-        skill = null;
-        if (!TryGetSkill(skills, skillType, out skill))
-        {
-            return false;
-        }
-        if (!skill.IsReady)
-        {
-            return false;
-        }
-        if (distance < skill.AttackMinRange || distance > skill.AttackMaxRange)
-        {
-            return false;
-        }
+        if(skill == null) return false;
+        if(!skill.IsReady) return false;
+        if (distance < skill.AttackMinRange || distance > skill.AttackMaxRange) return false;
+
         return true;
-    }
-    private bool TryGetSkill(EnemySkillAttack[] skills, SummonSkill skillType, out EnemySkillAttack skill)
-    {
-        skill = null;
-        if (skills == null) return false;
-
-        int index = (int)skillType;
-        if (index < 0 || index >= skills.Length) return false;
-        if (skills[index] == null) return false;
-
-        skill = skills[index];
-        return true;
-
     }
 
     public void OnAttackFinish()
     {
-        Debug.Log("OnAttackFinish »£√‚µ ");
         currentSkill = null;
         if (IsReturnToDetectIsNoSkill) controller.TransitionToState(EnumTypes.STATE.DETECT);
         else controller.TransitionToState(EnumTypes.STATE.IDLE);

@@ -113,8 +113,6 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Navigation")]
     public NavMeshSurface navSurface;
 
-    [Header("Boss Settings")]
-    [SerializeField] private GameObject bossPrefab;
 
     [Header("Grid")]
     [SerializeField] private GridAStar grid;
@@ -844,13 +842,12 @@ public class DungeonGenerator : MonoBehaviour
     public void SpawnBossInRoom()
     {
         Vector3 spawnPos = new Vector3(EndPoint.x * tileSize, 0.5f, EndPoint.y * tileSize);
-        GameObject bossObj = Instantiate(bossPrefab, spawnPos, Quaternion.identity, dungeonParent);
+        var questData = GameManager.Instance.QuestManager.GetCurrentQuestData();
+        GameObject bossObj = Instantiate(questData.BossPrefab, spawnPos, Quaternion.identity, dungeonParent);
 
         BossQuestComponent questComp = bossObj.GetComponent<BossQuestComponent>();
         if(questComp != null)
         {
-            var questData = GameManager.Instance.QuestManager.GetCurrentQuestData();
-            if (questData != null) Debug.Log($"{questData.QuestID}");
             questComp.SetQuestData(questData);
         }
     }

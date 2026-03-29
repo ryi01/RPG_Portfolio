@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BossPhaseComponent : MonoBehaviour
 {
+    public event Action OnPhaseTwoStarted;
     [SerializeField] private float phaseTwoHpRatio = 0.4f;
     [SerializeField] private float phaseTwoSpeedMultiplier = 2f;
 
@@ -29,7 +30,7 @@ public class BossPhaseComponent : MonoBehaviour
         controller.NavigationStop();
         controller.StatComp.SetSpeedMultifle(phaseTwoSpeedMultiplier);
         controller.TransitionToState(EnumTypes.STATE.PATTERN_PHASE);
-
+        OnPhaseTwoStarted?.Invoke();
         if (controller.BossLightning != null) controller.BossLightning.StartPattern();
     }
 

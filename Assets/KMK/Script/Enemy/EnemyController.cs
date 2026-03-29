@@ -109,7 +109,7 @@ public class EnemyController : BaseController<EnemyStatComponent>
         if (!stateDict.TryGetValue(state, out EnemyState nextState)) return;
         if (currentState == nextState && data == null) return;
         if (state == EnumTypes.STATE.STUN && currentState == nextState) return;
-        Debug.Log($"상태 전환: {CurrentState} -> {state}");
+
         currentState?.ExitState();
         currentState = null;
         currentState = nextState;

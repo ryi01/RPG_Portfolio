@@ -30,6 +30,12 @@ public class MoveToPosSkill : PlayerSkillAttack
         pc.IsBlink = true;
         pc.MovementComp.StopMove();
         pc.MovementComp.LookAtInstant(dir);
+        int playerLayer = pc.gameObject.layer;
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        if(enemyLayer != -1)
+        {
+            Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+        }
 
         StartSkill();
 
@@ -38,7 +44,10 @@ public class MoveToPosSkill : PlayerSkillAttack
         pc.CameraShakeController.GenerateImpulseDirection(dir, 0.4f);
 
         yield return new WaitForSeconds(skillInfo.attackTime);
-
+        if (enemyLayer != -1)
+        {
+            Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
+        }
         pc.IsBlink = false;
     }
 

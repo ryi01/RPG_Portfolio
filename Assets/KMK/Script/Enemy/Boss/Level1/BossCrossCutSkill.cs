@@ -2,6 +2,15 @@ using UnityEngine;
 
 public class BossCrossCutSkill : EnemySkillAttack
 {
+
+    private void OnEnable()
+    {
+        owner.BossPhase.OnPhaseTwoStarted += EnterBossPhase;
+    }
+    private void OnDisable()
+    {
+        owner.BossPhase.OnPhaseTwoStarted -= EnterBossPhase;
+    }
     private void Start()
     {
         if (TryGetComponent<TrailRenderer>(out TrailRenderer trail))
@@ -9,14 +18,12 @@ public class BossCrossCutSkill : EnemySkillAttack
             trail.emitting = false;
         }
     }
-    protected override void AttackReady()
+
+    private void EnterBossPhase()
     {
-        base.AttackReady();
-        if (owner != null && owner.BossPhase.IsPhaseTwo)
-        {
-            AttackRaidusMult = 1.8f;
-        }
+        AttackRaidusMult = 1.8f;
     }
+
     public void OnCrossCut()
     {
         Attack();

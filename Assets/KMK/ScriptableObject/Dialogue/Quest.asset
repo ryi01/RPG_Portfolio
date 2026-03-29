@@ -22,3 +22,4 @@ MonoBehaviour:
     itemId: 0
     itemCount: 0
   rewardSkill: 3
+  bossPrefab: {fileID: 4338804194200415577, guid: 8e3ca597af9a6d44885b97a3e5fb074f, type: 3}

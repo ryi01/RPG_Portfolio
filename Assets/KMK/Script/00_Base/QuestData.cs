@@ -10,12 +10,14 @@ public class QuestData : ScriptableObject
     [SerializeField] private int targetCount;
     [SerializeField] private ItemInfo rewardItem;
     [SerializeField] private InputSkill.SKILLS rewardSkill;
+    [SerializeField] private GameObject bossPrefab;
 
     public int QuestID => questID;
     public int NextQuestID => nextQuestID;
     public string QuestTitle => questTitle;
     public string Description => description;
     public int TargetCount => targetCount;
+    public GameObject BossPrefab => bossPrefab;
     public ItemInfo RewardItem => rewardItem;
 
     public InputSkill.SKILLS RewardSkill => rewardSkill;

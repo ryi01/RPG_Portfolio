@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 2374185998068091769}
   - component: {fileID: 5310972927591874571}
   - component: {fileID: 2232772743412867999}
+  - component: {fileID: 7158049809235697903}
   m_Layer: 9
   m_Name: E_Skeleton
   m_TagString: Untagged
@@ -289,6 +290,24 @@ MonoBehaviour:
   bc: {fileID: 4671427480397639408}
   attackTransform: {fileID: 1364055168383625131}
   hitEffectPrefab: {fileID: 7381076919369370466}
+--- !u!114 &7158049809235697903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289355918717940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 4
+  outlineColor: {r: 1, g: 0.53998077, b: 0.15686274, a: 1}
+  outlineWidth: 1.67
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &99877448570116759
 GameObject:
   m_ObjectHideFlags: 0
