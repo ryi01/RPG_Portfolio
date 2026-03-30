@@ -9,11 +9,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private ItemBoxUI itemBoxUI;
     [SerializeField] private Text goldText;
+    [SerializeField] private Text storeGoldText;
 
     private void Start()
     {
         inventoryUI.InitInventoryUI();
         goldText.text = "0";
+        storeGoldText.text = "0";
     }
     #region 체력 관련
     public void BindPlayerUI(PlayerStatComponent player)
@@ -51,6 +53,7 @@ public class UIManager : MonoBehaviour
     public void ChangeGold(int amount)
     {
         goldText.text = amount.ToString();
+        storeGoldText.text = amount.ToString();
     }
     #endregion
 

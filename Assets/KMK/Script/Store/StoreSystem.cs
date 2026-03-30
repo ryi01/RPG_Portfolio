@@ -24,6 +24,7 @@ public class StoreSystem : MonoBehaviour
         if (storeData == null) return;
         currentStore = storeData;
         OnOpenStore?.Invoke(currentStore);
+        
         OnChangedStoreData?.Invoke();
     }
 
@@ -33,71 +34,64 @@ public class StoreSystem : MonoBehaviour
         OnCloseStore?.Invoke();
     }
 
-    public bool BuyItem(StoreItemData storeItem, int amount = 1)
+    public bool BuyItem(Item item, int amount = 1)
     {
-        if (storeItem == null || storeItem.ItemData == null)
+        if (item == null)
         {
-            FailTransaction("상점 아이템이 없습니다.");
-            return false;
-        }
-
-        if (!storeItem.IsBuy)
-        {
-            FailTransaction("구매할 수 없는 아이템 입니다.");
+            FailTransaction("상점에 아이템이 없습니다.");
             return false;
         }
         if (amount <= 0)
         {
-            FailTransaction("수량이 올바르지 않습니다.");
+            FailTransaction("수량이 올바르지 않습니다");
             return false;
         }
-        int totalPrice = storeItem.BuyPrice * amount;
-        if (!GameManager.Instance.GoldSystem.IsEnoughGold(totalPrice))
+        var goldSystem = GameManager.Instance.GoldSystem;
+        var inventorySystem = GameManager.Instance.InventroySystem;
+        if (goldSystem == null || inventorySystem == null) return false;
+        int totalPrice = item.BuyPrice * amount;
+        if(!goldSystem.IsEnoughGold(totalPrice))
         {
             FailTransaction("골드가 부족합니다.");
             return false;
         }
-        bool added = GameManager.Instance.InventroySystem.AddItem(storeItem.ItemData, amount);
-        if (!added)
+        bool spent = goldSystem.SpendGold(totalPrice);
+        if (!spent)
         {
-            FailTransaction("인벤토리가 가득 찼거나, 아이템 추가에 실패했습니다.");
+            FailTransaction("골드 차감에 실패했습니다.");
             return false;
         }
-        bool spent = GameManager.Instance.GoldSystem.SpendGold(totalPrice);
-        if(!spent)
+        bool added = inventorySystem.AddItem(item, amount);
+        if(!added)
         {
-            GameManager.Instance.InventroySystem.RemoveItem(storeItem.ItemData, amount);
-            FailTransaction("골드 차감에 실패 했습니다");
+            goldSystem.AddGold(totalPrice);
+            FailTransaction("인벤토리가 가득 찼거나, 아이템 추가에 실패했습니다.");
             return false;
         }
         OnChangedStoreData?.Invoke();
         return true;
     }
 
-    public bool SellItem(StoreItemData storeItem, int amount = 1)
+    public bool SellItem(Item item, int amount = 1)
     {
-        if (storeItem == null || storeItem.ItemData == null)
+        if (item == null)
         {
             FailTransaction("판매할 아이템이 없습니다.");
             return false;
         }
-        if (!storeItem.IsSell)
-        {
-            FailTransaction("판매할 수 없는 아이템입니다.");
-            return false;
-        }
+
         if (amount <= 0)
         {
             FailTransaction("수량이 올바르지 않습니다.");
             return false;
         }
         var inventorySystem = GameManager.Instance.InventroySystem;
-        if (!inventorySystem.HasItem(storeItem.ItemData, amount))
+        if (!inventorySystem.HasItem(item, amount))
         {
             FailTransaction("아이템 수량이 부족합니다.");
             return false;
         }
-        Item foundItem = inventorySystem.HasItemList.Find(x => x != null && x.ItemID == storeItem.ItemData.ItemID);
+        Item foundItem = inventorySystem.HasItemList.Find(x => x != null && x.ItemID == item.ItemID);
         if (foundItem == null)
         {
             FailTransaction("인벤토리에서 판매 아이템을 찾지 못했습니다.");
@@ -110,7 +104,7 @@ public class StoreSystem : MonoBehaviour
             return false;
         }
 
-        GameManager.Instance.GoldSystem.AddGold(storeItem.SellPrice * amount);
+        GameManager.Instance.GoldSystem.AddGold(item.SellPrice * amount);
         OnChangedStoreData?.Invoke();
         return true;
     }
@@ -121,11 +115,11 @@ public class StoreSystem : MonoBehaviour
         return goldSystem != null ? goldSystem.CurrentGold : 0;
     }
 
-    public int GetOwnedItemCount(StoreItemData storeItem)
+    public int GetOwnedItemCount(Item storeItem)
     {
-        if (storeItem == null || storeItem.ItemData == null) return 0;
+        if (storeItem == null) return 0;
 
-        return GameManager.Instance.InventroySystem.GetItemCount(storeItem.ItemData);
+        return GameManager.Instance.InventroySystem.GetItemCount(storeItem);
     }
 
     private void FailTransaction(string message)

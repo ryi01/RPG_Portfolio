@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EnemyUIManager enemyUIManager;
     [SerializeField] private GameObject protalPrefab;
     [SerializeField] private CameraEnviroment cameraEnviroment;
+    [SerializeField] private StoreSystem storeSystem;
 
     public UIManager UIManager => uiManager;
     public InventorySystem InventroySystem => inventroySystem;
@@ -35,6 +36,8 @@ public class GameManager : MonoBehaviour
     public EnemyUIManager EnemyUIManager => enemyUIManager;
 
     public CameraEnviroment CameraEnviroment => cameraEnviroment;
+
+    public StoreSystem StoreSystem => storeSystem;
 
     public GameState CurrentState {  get; private set; }
 
@@ -99,6 +102,16 @@ public class GameManager : MonoBehaviour
     public void CloseBoxInfo()
     {
         inventroySystem.CurrentBox = null;
+    }
+    #endregion
+    #region 상점 관련
+    public void OpenStoreUI(StoreData storeData)
+    {
+        storeSystem.OpenStore(storeData);
+    }    
+    public void CloseStoreUI()
+    {
+        storeSystem.CloseShop();
     }
     #endregion
     #region 데이터 관련

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd166bc9932dbf64dbe67ccba9695de3, type: 3}
-  m_Name: HPPortion
+  m_Name: HPPortion 1
   m_EditorClassIdentifier: Assembly-CSharp::HpConsumableItem
   itemType: 0
-  itemId: 2003
-  itemName: "\uC0AC\uACFC"
+  itemId: 2004
+  itemName: "\uCCB4\uB825\uBB3C\uC57D"
   itemDescription: "\uCCB4\uB825 \uC99D\uAC00 \uC544\uC774\uD15C\uC785\uB2C8\uB2E4."
-  itemIconImage: {fileID: -1144779711, guid: 81a09b10b55cc0b4ea8452c10e23c891, type: 3}
+  itemIconImage: {fileID: -1844851830, guid: 81a09b10b55cc0b4ea8452c10e23c891, type: 3}
   itemCount: 1
   isEquip: 0
-  buyPrice: 10
-  sellPrice: 8
+  buyPrice: 15
+  sellPrice: 10
   cbType: 1
-  upValue: 10
+  upValue: 20

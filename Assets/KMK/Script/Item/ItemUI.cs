@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     public int SlotIndex { get => slotIndex; set => slotIndex = value; }
     // 아이템 이미지 및 텍스트 표시
     [SerializeField] private Image itemImage;
+    [SerializeField] private Image selectImage;
     [SerializeField] private Text itemCountText;
 
     // 드래그 시 최상단 출력을 위한 캔버스 참조
@@ -22,7 +24,10 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
 
     // 잡고있는 itemInfo의 실제 데이터
     public Item item { get; private set; }
+    private Action onClick;
     private Action onDoubleClick;
+
+    private EnumTypes.ItemUIMode currentMode = EnumTypes.ItemUIMode.Use;
 
     private bool isFromInven;
     private void Awake()
@@ -33,18 +38,41 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         canvasGroup = GetComponent<CanvasGroup>() == null ? gameObject.AddComponent<CanvasGroup>(): GetComponent<CanvasGroup>();
         ClearItemUI();
     }
+    public void SetSelect(bool isSelected)
+    {
+        selectImage.gameObject.SetActive(isSelected);
+    }
+    public void SetMode(EnumTypes.ItemUIMode mode)
+    {
+        currentMode = mode;
+    }
+    private bool IsDrag()
+    {
+        return currentMode == EnumTypes.ItemUIMode.Use ||
+            currentMode == EnumTypes.ItemUIMode.BoxLoot ||
+            currentMode == EnumTypes.ItemUIMode.BoxStorage;
+    }
+
+    private bool IsDoubleClick()
+    {
+        return currentMode == EnumTypes.ItemUIMode.Use || currentMode == EnumTypes.ItemUIMode.StoreBuy;
+    }
     // 아이템 셀 초기화
     public void ClearItemUI()
     {
+        item = null;
         itemImage.sprite = null;
         itemCountText.text = "";
         itemImage.color = new Color(1, 1, 1, 0); // 투명
+        selectImage.gameObject.SetActive(false);
+        onClick = null;
         onDoubleClick = null;
     }
     // 아이템 획득시
-    public void InitItemUI(Item item, Action doubleClickAction)
+    public void InitItemUI(Item item, Action clickAction = null, Action doubleClickAction = null)
     {
         this.item = item;
+        this.onClick = clickAction;
         this.onDoubleClick = doubleClickAction;
         if (this.item != null && this.item.ItemIconImage != null)
         {
@@ -58,15 +86,19 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     // 더블 클릭 확인
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
+        if (item == null) return;
+        if (eventData.button != PointerEventData.InputButton.Left) return;
+        if (eventData.clickCount == 2)
         {
-            onDoubleClick?.Invoke();
+            if(IsDoubleClick()) onDoubleClick?.Invoke();
         }
+        else if (eventData.clickCount == 1) onClick?.Invoke();
     }
     #region Drag&Drop
     // 마우스 왼클릭 끌기 시작 시 호출됨
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!IsDrag()) return;
         if (item == null) return;
 
         // 원래 위치와 슬롯 기억
@@ -85,6 +117,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     // 드래그 중에 호출
     public void OnDrag(PointerEventData eventdata)
     {
+        if (!IsDrag()) return;
         if (item == null) return;
         // 마우스의 이동량만큼 ui위치 실시간으로 변경
         rectTransform.anchoredPosition += eventdata.delta / canvas.scaleFactor;
@@ -92,6 +125,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!IsDrag()) return;
         if (item == null) return;
         // 드래그 종료 후 상태 복구
         canvasGroup.blocksRaycasts = true;

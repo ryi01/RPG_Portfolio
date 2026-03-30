@@ -89,10 +89,10 @@ public class InventorySystem : MonoBehaviour
             if (item.ItemCount > 1)
             {
                 item.ItemCount--;
+                OnChangedInventory?.Invoke();
             }
             else RemoveItem(item);
 
-            OnChangedInventory?.Invoke();
         }
     }
     // 아이템 삭제

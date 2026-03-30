@@ -13,10 +13,12 @@ public class InputPickUp : MonoBehaviour
 {
     [SerializeField] private GameObject itemBoxUI;
     private InventorySystem inventroySystem;
+    private PlayerController pc;
 
     private void Start()
     {
-        inventroySystem = FindAnyObjectByType<InventorySystem>();
+        pc = GetComponent<PlayerController>();
+        inventroySystem = GameManager.Instance.InventroySystem;
     }
     public void OpenItemBox(ItemBox box)
     {
@@ -24,6 +26,15 @@ public class InputPickUp : MonoBehaviour
         {
             GameManager.Instance.OpenBoxInfo(box);
         }
+    }
+    public void OpenStore(StoreData storeData)
+    {
+        GameManager.Instance.OpenStoreUI(storeData);
+    }
+    public void CloseStore()
+    {
+        GameManager.Instance.CloseStoreUI();
+        if (pc != null) pc.CloseStore();
     }
 
     public void CloseUI()

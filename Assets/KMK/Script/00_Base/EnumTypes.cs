@@ -14,4 +14,13 @@ public class EnumTypes
         NOT_START, IN_PROGRESS, OBJECTIVE_DONE, COMPLETED
     }
 
+    public enum ItemUIMode
+    {
+        Use,
+        ShopSell,
+        StoreBuy,
+        BoxLoot,
+        BoxStorage
+    }
+
 }

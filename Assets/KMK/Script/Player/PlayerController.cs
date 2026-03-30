@@ -58,9 +58,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private KeyCode[] skillKeys = { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.D, KeyCode.F };
 
     // 아이템 관련 변수들
+    private StoreNPC currentStoreNPC;
     private ItemBox openBox;
     private InteractionObject targetInteractable;
     private bool isMoveToInteraction = false;
+    private bool isStoreOpen;
     #endregion
     protected override void Awake()
     {
@@ -76,6 +78,14 @@ public class PlayerController : BaseController<PlayerStatComponent>
         CombatFeedback = GetComponent<CombatFeedback>();        
         if(trail != null) trail.emitting = false;
         currentStepInterval = UnityEngine.Random.Range(interval.x, interval.y);
+    }
+    private void OnEnable()
+    {
+        GameManager.Instance.StoreSystem.OnCloseStore += CloseStore;
+    }
+    private void OnDisable()
+    {
+        GameManager.Instance.StoreSystem.OnCloseStore -= CloseStore;
     }
     // Update is called once per frame
     void Update()
@@ -134,6 +144,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     /// </summary>
     private void HandleInput()
     {
+        if (isStoreOpen) return;
         if (EventSystem.current.IsPointerOverGameObject()) return;
         HandleMoveAndInteractInput();
         HandleAttackInput();
@@ -197,10 +208,27 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (dist <= interactionDistance)
         {
             MovementComp.StopMove();
+            Vector3 dir = targetInteractable.transform.position - transform.position;
+            dir.y = 0;
+            if (dir.sqrMagnitude > 0.001f) MovementComp.LookAtInstant(dir.normalized);
+
             targetInteractable.Interact(this);
+
             targetInteractable = null;
             isMoveToInteraction = false;
         }
+    }
+    public void OpenStore(StoreNPC npc)
+    {
+        if (npc == null) return;
+        currentStoreNPC = npc;
+        isStoreOpen = true;
+        PickUpComp.OpenStore(npc.StoreData);
+    }
+    public void CloseStore()
+    {
+        isStoreOpen = false;
+        currentStoreNPC = null;
     }
     public void OpenBox(ItemBox box)
     {
@@ -217,12 +245,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
             PickUpComp.CloseUI();
             openBox = null;
         }
-    }
-    public void TryInteract(NPCInteraction npc)
-    {
-        if (npc == null) return;
-        GameManager.Instance.ChangeState(GameState.Dialogue);
-        npc.Interact();
     }
     #endregion
     #region 이동관련
