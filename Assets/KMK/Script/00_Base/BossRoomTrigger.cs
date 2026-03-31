@@ -4,6 +4,7 @@ public class BossRoomTrigger : MonoBehaviour
 {
     private EnemyUIManager enemyUIManager;
     private CameraEnviroment cameraEnviroment;
+    private SoundManager soundManager;
     private bool isTrigger = false;
 
     public void InitRoomTrigger(EnemyUIManager enemyUI, CameraEnviroment cameraEnv)

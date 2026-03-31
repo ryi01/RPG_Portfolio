@@ -6,7 +6,10 @@ public class SceneCoordinator : MonoBehaviour
     [SerializeField] private CameraEnviroment cameraEnviroment;
 
     public bool IsPathFindingEnable { get; private set; } = false;
-
+    private void Awake()
+    {
+        cameraEnviroment.ChangeToTown();
+    }
     public void ChangeScene(string unloadSceneName, string loadSceneName)
     {
         bool isDungeon = loadSceneName.Contains("Game");

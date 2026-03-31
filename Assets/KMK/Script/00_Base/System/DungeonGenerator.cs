@@ -101,7 +101,6 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject[] propPrefabs;
     public GameObject itemPrefabs;
     public GameObject dungeonDustPrefab;
-    public GameObject triggerPrefab;
     public GameObject torchPrefab;
     public GameObject[] trapPrefab;
     [SerializeField][Range(0, 1)] private float decorationDensity = 0.1f; 
@@ -141,6 +140,11 @@ public class DungeonGenerator : MonoBehaviour
 
     [Header("Grid")]
     [SerializeField] private GridAStar grid;
+    
+    [Header("Portal")]
+    public GameObject bossTriggerPrefab;
+    [SerializeField] private EnemyUIManager enemyUIManager;
+    [SerializeField] private CameraEnviroment cameraEnviroment;
 
     private int[,] mapData;
     private int roomSize;
@@ -956,8 +960,11 @@ public class DungeonGenerator : MonoBehaviour
     {
         Vector3 triggerPos = new Vector3(EndPoint.x * tileSize, 1f, EndPoint.y * tileSize);
 
-        GameObject triggerObj = Instantiate(triggerPrefab, triggerPos, Quaternion.identity, dungeonParent);
-
+        GameObject triggerObj = Instantiate(bossTriggerPrefab, triggerPos, Quaternion.identity, dungeonParent);
+        if(triggerObj.TryGetComponent<BossRoomTrigger>(out var trigger))
+        {
+            trigger.InitRoomTrigger(enemyUIManager, cameraEnviroment);
+        }
         int size = GetRoomSize(EndPoint);
         triggerObj.transform.localScale = new Vector3(size * tileSize * 2, 2f, size * tileSize * 2);
         

@@ -336,7 +336,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
   looping: 1
-  prewarm: 0
+  prewarm: 1
   playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
@@ -18010,7 +18010,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 0
   looping: 1
-  prewarm: 0
+  prewarm: 1
   playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
@@ -75102,7 +75102,19 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6710139492206580334, guid: 95b8d3d65b5d7f1409c4ed1723887826, type: 3}
+      propertyPath: prewarm
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6710139492206580334, guid: 95b8d3d65b5d7f1409c4ed1723887826, type: 3}
       propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6710139492206580334, guid: 95b8d3d65b5d7f1409c4ed1723887826, type: 3}
+      propertyPath: startDelay.maxCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6710139492206580334, guid: 95b8d3d65b5d7f1409c4ed1723887826, type: 3}
+      propertyPath: startDelay.maxCurve.m_Curve.Array.data[1].value
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6710139492206580335, guid: 95b8d3d65b5d7f1409c4ed1723887826, type: 3}
@@ -81910,7 +81922,6 @@ MonoBehaviour:
   - {fileID: 3444133555907358239, guid: 8e868b6010a5678479be03a8ad853bd8, type: 3}
   itemPrefabs: {fileID: 731909822446796602, guid: 582326b5252376146b50b4268c9b65a6, type: 3}
   dungeonDustPrefab: {fileID: 4503987393827156431, guid: 60326d8b482a8b24aa61fd84b4b93c3f, type: 3}
-  triggerPrefab: {fileID: 5248261036822521736, guid: 76c09206f80976748a653fb9845c96d5, type: 3}
   torchPrefab: {fileID: 8093684320013947095, guid: ab761831d8d79ff47badf1ec818429ce, type: 3}
   trapPrefab:
   - {fileID: 5321417686779697709, guid: 9022889366cfebf41a381cce440bc438, type: 3}
@@ -81945,6 +81956,9 @@ MonoBehaviour:
   eliteSpawnRange: {x: 1, y: 3}
   navSurface: {fileID: 0}
   grid: {fileID: 1779133844}
+  bossTriggerPrefab: {fileID: 5248261036822521736, guid: 76c09206f80976748a653fb9845c96d5, type: 3}
+  enemyUIManager: {fileID: 1779133847}
+  cameraEnviroment: {fileID: 1779133845}
 --- !u!114 &1779133850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81995,7 +82009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46c75142d60ebd4bb637846cc7082c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadManager
-  dungeonGenerator: {fileID: 0}
+  dungeonGenerator: {fileID: 1779133849}
   loadingCanvas: {fileID: 2113889505}
   player: {fileID: 1820549347}
   loadingImage: {fileID: 752922514}
