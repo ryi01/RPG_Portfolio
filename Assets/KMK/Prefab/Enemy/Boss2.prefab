@@ -20647,8 +20647,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossSummonComponent
   summonPrefabs:
   - {fileID: 1289355918717940, guid: e2e4912477ad02e42a9a2cb8ebbdbea1, type: 3}
-  - {fileID: 1289355918717940, guid: e2e4912477ad02e42a9a2cb8ebbdbea1, type: 3}
   - {fileID: 3437770679800848509, guid: b012fe6b82dcb864fb0b153f8b6cddce, type: 3}
+  - {fileID: 2824353612501627854, guid: a91b963949f392c479091a3c91791941, type: 3}
   summonCount: 2
   maxAliveSummon: 4
   groundLayer:

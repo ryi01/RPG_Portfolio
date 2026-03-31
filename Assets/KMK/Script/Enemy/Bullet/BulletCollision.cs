@@ -31,6 +31,7 @@ public class BulletCollision : MonoBehaviour
 
     protected virtual void OnCollisionEnter(Collision collision)
     {
+        if (collision.contactCount == 0) return;
         HandleEnter(collision.collider, collision.contacts[0].point);
     }
     protected virtual void OnTriggerEnter(Collider other)
@@ -40,7 +41,7 @@ public class BulletCollision : MonoBehaviour
     }
     protected virtual void HandleEnter(Collider other, Vector3 hitPoint)
     {
-        if (other.gameObject == Owner)
+        if (Owner != null && other.gameObject == Owner.gameObject)
         {
             return;
         }
@@ -70,10 +71,9 @@ public class BulletCollision : MonoBehaviour
     protected virtual void DamageTarget(Collider other)
     {
         if (!other.TryGetComponent(out BaseController target)) return;
-        if (Owner == null) return;
-        if (!Owner.TryGetComponent(out BaseController ownerController)) return;
-        
-        target.Damage(ownerController.GetStat.Attack, 0, Owner.transform);
+        float final = Owner != null ? Owner.GetStat.Attack : 1;
+        Transform finalPos = Owner != null ? Owner.transform : null;
+        target.Damage(final, 0, finalPos);
     }
 
     protected virtual void FinishBullet()
@@ -83,7 +83,7 @@ public class BulletCollision : MonoBehaviour
         if (col != null) col.enabled = false;
 
         Rigidbody rb = GetComponent<Rigidbody>();
-        if(rb != null)
+        if(rb != null && !rb.isKinematic)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -93,8 +93,10 @@ public class BulletCollision : MonoBehaviour
         ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
         foreach(var ps in particles)
         {
-            var emission = ps.emission;
-            Destroy(ps.gameObject);
+            if (ps.gameObject == gameObject) continue;
+            ps.transform.SetParent(null);
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            Destroy(ps.gameObject, 2);
         }
 
         TargetMovement movement = GetComponentInParent<TargetMovement>();

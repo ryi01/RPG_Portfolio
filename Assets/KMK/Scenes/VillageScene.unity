@@ -199,7 +199,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 2260def402ec8254f899cc7d78a30764, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7982,7 +7982,7 @@ MonoBehaviour:
   yOffset: 4
   uiPrefab: {fileID: 3790533417186835734, guid: bb93c905088045c46b69b28ea408f2b7, type: 3}
   myQuestData: {fileID: 11400000, guid: 32713ef5a19887f44a706d6a9d0e6037, type: 2}
-  myStageIndex: 0
+  myStageIndex: 1
   startDialogueIndex: 0
   inProgressDialogueIndex: 3
   objectiveDoneDialogueIndex: 5

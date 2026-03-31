@@ -39,6 +39,7 @@ public class PlayerSkillAttack : PlayerMeleeAttack
     }
     protected override void AttackHit(Collider hit)
     {
+        if (!hit) return;
         var target = hit.GetComponent<BaseController>();
         if (target != null)
         {

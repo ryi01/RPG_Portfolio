@@ -53,7 +53,6 @@ public class Triangle
         return Vector2.Distance(point, circleCenter) < circleRadius;
     }
 }
-
 public struct Edge
 {
     public Vector2 u;
@@ -71,8 +70,10 @@ public struct Edge
     }
 }
 #endregion
+
 public class DungeonGenerator : MonoBehaviour
 {
+    #region 변수
     [Header("Dungeon Settings")]
     [SerializeField] private int pointCount = 10;
     [SerializeField] private float areaSize = 50;
@@ -99,16 +100,41 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject[] obstaclePrefabs;
     public GameObject[] propPrefabs;
     public GameObject itemPrefabs;
+    public GameObject dungeonDustPrefab;
     public GameObject triggerPrefab;
+    public GameObject torchPrefab;
     public GameObject[] trapPrefab;
     [SerializeField][Range(0, 1)] private float decorationDensity = 0.1f; 
     [SerializeField][Range(0, 1)] private float itemBoxDensity = 0.3f; 
     [SerializeField][Range(0, 1)] private float trapDensity = 0.2f;
+    [SerializeField][Range(0, 1)] private float torchChance = 0.4f;
 
     [Header("Enemy Spawn")]
     public GameObject[] enemyPrefabs;
-    [SerializeField] private int maxEnemiesPerRoom = 5;
+    [SerializeField] private GameObject[] meleeEnemyPrefabs;
+    [SerializeField] private GameObject[] rangedEnemyPrefabs;
+    [SerializeField] private GameObject[] eliteEnemyPrefabs;
+
     [SerializeField] private int spawnPointsPerRoom = 6;
+    [SerializeField] private int patrolPointsPerRoom = 4;
+    [SerializeField] private float minPointDistance = 2;
+
+    [SerializeField] private Vector2Int meleeSpawnRange = new Vector2Int(3, 5);
+    [SerializeField] private Vector2Int rangedSpawnRange = new Vector2Int(2, 4);
+    [SerializeField] private Vector2Int eliteSpawnRange = new Vector2Int(1, 2);
+    #region 방 정보
+    [System.Serializable]
+    public class RoomSpawnData
+    {
+        public Vector2Int RoomKey;
+        public List<Transform> RoomWayPoints;
+        public List<Vector3> SpawnPoints;
+
+        public EnumTypes.RoomSpawnType RoomType;
+        public int SpawnCount;
+        public GameObject[] EnemySet;
+    }
+    #endregion
 
     [Header("Navigation")]
     public NavMeshSurface navSurface;
@@ -127,8 +153,8 @@ public class DungeonGenerator : MonoBehaviour
     public Vector3 WorldEndPoint => new Vector3(EndPoint.x * tileSize, 0, EndPoint.y * tileSize);
     public Transform DungeonParent => dungeonParent;
 
-    private Dictionary<Vector2Int, Transform> wayPoints = new Dictionary<Vector2Int, Transform>();
-    private Dictionary<Vector2Int, List<Vector3>> roomWayPoints = new Dictionary<Vector2Int, List<Vector3>>();
+    private Dictionary<Vector2Int, List<Transform>> wayPoints = new Dictionary<Vector2Int, List<Transform>>();
+    private Dictionary<Vector2Int, List<Vector3>> roomSpawnPoints = new Dictionary<Vector2Int, List<Vector3>>();
 
     public static Action<Vector3> OnSpawnItemBox;
 
@@ -145,6 +171,7 @@ public class DungeonGenerator : MonoBehaviour
         Door = 7,
         BossRoom = 8
     }
+    #endregion
     private void OnEnable()
     {
         BossQuestComponent.OnBossDeath += SpawnPortal;
@@ -177,9 +204,11 @@ public class DungeonGenerator : MonoBehaviour
         SpawnEnemies();
         SpawnBossInRoom();
 
+        SpawnAtmosphere();
+
         IsGenerationCompleted = true;
     }
-    
+    #region 맵 생성 공식
     private void GeneratePoint()
     {
         points.Clear();
@@ -207,7 +236,6 @@ public class DungeonGenerator : MonoBehaviour
             if (!isTooClose) points.Add(newPoint);
         }
     }
-
     private void SetupSuperTriangle()
     {
         triangleList.Clear();
@@ -299,25 +327,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         mstEdges.Clear();
         if (points.Count == 0) return;
-        List<Edge> allEdges = new List<Edge>();
-        foreach(var tri in triangleList)
-        {
-            Edge[] triEdges = { new Edge(tri.a, tri.b), new Edge(tri.b, tri.c), new Edge(tri.c, tri.a) };
-            foreach (var e in triEdges)
-            {
-                bool exits = false;
-                foreach(var ae in allEdges)
-                {
-                    if(ae.Equal(e))
-                    {
-                        exits = true;
-                        break;
-                    }
-                }
-                if (!exits) allEdges.Add(e);
-            }
-        }
-
+        List<Edge> allEdges = CollectUniqueEdge(triangleList);
         List<Vector2Int> reachedPonints = new List<Vector2Int>();
         List<Vector2Int> unreachedPoints = new List<Vector2Int>(points);
         reachedPonints.Add(unreachedPoints[0]);
@@ -365,24 +375,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         finalEdges.Clear();
         finalEdges.AddRange(mstEdges);
-        List<Edge> allDelaunaryEdges = new List<Edge>();
-        foreach(var tri in triangleList)
-        {
-            Edge[] triEdges = { new Edge(tri.a, tri.b), new Edge(tri.b, tri.c), new Edge(tri.c, tri.a) };
-            foreach(var e in triEdges)
-            {
-                bool exits = false;
-                foreach(var ae in allDelaunaryEdges)
-                {
-                    if(ae.Equal(e))
-                    {
-                        exits = true;
-                        break;
-                    }
-                }
-                if (!exits) allDelaunaryEdges.Add(e);
-            }
-        }
+        List<Edge> allDelaunaryEdges = CollectUniqueEdge(triangleList);
 
         List<Edge> remainEdges = new List<Edge>();
         foreach(var e in allDelaunaryEdges)
@@ -452,6 +445,33 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
+
+    private List<Edge> CollectUniqueEdge(List<Triangle> triangles)
+    {
+        List<Edge> result = new List<Edge>();
+        foreach (var tri in triangleList)
+        {
+            Edge[] triEdges = { new Edge(tri.a, tri.b), new Edge(tri.b, tri.c), new Edge(tri.c, tri.a) };
+            foreach (var e in triEdges)
+            {
+                bool exits = false;
+                foreach (var ae in result)
+                {
+                    if (ae.Equal(e))
+                    {
+                        exits = true;
+                        break;
+                    }
+                }
+                if (!exits) result.Add(e);
+            }
+        }
+
+        return result;
+    }
+
+    #endregion
+    #region 벽, 바닥 생성
     private void MarkCorridorInData(Edge edge)
     {
         int x1 = Mathf.RoundToInt(edge.u.x);
@@ -498,7 +518,10 @@ public class DungeonGenerator : MonoBehaviour
                         GameObject wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, dungeonParent);
                         wall.name = $"Wall_{x}_{y}";
                         wall.transform.localScale = new Vector3(0.5f, 0.8f, 1.4f);
-
+                        if (UnityEngine.Random.value < torchChance)
+                        {
+                            TryAttachWallDecoration(wall, x, y);
+                        }
                         // 생성된 벽 자리 마킹 (중복 생성 방지)
                         mapData[x, y] = (int)TileType.Wall;
                     }
@@ -506,33 +529,6 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
-    private void CreateDoors()
-    {
-        int bx = Mathf.RoundToInt(EndPoint.x);
-        int by = Mathf.RoundToInt(EndPoint.y);
-        int currentSize = GetRoomSize(EndPoint);
-        // 1. 반복문 범위를 배열의 최대 크기 내로 안전하게 고정합니다.
-        int minX = Mathf.Max(0, bx - currentSize);
-        int maxX = Mathf.Min(mapData.GetLength(0) - 1, bx + currentSize);
-
-        int minY = Mathf.Max(0, by - currentSize);
-        int maxY = Mathf.Min(mapData.GetLength(1) - 1, by + currentSize);
-        for (int x = minX; x <= maxX; x++)
-        {
-            for (int y = minY; y <= maxY; y++)
-            {
-                if (mapData[x, y] == (int)TileType.BossRoom && IsNextToType(x, y, TileType.Corridor))
-                {
-                    Vector3 doorPos = new Vector3(x * tileSize, 0.5f, y * tileSize);
-                    Instantiate(doorPrefab, doorPos, Quaternion.identity, dungeonParent);
-
-                    mapData[x, y] = (int)TileType.Door;
-                    return;
-                }
-            }
-        }
-    }
-
     private bool IsNextToType(int x, int y, TileType targetType)
     {
         for(int ox = -1; ox <= 1; ox++)
@@ -557,6 +553,8 @@ public class DungeonGenerator : MonoBehaviour
         }
         return false;
     }
+    #endregion
+    #region 보스방 설정
     // BFS 사용
     // 어떤 점에서 가장 먼 곳을 찾고 그 점에서 다시 가장 먼 곳을 찾음
     // => 던전의 시작과 끝 찾기
@@ -620,7 +618,8 @@ public class DungeonGenerator : MonoBehaviour
         EndPoint = endCandiate;
     }
 
-
+    #endregion
+    #region 오브젝트 배치
     private void SpawnDungeonObjects()
     {
         if (mapData == null) return;
@@ -632,19 +631,19 @@ public class DungeonGenerator : MonoBehaviour
 
                 Vector2 currentPos = new Vector2(x, y);
                 if (Vector2.Distance(currentPos, StartPoint) <= 5f || currentPos == EndPoint) continue;
-                
+
                 int wallCount = CountWall(x, y);
                 // 아이템 생성
-                if (mapData[x, y]  == (int)TileType.Room && wallCount >=2)
+                if (mapData[x, y] == (int)TileType.Room && wallCount >= 2)
                 {
-                    if(UnityEngine.Random.value < itemBoxDensity)
+                    if (UnityEngine.Random.value < itemBoxDensity)
                     {
                         PlaceObject(itemPrefabs, x, y, TileType.Item);
                         continue;
                     }
                 }
                 // 장식
-                if (wallCount > 0 && (mapData[x, y] == (int)TileType.Room || mapData[x, y] == (int)TileType.Corridor) )
+                if (wallCount > 0 && (mapData[x, y] == (int)TileType.Room || mapData[x, y] == (int)TileType.Corridor))
                 {
                     if (UnityEngine.Random.value < decorationDensity)
                     {
@@ -655,12 +654,12 @@ public class DungeonGenerator : MonoBehaviour
                 }
 
                 // 트랩
-                if ((mapData[x,y] == (int)TileType.Room || mapData[x, y] == (int)TileType.Corridor) && mapData[x, y] < (int)TileType.Prop)
+                if ((mapData[x, y] == (int)TileType.Room || mapData[x, y] == (int)TileType.Corridor) && mapData[x, y] < (int)TileType.Prop)
                 {
 
-                    if(UnityEngine.Random.value < trapDensity)
+                    if (UnityEngine.Random.value < trapDensity)
                     {
-                        if(GetDirectionByType(x, y, TileType.Wall) != Vector2Int.zero)
+                        if (GetDirectionByType(x, y, TileType.Wall) != Vector2Int.zero)
                         {
                             PlaceObject(trapPrefab[0], x, y, TileType.Trap);
                         }
@@ -672,8 +671,6 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
         }
-
-
     }
 
     private void PlaceObject(GameObject prefab, int x, int y, TileType typeMask, float posY = 0.1f)
@@ -697,6 +694,29 @@ public class DungeonGenerator : MonoBehaviour
         obj.name = $"{prefab.name}_{x}_{y}";
         mapData[x, y] = (int)typeMask;
     }
+
+    private void TryAttachWallDecoration(GameObject wall, int x, int y)
+    {
+        Vector2Int dir = GetInsideDirection(x, y);
+        if (dir == Vector2Int.zero) return;
+        Renderer renderer = wall.GetComponentInChildren<Renderer>();
+        if (renderer == null) return;
+        Vector3 dir3 = new Vector3(dir.x, 0, dir.y);
+        Bounds bounds = renderer.bounds;
+
+        float halfDepth = Mathf.Abs(dir.x) > 0 ? bounds.extents.x : bounds.extents.z;
+        float surfaceOffset = 0.05f;
+        float height = bounds.extents.y + 0.2f;
+
+        Vector3 pos = wall.transform.position + dir3 * (halfDepth + surfaceOffset) + Vector3.up * height;
+
+        Quaternion rotation = DirectionToRotation(-dir);
+
+        Instantiate(torchPrefab, pos, rotation, dungeonParent);
+    }
+
+    #endregion
+    #region 벽 위치 및 방향 확인
     private int CountWall(int x, int y)
     {
         int count = 0;
@@ -728,6 +748,20 @@ public class DungeonGenerator : MonoBehaviour
 
         return Vector2Int.zero;
     }
+
+    private Vector2Int GetInsideDirection(int x, int y)
+    {
+        Vector2Int dir = GetDirectionByType(x, y, TileType.BossRoom);
+        if (dir != Vector2Int.zero) return dir;
+
+        dir = GetDirectionByType(x, y, TileType.Room);
+        if (dir != Vector2Int.zero) return dir;
+
+        dir = GetDirectionByType(x, y, TileType.Corridor);
+        if (dir != Vector2Int.zero) return dir;
+
+        return Vector2Int.zero;
+    }
     private Quaternion GetRotationByType(int x, int y, TileType type)
     {
         Vector2Int dir = GetDirectionByType(x, y, type);
@@ -744,10 +778,12 @@ public class DungeonGenerator : MonoBehaviour
         return Quaternion.identity;
     }
 
+    #endregion
+    #region 적 생성
     public void SpawnEnemies()
     {
         if (mapData == null || points == null) return;
-
+        int roomOrder = 0;
         foreach(var p in points)
         {
             if (p == StartPoint) continue;
@@ -755,76 +791,140 @@ public class DungeonGenerator : MonoBehaviour
             int cx = Mathf.RoundToInt(p.x);
             int cy = Mathf.RoundToInt(p.y);
 
-            Vector2Int roomKey = new Vector2Int(cx, cy);
-            if (!wayPoints.TryGetValue(roomKey, out Transform wayPoint)) 
-            {
-                wayPoint = CreateWayPointsForPoint(cx, cy, roomSize);
-                wayPoints.Add(roomKey, wayPoint);
-            }
-            if (!roomWayPoints.TryGetValue(roomKey, out List<Vector3> spawnPoints))
-            {
-                spawnPoints = CreateSpawnPointForRoom(cx, cy, roomSize);
+            RoomSpawnData roomData = CreateRoomSpawnData(cx, cy, roomOrder);
+            SpawnRoomEnemies(roomData);
 
-                roomWayPoints.Add(roomKey, spawnPoints);
-            }
+            roomOrder++;
+        }
+    }
+    private RoomSpawnData CreateRoomSpawnData(int cx, int cy, int roomOrder)
+    {
+        Vector2Int roomKey = new Vector2Int(cx, cy);
 
-            int spawnCount = UnityEngine.Random.Range(3, maxEnemiesPerRoom + 1);
-            int enemyindex = 0;
-            for(int i = 0; i <spawnCount; i++)
-            {
-                if (spawnPoints.Count == 0) break;
-                Vector3 spawnPos = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
-                int index = enemyindex % enemyPrefabs.Length;
-                GameObject enemy = Instantiate(enemyPrefabs[index], spawnPos, Quaternion.identity, dungeonParent);
-                enemyindex++;
-                EnemyStatComponent stat = enemy.GetComponent<EnemyStatComponent>();
-                if (stat != null)
-                {
-                    Vector2 offset = UnityEngine.Random.insideUnitCircle * 3f;
-                    stat.RoamCenter = wayPoint.position + new Vector3(offset.x, 0, offset.y);
-                }
-            }
+        if(!roomSpawnPoints.TryGetValue(roomKey, out List<Vector3> spawnPoints))
+        {
+            spawnPoints = CreateSpawnPointForRoom(cx, cy, roomSize);
+            roomSpawnPoints.Add(roomKey, spawnPoints);
+        }
+
+        if (!wayPoints.TryGetValue(roomKey, out List<Transform> wayPoint))
+        {
+            wayPoint = CreateWayPointsForPoint(cx, cy, roomSize);
+            wayPoints.Add(roomKey, wayPoint);
+        }
+
+        RoomSpawnData data = new RoomSpawnData
+        {
+            RoomKey = roomKey,
+            SpawnPoints = spawnPoints,
+            RoomWayPoints = wayPoint
+        };
+
+        DecideRoomSpawnRule(data, roomOrder);
+
+        return data;
+    }
+    private void DecideRoomSpawnRule(RoomSpawnData data, int roomOrder)
+    {
+        int typeIndex = roomOrder % 3;
+        switch(typeIndex)
+        {
+            case 0:
+                data.RoomType = EnumTypes.RoomSpawnType.Melee;
+                data.SpawnCount = UnityEngine.Random.Range(meleeSpawnRange.x, meleeSpawnRange.y + 1);
+                data.EnemySet = meleeEnemyPrefabs;
+                break;
+            case 1:
+                data.RoomType = EnumTypes.RoomSpawnType.Ranged;
+                data.SpawnCount = UnityEngine.Random.Range(rangedSpawnRange.x, rangedSpawnRange.y + 1);
+                data.EnemySet = rangedEnemyPrefabs;
+                break;
+            case 2:
+                data.RoomType = EnumTypes.RoomSpawnType.Elite;
+                data.SpawnCount = UnityEngine.Random.Range(eliteSpawnRange.x, eliteSpawnRange.y + 1);
+                data.EnemySet = eliteEnemyPrefabs;
+                break;
         }
     }
     // 적 생성 위치를 만드는 함수
     private List<Vector3> CreateSpawnPointForRoom(int cx, int cy, int size)
     {
-        List<Vector3> points = new List<Vector3>();
-        int attempts = 0;
+        return CreateRandomRoomPoints(cx, cy, size, spawnPointsPerRoom, 2);
+    }
+    private List<Transform> CreateWayPointsForPoint(int cx, int cy, int size)
+    {
+        List<Transform> result = new List<Transform>();
+        int targetCount = UnityEngine.Random.Range(3, patrolPointsPerRoom + 1);
+        List<Vector3> positions = CreateRandomRoomPoints(cx, cy, size, targetCount, minPointDistance);
+        for(int i = 0; i < positions.Count; i++)
+        {
+            GameObject wp = new GameObject($"WayPoint_{cx}_{cy}_{i}");
+            wp.transform.position = positions[i];
+            wp.transform.SetParent(dungeonParent);
 
-        while(points.Count < spawnPointsPerRoom && attempts < spawnPointsPerRoom *10)
+            result.Add(wp.transform);
+        }
+        return result;
+    }
+
+    private void SpawnRoomEnemies(RoomSpawnData data)
+    {
+        if (data.EnemySet == null || data.EnemySet.Length == 0) return;
+        if (data.SpawnPoints == null || data.SpawnPoints.Count == 0) return;
+        List<Vector3> avaliableSpawnPoints = new List<Vector3>(data.SpawnPoints);
+        int spawnCount = Mathf.Min(data.SpawnCount, avaliableSpawnPoints.Count);
+
+        for(int i = 0; i < spawnCount; i++)
+        {
+            int pointIndex = UnityEngine.Random.Range(0, avaliableSpawnPoints.Count);
+            Vector3 spawnPos = avaliableSpawnPoints[pointIndex];
+            avaliableSpawnPoints.RemoveAt(pointIndex);
+
+            GameObject enemyPrefab = data.EnemySet[i % data.EnemySet.Length];
+
+            GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity, dungeonParent);
+
+            EnemyStatComponent stat = enemy.GetComponent<EnemyStatComponent>();
+            if (stat != null && data.RoomWayPoints != null && data.RoomWayPoints.Count > 0)
+            {
+                Transform patrolPoint = data.RoomWayPoints[UnityEngine.Random.Range(0, data.RoomWayPoints.Count)];
+                stat.RoamCenter = patrolPoint.position;
+            }
+        }
+    }
+    // 랜덤 포인트 생성 공통함수
+    private List<Vector3> CreateRandomRoomPoints(int cx, int cy, int size, int targetCount, float minDistance)
+    {
+        List<Vector3> result = new List<Vector3>();
+        int attempts = 0;
+        while (result.Count < targetCount && attempts < targetCount * 10)
         {
             attempts++;
             int rx = UnityEngine.Random.Range(cx - size, cx + size);
             int ry = UnityEngine.Random.Range(cy - size, cy + size);
 
             if (!IsInMap(rx, ry)) continue;
-            if (mapData[rx, ry] != (int)TileType.Room) continue;
+            if (mapData[rx, ry] != (int)TileType.Room && mapData[rx, ry] != (int)TileType.BossRoom) continue;
+
             Vector3 pos = new Vector3(rx * tileSize, 0.5f, ry * tileSize);
+
             bool isClose = false;
-            foreach(var p in points)
+
+            foreach (var p in result)
             {
-                if(Vector3.Distance(p, pos) < 2)
+                if (Vector3.Distance(p, pos) < minDistance)
                 {
                     isClose = true;
                     break;
                 }
             }
+
             if (isClose) continue;
-            points.Add(pos);
+            result.Add(pos);
         }
-        return points;
+        return result;
     }
-    private Transform CreateWayPointsForPoint(int cx, int cy, int size)
-    {
-        Vector3 center = new Vector3(cx * tileSize, 0.5f, cy * tileSize);
-
-        GameObject wp = new GameObject($"WayPoint_{cx}_{cy}");
-        wp.transform.position = center;
-        wp.transform.SetParent(dungeonParent);
-        return wp.transform;
-    }
-
+    #endregion
     public void BuildNavMesh()
     {
         if(navSurface == null)
@@ -838,6 +938,8 @@ public class DungeonGenerator : MonoBehaviour
 
         navSurface.BuildNavMesh();
     }
+
+    #region 보스 방 생성
 
     public void SpawnBossInRoom()
     {
@@ -865,6 +967,105 @@ public class DungeonGenerator : MonoBehaviour
     {
         return (roomPos == EndPoint) ? roomSize + 2 : roomSize;
     }
+    private void OnDungeonGenerationComplete()
+    {
+        Vector2 dungeonSize = new Vector2(mapWidth * tileSize, mapHeight * tileSize);
+        grid.transform.position = new Vector3(dungeonSize.x / 2f, 0, dungeonSize.y / 2f);
+        grid.Init(dungeonSize, tileSize / 2, dungeonParent.position);
+    }
+    #endregion
+    #region 먼지 생성
+    private void SpawnAtmosphere()
+    {
+        SpawnRoomDust();
+        SpawnCorridorDusts();
+    }
+
+    private void SpawnRoomDust()
+    {
+        if (points == null || dungeonDustPrefab == null) return;
+
+        foreach(var p in points)
+        {
+            int cx = Mathf.RoundToInt(p.x);
+            int cy = Mathf.RoundToInt(p.y);
+
+            int currentRoomSize = GetRoomSize(p);
+
+            Vector3 roomCenter = new Vector3(cx * tileSize, 0f, cy * tileSize);
+
+            SpawnRoomDust(roomCenter, currentRoomSize);
+        }    
+    }
+
+    private void SpawnRoomDust(Vector3 roomCenter, int roomRadius)
+    {
+        float worldRoomWidth = (roomRadius * 2 + 1) * tileSize;
+        SpawnDustVolume(roomCenter, new Vector3(worldRoomWidth * 0.8f, 2, worldRoomWidth * 0.8f), 2, 0.16f, $"RoomDust_{roomCenter.x}_{roomCenter.z}");
+    }
+
+    private void SpawnCorridorDusts()
+    {
+        if (mapData == null || dungeonDustPrefab == null) return;
+
+        int space = 6;
+
+        for(int x = 0; x < mapWidth; x++)
+        {
+            for(int y = 0; y < mapHeight; y++)
+            {
+                if (mapData[x, y] != (int)TileType.Corridor) continue;
+                if ((x + y) % space != 0) continue;
+                bool left = IsInMap(x - 1, y) && mapData[x - 1, y] == (int)TileType.Corridor;
+                bool right = IsInMap(x + 1, y) && mapData[x + 1, y] == (int)TileType.Corridor;
+                bool up = IsInMap(x, y + 1) && mapData[x, y + 1] == (int)TileType.Corridor;
+                bool down = IsInMap(x, y - 1) && mapData[x, y - 1] == (int)TileType.Corridor;
+
+                bool horizontal = left || right;
+                bool vertical = up || down;
+
+                Vector3 corridorCenter = new Vector3(x * tileSize, 0, y * tileSize);
+                SpawnCorridorDust(corridorCenter, horizontal, vertical);
+            }
+        }
+    }
+
+    private void SpawnCorridorDust(Vector3 corridorCenter, bool horizontal, bool vertical)
+    {
+        Vector3 scale = new Vector3(tileSize * 3f, 1.5f, tileSize * 3f);
+        if(horizontal && !vertical)
+        {
+            scale = new Vector3(tileSize * 4f, 1.2f, tileSize * 2f);
+        }
+        else if(!horizontal && vertical)
+        {
+            scale = new Vector3(tileSize * 2f, 1.2f, tileSize * 4f);
+        }
+        else if(horizontal && vertical)
+        {
+            scale = new Vector3(tileSize * 3f, 1.2f, tileSize * 3f);
+        }
+
+        SpawnDustVolume(corridorCenter, scale, 1.5f, 0.14f, $"CorridorDust_{corridorCenter.x}_{corridorCenter.z}");
+    }
+    private void SpawnDustVolume(Vector3 center, Vector3 scale, float height, float startSize, string dustName)
+    {
+        if (dungeonDustPrefab == null) return;
+        Vector3 spawnPos = center + Vector3.up * height;
+        GameObject dust = Instantiate(dungeonDustPrefab, spawnPos, Quaternion.identity, dungeonParent);
+        dust.name = dustName;
+
+        ParticleSystem ps = dust.GetComponent<ParticleSystem>();
+        if (ps == null) return;
+
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = scale;
+
+        var main = ps.main;
+        main.startSize = startSize;
+    }
+    #endregion
 
     private void SpawnPortal()
     {
@@ -872,16 +1073,13 @@ public class DungeonGenerator : MonoBehaviour
         GameManager.Instance.SpawnPortal("VillageScene", spawnPos);
     }
 
-    private void OnDungeonGenerationComplete()
-    {
-        Vector2 dungeonSize = new Vector2(mapWidth * tileSize, mapHeight * tileSize);
-        grid.transform.position = new Vector3(dungeonSize.x / 2f, 0, dungeonSize.y / 2f);
-        grid.Init(dungeonSize, tileSize / 2, dungeonParent.position);
-    }
-
     public void ClearDungeon()
     {
         IsGenerationCompleted = false;
+
+        roomSpawnPoints.Clear();
+        wayPoints.Clear();
+
         if (dungeonParent != null)
         {
             grid.ClearGrid();

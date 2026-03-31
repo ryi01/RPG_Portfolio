@@ -22,5 +22,10 @@ public class EnumTypes
         BoxLoot,
         BoxStorage
     }
-
+    public enum RoomSpawnType
+    {
+        Melee,
+        Ranged,
+        Elite
+    }
 }

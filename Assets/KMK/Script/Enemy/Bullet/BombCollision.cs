@@ -5,10 +5,14 @@ public class BombCollision : BulletCollision
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float explosionRadius = 3;
+
     [SerializeField] protected Material flashMat;
     [SerializeField] protected int flashCount = 4;
+    [SerializeField] private float explodeDelay = 1.2f;
+
     private Material originMat;
 
+    private bool isArmed = false;
     private bool isExploding = false;
     protected override void Awake()
     {
@@ -16,45 +20,85 @@ public class BombCollision : BulletCollision
         originMat = mesh.material;
     }
 
-    protected override void OnHitTarget(Collider other, Vector3 hitPoint)
+    protected override void OnTriggerEnter(Collider other)
     {
-
+       
     }
-    protected override void OnHitObstacle(Collider other, Vector3 hitPoint)
+
+    protected override void OnCollisionEnter(Collision collision)
     {
-        if (rb.isKinematic || isExploding) return;
-        isExploding = true;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
+        if (isExploding) return;
+        if (collision.contactCount == 0) return;
 
-        // 물리 연산 중단
-        rb.isKinematic = true;
+        Collider other = collision.collider;
 
-        StartCoroutine(ExplosionRoutine(other)); 
+        Vector3 hitPoint = collision.contacts[0].point;
+
+        if (Owner != null && other.gameObject == Owner.gameObject) return;
+
+        if (collision.relativeVelocity.magnitude < 1.5f) return;
+        TryArmBomb();
     }
-    private IEnumerator ExplosionRoutine(Collider other)
+    private void TryArmBomb()
     {
-        float interval = destroyTime / (flashCount * 2);
-        for(int i = 0; i < flashCount; i++)
+        if (isArmed) return;
+        isArmed = true;
+        StartCoroutine(ArmAndExplodeRoutine());
+    }
+
+    private IEnumerator ArmAndExplodeRoutine()
+    {
+        yield return StartCoroutine(FlashRoutine());
+        Explode();
+    }
+
+    private IEnumerator FlashRoutine()
+    {
+        if(mesh == null || flashMat == null || originMat == null)
         {
-            if (mesh != null) mesh.material = flashMat;
-            yield return new WaitForSeconds(interval);
-            if (mesh != null) mesh.material = originMat;
-            yield return new WaitForSeconds(interval);
+            yield return new WaitForSeconds(explodeDelay);
+            yield break;
         }
 
-        if(bulletParticle != null) Instantiate(bulletParticle, transform.position, bulletParticle.transform.rotation);
-        ExplodeDamage();
+        float elapsed = 0f;
+        float interval = 0.2f;
+        while(elapsed < explodeDelay)
+        {
+            mesh.material = flashMat;
+            yield return new WaitForSeconds(interval);
+            elapsed += interval;
 
+            mesh.material = originMat;
+            yield return new WaitForSeconds(interval);
+            elapsed += interval;
+
+            interval = Mathf.Max(0.05f, interval * 0.8f);
+        }
+        mesh.material = originMat;
+    }
+
+    private void Explode()
+    {
+        if (isExploding) return;
+        isExploding = true;
+        if(rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+        if (bulletParticle != null) Instantiate(bulletParticle, transform.position, bulletParticle.transform.rotation);
+
+        ExplodeDamage();
         Destroy(gameObject);
     }
     private void ExplodeDamage()
     {
-        hitTargets.Clear();
+        hitTargets.Clear(); 
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, hitLayer);
         foreach(Collider hit in hits)
         {
-            base.DamageTarget(hit);
+            DamageTarget(hit);
         }
     }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 public class BombMovement : MonoBehaviour
 {
     [SerializeField] private float throwPower = 15f;
-    [SerializeField] private float bias = 0.5f;
+    [SerializeField] private float upwardForce = 4f;
 
     private Rigidbody rb;
     private void Awake()
@@ -15,11 +15,10 @@ public class BombMovement : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
         Vector3 targetDir = (player.transform.position - transform.position).normalized;
-        targetDir.y += bias;
 
-        Vector3 velocity = targetDir.normalized * throwPower;
+        Vector3 force = targetDir * throwPower + Vector3.up * upwardForce;
 
-        rb.AddForce(velocity, ForceMode.VelocityChange);
+        rb.AddForce(force, ForceMode.VelocityChange);
     }
 
 }

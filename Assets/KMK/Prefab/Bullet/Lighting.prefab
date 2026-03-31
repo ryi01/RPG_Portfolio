@@ -24717,8 +24717,8 @@ MonoBehaviour:
     cameras: []
     delay: 0
     duration: 0.3
-    shakeSpace: 0
-    shakeStrength: {x: 0.01, y: 0.03, z: 0.01}
+    shakeSpace: 1
+    shakeStrength: {x: 0.5, y: 0.8, z: 0.3}
     shakeCurve:
       serializedVersion: 2
       m_Curve:

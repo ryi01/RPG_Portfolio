@@ -416,7 +416,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
             CameraShakeController.PlayMotionBlur(0.3f, 0.07f);
             CameraShakeController.ShakeCamDirectional(dir, 1.2f, 0.08f, 3.4f, true, 1.7f);
             CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Boss);
-            MovementComp.Push(dir, force, 0.08f);
+            MovementComp.PushByBoss(dir, force, 0.08f);
         }
         else
         {

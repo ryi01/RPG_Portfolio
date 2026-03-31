@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CurrentState = GameState.Town;
-        cameraEnviroment.ChnageToTown();
+        cameraEnviroment.ChangeToTown();
         BindGoldSystem();
     }
     private void OnDestroy()
@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviour
         bool isDungeon = loadSceneName.Contains("Game");
         CurrentState = isDungeon ? GameState.Dungeon : GameState.Town;
         if (isDungeon) cameraEnviroment.ChangeToDungeon();
-        else cameraEnviroment.ChnageToTown();
+        else cameraEnviroment.ChangeToTown();
         IsPathFindingEnable = isDungeon;
         StartCoroutine(SceneLoadManager.ChangeSceneCor(unloadSceneName, loadSceneName));
     }

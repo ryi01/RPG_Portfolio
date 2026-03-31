@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
@@ -9,8 +10,12 @@ public class StoreUI : MonoBehaviour
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private GameObject storePanel;
     [SerializeField] private GameObject skillPanel;
+    [SerializeField] private GameObject popupPanel;
     [SerializeField] private Text[] informations;
     [SerializeField] private Text buttText;
+    [SerializeField] private Text popupText;
+
+    [SerializeField] private float showPopupTime = 1.5f;
 
     [SerializeField] private RectTransform[] storeSlotParents;
     [SerializeField] private ItemUI[] itemUIs;
@@ -31,6 +36,7 @@ public class StoreUI : MonoBehaviour
             storeSystem.OnFailedTransaction += HandleFailedTransaction;
         }
         storePanel.SetActive(false);
+        ShowPopUp(false);
     }
 
     public void InitStoreUI()
@@ -180,6 +186,7 @@ public class StoreUI : MonoBehaviour
 
     private void HandleFailedTransaction(string message)
     {
+        ShowPopUp(true, message);
         Debug.LogWarning(message);
     }
 
@@ -193,4 +200,17 @@ public class StoreUI : MonoBehaviour
             storeSystem.OnFailedTransaction -= HandleFailedTransaction;
         }
     }
+    #region ÆË¾÷ Àü¿ë
+    public void ShowPopUp(bool enabled, string text = "")
+    {
+        popupText.text = text;
+        popupPanel.SetActive(enabled);
+        StartCoroutine(OffPopUpTimer());
+    }
+    IEnumerator OffPopUpTimer()
+    {
+        yield return new WaitForSeconds(showPopupTime);
+        popupPanel.SetActive(false);
+    }
+    #endregion
 }

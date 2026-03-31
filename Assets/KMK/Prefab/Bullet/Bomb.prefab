@@ -175,7 +175,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7932921286097933101}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 320e11b1cb7ce3c4b890f738a6404058, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -215,6 +215,7 @@ MonoBehaviour:
   explosionRadius: 3
   flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}
   flashCount: 5
+  explodeDelay: 1.2
 --- !u!114 &3667390570156980080
 MonoBehaviour:
   m_ObjectHideFlags: 0

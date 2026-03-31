@@ -26,6 +26,9 @@ public class InputMovement : MonoBehaviour
     [SerializeField] private LineRenderer pathVisualizerPrefab;
     [SerializeField] private TrailRenderer dashTrail;
     private LineRenderer pathLine;
+
+    private Coroutine forceCoroutine;
+    private readonly List<Collider> ignoredEnemyCols = new List<Collider>();
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
@@ -63,6 +66,8 @@ public class InputMovement : MonoBehaviour
     {
         HidePathLine();
         isMoving = false;
+        currentPath = null;
+        targetIndex = 0;
         pc.Animator.SetFloat("Move", 0);
     }
     public void UpdateClickMove()
@@ -170,24 +175,41 @@ public class InputMovement : MonoBehaviour
         }
         return transform.position + transform.forward;
     }
-    private Coroutine forceCoroutine;
+
     public void Push(Vector3 dir, float distance, float duration, bool isJump = false, bool useTrail = false)
     {
-        if(forceCoroutine != null) StopCoroutine(forceCoroutine);
-        StopMove();
-        dir = dir.normalized;
-        pc.CameraShakeController.ShakeCam(0.1f, 0.2f);
-        if(useTrail) dashTrail.emitting = true;
-    
-        forceCoroutine = StartCoroutine(OnForce(dir, distance, duration, isJump));
+        StartPush(dir, distance, duration, isJump, useTrail, false);
     }
-    IEnumerator OnForce(Vector3 dir, float distance, float duration, bool isJump = false)
+    public void PushByBoss(Vector3 dir, float distance, float duration, bool isJump = false, bool useTrail = false)
     {
-        int playerLayer = pc.gameObject.layer;
-        int enemyLayer = LayerMask.NameToLayer("Enemy");
-        if (enemyLayer != -1)
+        StartPush(dir, distance, duration, isJump, useTrail, true);
+    }
+    private void StartPush(Vector3 dir, float distance, float duration, bool isJump, bool useTrail, bool ignoreEnemyCollision)
+    {
+        if(forceCoroutine != null)
         {
-            Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+            StopCoroutine(forceCoroutine);
+            RestoreIgnoredEnemyCollisions();
+            forceCoroutine = null;
+        }
+
+        StopMove();
+
+        dir.y = 0;
+        if (dir.sqrMagnitude <= 0.001f) return;
+        dir.Normalize();
+        pc.CameraShakeController.ShakeCam(0.1f, 0.2f);
+
+        if (dashTrail != null)
+            dashTrail.emitting = useTrail;
+
+        forceCoroutine = StartCoroutine(OnForce(dir, distance, duration, isJump, ignoreEnemyCollision));
+    }
+    IEnumerator OnForce(Vector3 dir, float distance, float duration, bool isJump, bool ignoreEnemyCollision)
+    {
+        if(ignoreEnemyCollision)
+        {
+            IgnoreNearbyEnemyCollisions(true, 2.5f);
         }
         float elapsed = 0;
         Vector3 startPos = transform.position;
@@ -213,12 +235,40 @@ public class InputMovement : MonoBehaviour
             yield return null;
         }
         dashTrail.emitting = false;
-        forceCoroutine = null;
 
-        if (enemyLayer != -1)
+        RestoreIgnoredEnemyCollisions();
+        forceCoroutine = null;
+    }
+    private void IgnoreNearbyEnemyCollisions(bool ignore, float radius)
+    {
+        RestoreIgnoredEnemyCollisions();
+
+        Collider playerCol = cc;
+        if (playerCol == null) return;
+        int enemyLayerMask = LayerMask.GetMask("Enemy");
+        Collider[] hits = Physics.OverlapSphere(transform.position, radius, enemyLayerMask);
+        foreach(Collider hit in hits)
         {
-            Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
+            if (!hit) continue;
+            if (hit.transform == transform) continue;
+
+            Physics.IgnoreCollision(playerCol, hit, ignore);
+            ignoredEnemyCols.Add(hit);
         }
+    }
+
+    private void RestoreIgnoredEnemyCollisions()
+    {
+        Collider playerCol = cc;
+        if (playerCol == null) return;
+        for(int i = 0; i < ignoredEnemyCols.Count; i++)
+        {
+            Collider enemyCol = ignoredEnemyCols[i];
+            if (!enemyCol) continue;
+
+            Physics.IgnoreCollision(playerCol, enemyCol, false);
+        }
+        ignoredEnemyCols.Clear();
     }
     private void DrawPath()
     {

@@ -32,6 +32,7 @@ public class SoundManager : MonoBehaviour
         foreach(var data in bgmList)
         {
             bgmDict[data.type] = data.clip;
+            if (data.clip != null) data.clip.LoadAudioData();
         }
     }
     private void Start()
@@ -45,7 +46,7 @@ public class SoundManager : MonoBehaviour
     public void PlayBGM(EBGMType type)
     {
         if (!bgmDict.TryGetValue(type, out AudioClip clip) || clip == null) return;
-        if (bgmSource.clip == clip) return;
+        if (bgmSource.clip == clip && bgmSource.isPlaying) return;
         bgmSource.Stop();
         bgmSource.clip = clip;
         bgmSource.Play();
