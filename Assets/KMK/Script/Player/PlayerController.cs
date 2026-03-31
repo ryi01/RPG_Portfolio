@@ -19,12 +19,19 @@ public class PlayerController : BaseController<PlayerStatComponent>
     [SerializeField] private float interactionDistance = 3f;
     [SerializeField] private TrailRenderer trail;
     [SerializeField] private Vector2 interval = new Vector2(0.34f, 0.42f);
+    [SerializeField] private GoldSystem goldSystem;
+    [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private InventorySystem inventorySystem;
+    [SerializeField] private StoreSystem storeSystem;
 
     // 입력 및 행동 관련 하위 컴포넌트
     public InputMovement MovementComp { get; private set; }
     public InputAttack AttackComp { get; private set; }
     public InputSkill SkillComp { get; private set; }
     public InputPickUp PickUpComp { get; private set; }
+
+    public InventorySystem InventorySystemComp => inventorySystem;
+    public StoreSystem StoreSystem => storeSystem;
 
     public PlayerRewardHandler RewardHandler { get; private set; }
     // 피격 연출 카메라 연출
@@ -81,11 +88,13 @@ public class PlayerController : BaseController<PlayerStatComponent>
     }
     private void OnEnable()
     {
-        GameManager.Instance.StoreSystem.OnCloseStore += CloseStore;
+        storeSystem.OnCloseStore += CloseStore;
+        inventoryUI.OnRequestUseItem += UseInventoryItem;
     }
     private void OnDisable()
     {
-        GameManager.Instance.StoreSystem.OnCloseStore -= CloseStore;
+        storeSystem.OnCloseStore -= CloseStore;
+        inventoryUI.OnRequestUseItem -= UseInventoryItem;
     }
     // Update is called once per frame
     void Update()
@@ -156,11 +165,22 @@ public class PlayerController : BaseController<PlayerStatComponent>
         {
             if(Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
-                GameManager.Instance.InventroySystem.UseItem(i);
+                UseInventoryItem(i);
             }
         }
     }
-
+    public bool AddGold(int amount)
+    {
+        if (goldSystem == null || amount <= 0) return false;
+        goldSystem.AddGold(amount);
+        return true;
+    }  
+    
+    public void UseInventoryItem(int slotIndex)
+    {
+        if(inventorySystem == null) return;
+        inventorySystem.UseItem(slotIndex, this.gameObject);
+    }
     private void HandleMoveAndInteractInput()
     {
         if (!Input.GetMouseButtonDown(1)) return;
@@ -232,7 +252,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     }
     public void OpenBox(ItemBox box)
     {
-        if (openBox != null) PickUpComp.CloseUI();
+        if (openBox != null) PickUpComp.CloseItemBox();
         openBox = box;
         PickUpComp.OpenItemBox(box);
     }
@@ -242,7 +262,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         float dist = Vector3.Distance(transform.position, openBox.transform.position);
         if(dist > interactionDistance)
         {
-            PickUpComp.CloseUI();
+            PickUpComp.CloseItemBox();
             openBox = null;
         }
     }

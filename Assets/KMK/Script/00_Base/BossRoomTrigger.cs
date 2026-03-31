@@ -2,7 +2,15 @@ using UnityEngine;
 
 public class BossRoomTrigger : MonoBehaviour
 {
+    private EnemyUIManager enemyUIManager;
+    private CameraEnviroment cameraEnviroment;
     private bool isTrigger = false;
+
+    public void InitRoomTrigger(EnemyUIManager enemyUI, CameraEnviroment cameraEnv)
+    {
+        enemyUIManager = enemyUI;
+        cameraEnviroment = cameraEnv;
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (isTrigger) return;
@@ -12,9 +20,9 @@ public class BossRoomTrigger : MonoBehaviour
             isTrigger = true;
             GameManager.Instance.SoundManager.PlayBGM(EBGMType.BOSS_BATTLE);
 
-            GameManager.Instance.EnemyUIManager.SetBossHP(true);
+            enemyUIManager.SetBossHP(true);
 
-            GameManager.Instance.CameraEnviroment.ChangeToBossRoom();
+            cameraEnviroment.ChangeToBossRoom();
         }
     }
 }

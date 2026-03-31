@@ -58,7 +58,7 @@ public class StoreUI : MonoBehaviour
 
     public void OnButtCloseStore()
     {
-        storeSystem.CloseShop();
+        storeSystem.CloseStore();
     }
 
     private void HandleOpenStore(StoreData storeData)

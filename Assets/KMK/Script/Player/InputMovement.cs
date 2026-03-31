@@ -25,6 +25,7 @@ public class InputMovement : MonoBehaviour
     #endregion
     [SerializeField] private LineRenderer pathVisualizerPrefab;
     [SerializeField] private TrailRenderer dashTrail;
+    [SerializeField] private SceneCoordinator sceneCoordinator;
     private LineRenderer pathLine;
 
     private Coroutine forceCoroutine;
@@ -41,7 +42,7 @@ public class InputMovement : MonoBehaviour
     {
         // 이동 시작 시 이전 로직 정리
         StopMove();
-        if (isGrid && GameManager.Instance.IsPathFindingEnable)
+        if (isGrid && sceneCoordinator.IsPathFindingEnable)
         {
             // 경로 탐색 시작
             currentPath = pathfinder.FindPath(transform.position, pos);
@@ -82,7 +83,7 @@ public class InputMovement : MonoBehaviour
        
         if (dir.magnitude < 0.3f)
         {
-            if(GameManager.Instance.IsPathFindingEnable)
+            if(sceneCoordinator.IsPathFindingEnable)
             {
                 targetIndex++;
                 if (currentPath != null && targetIndex < currentPath.Count)

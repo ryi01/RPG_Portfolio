@@ -12,6 +12,5 @@ public class PlayerStatInfo : StatInfo
     public float maxST;
     public float regenST;
     [Header("Level")]
-    public float level;
-    public List<float> exp;
+    public List<float> requiredExpByLevel;
 }

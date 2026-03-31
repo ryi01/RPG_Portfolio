@@ -81703,6 +81703,9 @@ GameObject:
   - component: {fileID: 1779133843}
   - component: {fileID: 1779133842}
   - component: {fileID: 1779133857}
+  - component: {fileID: 1779133858}
+  - component: {fileID: 1779133859}
+  - component: {fileID: 1779133860}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -81723,6 +81726,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoreSystem
   currentStore: {fileID: 0}
+  goldSystem: {fileID: 1779133851}
+  inventorySystem: {fileID: 1779133843}
 --- !u!114 &1779133843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81739,6 +81744,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e0f16c6acdc47c849bb4690f982cd5f3, type: 2}
   hasItemList: []
   inventorySize: 8
+  uiManager: {fileID: 1779133854}
 --- !u!114 &1779133844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81989,6 +81995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46c75142d60ebd4bb637846cc7082c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadManager
+  dungeonGenerator: {fileID: 0}
   loadingCanvas: {fileID: 2113889505}
   player: {fileID: 1820549347}
   loadingImage: {fileID: 752922514}
@@ -82022,18 +82029,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   uiManager: {fileID: 1779133854}
-  inventroySystem: {fileID: 1779133843}
-  dataManager: {fileID: 1779133852}
-  goldSystem: {fileID: 1779133851}
   dialogueSystem: {fileID: 1779133850}
-  dungeonGenerator: {fileID: 1779133849}
-  soundManager: {fileID: 117154606}
-  sceneLoadManager: {fileID: 1779133853}
-  questManager: {fileID: 1779133848}
   enemyUIManager: {fileID: 1779133847}
-  protalPrefab: {fileID: 4144285906249098318, guid: f60cc0f80fecea74ca1d77b7eac53356, type: 3}
-  cameraEnviroment: {fileID: 1779133845}
-  storeSystem: {fileID: 1779133842}
+  soundManager: {fileID: 117154606}
+  questManager: {fileID: 1779133848}
+  portalSpawner: {fileID: 1779133858}
 --- !u!4 &1779133856
 Transform:
   m_ObjectHideFlags: 0
@@ -82061,6 +82061,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0723ca880bcdb345883376ff6896f63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SQLiteManager
+--- !u!114 &1779133858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779133841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54a3b68f17ded774cb4914525acb0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalSpawner
+  sceneCoordinator: {fileID: 1779133859}
+  protalPrefab: {fileID: 4144285906249098318, guid: f60cc0f80fecea74ca1d77b7eac53356, type: 3}
+  gridAStar: {fileID: 1779133844}
+--- !u!114 &1779133859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779133841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54d32c64366022647ac542397821d250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneCoordinator
+  sceneLoadManager: {fileID: 1779133853}
+  cameraEnviroment: {fileID: 1779133845}
+--- !u!114 &1779133860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779133841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dabe8ef99e2507f48bb079e9dba9b725, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoldBinder
+  goldSystem: {fileID: 1779133851}
+  dataManager: {fileID: 1779133852}
+  uiManager: {fileID: 1779133854}
 --- !u!1 &1787031212
 GameObject:
   m_ObjectHideFlags: 0
@@ -82698,6 +82742,7 @@ MonoBehaviour:
   grav: 20
   pathVisualizerPrefab: {fileID: 1194065580510284778, guid: 5c50277fd43accc48a760d5f051741c4, type: 3}
   dashTrail: {fileID: 887470045}
+  sceneCoordinator: {fileID: 1779133859}
 --- !u!114 &1820549362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82718,6 +82763,7 @@ MonoBehaviour:
   levelUpEffectPrefab: {fileID: 2021369674}
   hpEffectPrefab: {fileID: 357245232}
   coinEffectPrefab: {fileID: 2113657821}
+  goldSystem: {fileID: 1779133851}
 --- !u!114 &1820549363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82730,7 +82776,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b9bdc68cd77aa46b092e3e0dfba1ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputPickUp
-  itemBoxUI: {fileID: 1533519438}
 --- !u!114 &1820549364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82747,6 +82792,10 @@ MonoBehaviour:
   interactionDistance: 2.5
   trail: {fileID: 1030390618}
   interval: {x: 0.34, y: 0.42}
+  goldSystem: {fileID: 1779133851}
+  inventoryUI: {fileID: 48202831}
+  inventorySystem: {fileID: 1779133843}
+  storeSystem: {fileID: 1779133842}
 --- !u!143 &1820549365
 CharacterController:
   m_ObjectHideFlags: 0

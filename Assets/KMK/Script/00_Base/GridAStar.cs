@@ -19,16 +19,7 @@ public class GridAStar : MonoBehaviour
     public int GridSizeX => gridSizeX;
     public int GridSizeY => gridSizeY;
     private Vector3 originPoint;
-    private void OnEnable()
-    {
-        GameManager.Instance.OnSpawnPortal += HandleSpawnObject;
-        DungeonGenerator.OnSpawnItemBox += HandleSpawnObject;
-    }
-    private void OnDisable()
-    {
-        GameManager.Instance.OnSpawnPortal -= HandleSpawnObject;
-        DungeonGenerator.OnSpawnItemBox -= HandleSpawnObject;
-    }
+
     public void Init(Vector2 mapSize, float nodeRadius, Vector3 origin)
     {
         gridWorldSize = mapSize;
@@ -100,12 +91,6 @@ public class GridAStar : MonoBehaviour
         Node targetNode = NodeFromWorldPoint(portalPos);
         if (targetNode != null) targetNode.isWalkable = isWalkable;
     }
-
-    private void HandleSpawnObject(Vector3 pos)
-    {
-        RegisterObjectNode(pos, true);
-    }
-
 
     public void ClearGrid()
     {

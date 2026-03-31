@@ -5,11 +5,9 @@ public class GemConsumable : ConsumableItem
     public override void Consume(GameObject target = null)
     {
         base.Consume(target);
-
-        GameObject actor = target != null ? target : GameObject.FindGameObjectWithTag("Player");
-        if (actor != null)
+        if (target.TryGetComponent(out PlayerController player))
         {
-            GameManager.Instance.GoldSystem.AddGold(UpValue);
+            player.AddGold(upValue);
         }
     }
 }

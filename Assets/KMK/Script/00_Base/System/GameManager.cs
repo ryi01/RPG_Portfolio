@@ -8,41 +8,22 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private InventorySystem inventroySystem;
-    [SerializeField] private DataManager dataManager;
-    [SerializeField] private GoldSystem goldSystem;
     [SerializeField] private DialogueSystem dialogueSystem;
-    [SerializeField] private DungeonGenerator dungeonGenerator;
-    [SerializeField] private SoundManager soundManager;
-    [SerializeField] private SceneLoadManager sceneLoadManager;
-    [SerializeField] private QuestManager questManager;
     [SerializeField] private EnemyUIManager enemyUIManager;
-    [SerializeField] private GameObject protalPrefab;
-    [SerializeField] private CameraEnviroment cameraEnviroment;
-    [SerializeField] private StoreSystem storeSystem;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private QuestManager questManager;
+    [SerializeField] private PortalSpawner portalSpawner;
 
     public UIManager UIManager => uiManager;
-    public InventorySystem InventroySystem => inventroySystem;
-    public DataManager DataManager => dataManager;
-    public GoldSystem GoldSystem => goldSystem;
-
-    public DungeonGenerator DungeonGenerator => dungeonGenerator;
-
-    public SceneLoadManager SceneLoadManager => sceneLoadManager;
+    public EnemyUIManager EnemyUIManager => enemyUIManager;
     public QuestManager QuestManager => questManager;
-
     public DialogueSystem DialogueSystem => dialogueSystem;
     public SoundManager SoundManager => soundManager;
-    public EnemyUIManager EnemyUIManager => enemyUIManager;
-
-    public CameraEnviroment CameraEnviroment => cameraEnviroment;
-
-    public StoreSystem StoreSystem => storeSystem;
+    public PortalSpawner PortalSpawner => portalSpawner;
 
     public GameState CurrentState {  get; private set; }
 
     public Action<float> OnDieEnemy;
-    public Action<Vector3> OnSpawnPortal;
 
     private void Awake()
     {
@@ -54,14 +35,9 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        CurrentState = GameState.Town;
-        cameraEnviroment.ChangeToTown();
-        BindGoldSystem();
+        ChangeState(GameState.Town);
     }
-    private void OnDestroy()
-    {
-        UnBindGoldSystem();
-    }
+
     #region UI
     public void OnBindPlayer(PlayerStatComponent player)
     {
@@ -89,43 +65,7 @@ public class GameManager : MonoBehaviour
         EnemyUIManager.UnBindBoss(enemy);
     }
     #endregion
-    #region 인벤토리
-    public void SwapItem(int a, int b)
-    {
-        inventroySystem.SwapItems(a, b);
-    }
-    public void OpenBoxInfo(ItemBox box)
-    {
-        inventroySystem.CurrentBox = box;
-        UIManager.OpenItemBox(box);
-    }
-    public void CloseBoxInfo()
-    {
-        inventroySystem.CurrentBox = null;
-    }
-    #endregion
-    #region 상점 관련
-    public void OpenStoreUI(StoreData storeData)
-    {
-        storeSystem.OpenStore(storeData);
-    }    
-    public void CloseStoreUI()
-    {
-        storeSystem.CloseShop();
-    }
-    #endregion
     #region 데이터 관련
-    public void BindGoldSystem()
-    {
-        goldSystem.OnGoldChanged += DataManager.ChangeGold;
-        goldSystem.OnGoldChanged += UIManager.ChangeGold;
-    }
-
-    public void UnBindGoldSystem()
-    {
-        goldSystem.OnGoldChanged -= DataManager.ChangeGold;
-        goldSystem.OnGoldChanged -= UIManager.ChangeGold;
-    }
 
     public void SendEnemyKilled(float exp)
     {
@@ -140,33 +80,8 @@ public class GameManager : MonoBehaviour
     #region 포탈 관련
     public void SpawnPortal(string sceneName, Vector3 pos)
     {
-        GameObject existingPortal = GameObject.FindGameObjectWithTag("Portal");
-        if (existingPortal != null)
-        {
-            Destroy(existingPortal);
-        }
-        if (protalPrefab != null)
-        {
-            GameObject go = Instantiate(protalPrefab, pos, Quaternion.identity);
-            go.tag = "Portal";
-            if (go.TryGetComponent<Portal>(out Portal portal))
-            {
-                portal.ChangeTargetSceneName(sceneName);
-                OnSpawnPortal?.Invoke(pos);
-            }
-        }
-    }
-    public void ChangeScene(string unloadSceneName, string loadSceneName)
-    {
-        bool isDungeon = loadSceneName.Contains("Game");
-        CurrentState = isDungeon ? GameState.Dungeon : GameState.Town;
-        if (isDungeon) cameraEnviroment.ChangeToDungeon();
-        else cameraEnviroment.ChangeToTown();
-        IsPathFindingEnable = isDungeon;
-        StartCoroutine(SceneLoadManager.ChangeSceneCor(unloadSceneName, loadSceneName));
-    }
-
-    public bool IsPathFindingEnable { get; private set; } = false;
-   
+        if (portalSpawner == null) return;
+        portalSpawner.SpawnPortal(sceneName, pos);
+    }  
     #endregion
 }

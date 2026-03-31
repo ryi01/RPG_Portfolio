@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class SceneLoadManager : MonoBehaviour
 {
+    [SerializeField] private DungeonGenerator dungeonGenerator;
     [SerializeField] private GameObject loadingCanvas;
     [SerializeField] private GameObject player;
     [SerializeField] private Image loadingImage;
@@ -17,10 +18,10 @@ public class SceneLoadManager : MonoBehaviour
     {
         loadingCanvas.SetActive(true);
         loadingImage.fillAmount = 0;
-        var dungeon = GameManager.Instance.DungeonGenerator;
-        if (dungeon != null)
+
+        if (dungeonGenerator != null)
         {
-            dungeon.ClearDungeon();
+            dungeonGenerator.ClearDungeon();
         }
 
         AsyncOperation op = SceneManager.LoadSceneAsync(loadSceneName, LoadSceneMode.Additive);
@@ -55,14 +56,14 @@ public class SceneLoadManager : MonoBehaviour
             Debug.LogWarning($"언로드하려는 씬({unloadSceneName})이 이미 없거나 유효하지 않습니다.");
         }
         Vector3 finalPos = new Vector3(0, 0.3f, 0);
-        if (loadSceneName.Contains("GameScene") && dungeon != null)
+        if (loadSceneName.Contains("GameScene") && dungeonGenerator != null)
         {
-            dungeon.GenerateDungeon();
+            dungeonGenerator.GenerateDungeon();
             // [중요] 던전 생성이 끝난 후, 물리 엔진이 한 프레임 업데이트되도록 대기
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
-            finalPos = dungeon.WorldStartPoint + Vector3.up * 5f;
+            finalPos = dungeonGenerator.WorldStartPoint + Vector3.up * 5f;
 
             RaycastHit hit;
 
@@ -70,7 +71,7 @@ public class SceneLoadManager : MonoBehaviour
             {
                 finalPos = hit.point + Vector3.up * 0.1f;
             }
-            else finalPos = dungeon.WorldStartPoint;
+            else finalPos = dungeonGenerator.WorldStartPoint;
         }
         else
         {

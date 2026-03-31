@@ -48,6 +48,10 @@ public class UIManager : MonoBehaviour
         itemBoxUI.transform.parent.gameObject.SetActive(true);
         itemBoxUI.SetupBoxUI(box);
     }
+    public void CloseItemBox()
+    {
+        itemBoxUI.transform.parent.gameObject.SetActive(false);
+    }
     #endregion
     #region °ñµå °ü·Ã
     public void ChangeGold(int amount)

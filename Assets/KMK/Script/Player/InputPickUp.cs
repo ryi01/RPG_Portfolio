@@ -11,36 +11,32 @@ using UnityEngine;
  */
 public class InputPickUp : MonoBehaviour
 {
-    [SerializeField] private GameObject itemBoxUI;
-    private InventorySystem inventroySystem;
     private PlayerController pc;
 
     private void Start()
     {
         pc = GetComponent<PlayerController>();
-        inventroySystem = GameManager.Instance.InventroySystem;
     }
     public void OpenItemBox(ItemBox box)
     {
-        if(box != null && inventroySystem != null)
-        {
-            GameManager.Instance.OpenBoxInfo(box);
-        }
+        if (box == null || pc.InventorySystemComp == null) return;
+        pc.InventorySystemComp.OpenItemBox(box);
+    }
+    public void CloseItemBox()
+    {
+        if (pc.InventorySystemComp == null) return;
+        pc.InventorySystemComp.CloseItemBox();
     }
     public void OpenStore(StoreData storeData)
     {
-        GameManager.Instance.OpenStoreUI(storeData);
+        if(storeData == null || pc.StoreSystem == null) return;
+        pc.StoreSystem.OpenStore(storeData);
     }
     public void CloseStore()
     {
-        GameManager.Instance.CloseStoreUI();
+        if (pc.StoreSystem == null) return;
+        pc.StoreSystem.CloseStore();
         if (pc != null) pc.CloseStore();
-    }
-
-    public void CloseUI()
-    {
-        itemBoxUI.SetActive(false);
-        GameManager.Instance.CloseBoxInfo();
     }
 
 }

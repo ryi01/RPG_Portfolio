@@ -13,6 +13,8 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     [SerializeField] private Image selectImage;
     [SerializeField] private Text itemCountText;
 
+    private InventorySystem inventorySystem;
+
     // 드래그 시 최상단 출력을 위한 캔버스 참조
     private Canvas canvas;
     // UI 위치제어
@@ -37,6 +39,11 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         // 드래그 중 마우스 검사를 확인하기 위함
         canvasGroup = GetComponent<CanvasGroup>() == null ? gameObject.AddComponent<CanvasGroup>(): GetComponent<CanvasGroup>();
         ClearItemUI();
+    }
+
+    public void InitInventory(InventorySystem system)
+    {
+        inventorySystem = system;
     }
     public void SetSelect(bool isSelected)
     {
@@ -162,7 +169,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
                 // 위치 변경
                 if (targetUI != null && targetUI != this)
                 {
-                    GameManager.Instance.SwapItem(this.slotIndex, targetUI.slotIndex);
+                    inventorySystem.SwapItems(this.slotIndex, targetUI.slotIndex);
                     return true;
                 }
             }
@@ -176,7 +183,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         }
         else if (isFromInven && target.CompareTag("Trash"))
         {
-            GameManager.Instance.InventroySystem.RemoveItem(item);
+            inventorySystem.RemoveItem(item);
             return true;
         }
 
@@ -190,12 +197,12 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     private bool MoveToBox()
     {
         // 현재 열린 박스를 가져와서
-        ItemBox box = GameManager.Instance.InventroySystem.CurrentBox;
+        ItemBox box = inventorySystem.CurrentBox;
         if (box == null) return false;
         // 박스 list에 추가
         box.AddItemFromInventroy(item);
         // 인벤토리에서 삭제
-        GameManager.Instance.InventroySystem.RemoveItem(item);
+        inventorySystem.RemoveItem(item);
 
         return true;
     }
@@ -203,7 +210,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     private bool LootToInven()
     {
         // 현재 박스에서
-        ItemBox box = GameManager.Instance.InventroySystem.CurrentBox;
+        ItemBox box = inventorySystem.CurrentBox;
         if (box == null) return false;
         // 들고있는 아이템의 info값을 가져와서
         ItemInfo info = new ItemInfo
@@ -213,7 +220,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
             ItemType = item.ItemType
         };
         // 인벤토리에 추가해주고
-        if(GameManager.Instance.InventroySystem.AddItem(info))
+        if(inventorySystem.AddItem(info))
         {
             // 박스에서 제거하기
             box.RemoveItemFromBox(info);

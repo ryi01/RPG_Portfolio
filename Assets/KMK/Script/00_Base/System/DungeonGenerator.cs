@@ -139,7 +139,6 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Navigation")]
     public NavMeshSurface navSurface;
 
-
     [Header("Grid")]
     [SerializeField] private GridAStar grid;
 
@@ -155,8 +154,6 @@ public class DungeonGenerator : MonoBehaviour
 
     private Dictionary<Vector2Int, List<Transform>> wayPoints = new Dictionary<Vector2Int, List<Transform>>();
     private Dictionary<Vector2Int, List<Vector3>> roomSpawnPoints = new Dictionary<Vector2Int, List<Vector3>>();
-
-    public static Action<Vector3> OnSpawnItemBox;
 
     public bool IsGenerationCompleted { get; private set; } = false;
     enum TileType
@@ -677,10 +674,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         Vector3 pos = new Vector3(x * tileSize, posY, y * tileSize);
         Quaternion rot = Quaternion.identity;
-        if(typeMask == TileType.Item)
-        {
-            OnSpawnItemBox?.Invoke(pos);
-        }
+
         if(typeMask == TileType.Trap)
         {
             Vector3 offset = Vector3.zero;
@@ -693,6 +687,11 @@ public class DungeonGenerator : MonoBehaviour
         GameObject obj = Instantiate(prefab, pos, rot, dungeonParent);
         obj.name = $"{prefab.name}_{x}_{y}";
         mapData[x, y] = (int)typeMask;
+
+        if(typeMask == TileType.Item && grid != null)
+        {
+            grid.RegisterObjectNode(pos, true);
+        }
     }
 
     private void TryAttachWallDecoration(GameObject wall, int x, int y)

@@ -10,6 +10,7 @@ public class PlayerStatComponent : CharacterStatComponent
     [SerializeField] private ParticleSystem levelUpEffectPrefab;
     [SerializeField] private ParticleSystem hpEffectPrefab;
     [SerializeField] private ParticleSystem coinEffectPrefab;
+    [SerializeField] private GoldSystem goldSystem;
     private PlayerStatInfo playerInfo;
     private float currentST;
     public float CurrentExp { get; private set; }
@@ -37,12 +38,12 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         currentST = MaxST;
         CurrentExp = 0;
-        OnChangeExp?.Invoke(CurrentExp, playerInfo.exp[0]);
+        OnChangeExp?.Invoke(CurrentExp, playerInfo.requiredExpByLevel[0]);
         GameManager.Instance.OnDieEnemy += TakeExp;
     }
     private void OnEnable()
     {
-        GameManager.Instance.GoldSystem.OnGoldChanged += GetGold;
+        goldSystem.OnGoldChanged += GetGold;
     }
     private void Start()
     {
@@ -62,7 +63,7 @@ public class PlayerStatComponent : CharacterStatComponent
     public void TakeExp(float amount)
     {
         CurrentExp += amount;
-        float maxExp = playerInfo.exp[CurrentLevel - 1];
+        float maxExp = playerInfo.requiredExpByLevel[CurrentLevel - 1];
         OnChangeExp?.Invoke(CurrentExp, maxExp);
        
         if(CurrentExp >= maxExp)
@@ -75,7 +76,7 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         CurrentExp -= usedExp;
         CurrentLevel++;
-        OnChangeExp?.Invoke(CurrentExp, playerInfo.exp[CurrentLevel - 1]);
+        OnChangeExp?.Invoke(CurrentExp, playerInfo.requiredExpByLevel[CurrentLevel - 1]);
         if (currentEffectCoroutine != null) StopCoroutine(currentEffectCoroutine);
         currentEffectCoroutine = StartCoroutine(EffectCoroutine(levelUpEffectPrefab, 0.5f));
         OncChangeLevel?.Invoke(CurrentLevel);
@@ -89,7 +90,7 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         GameManager.Instance.OnUnBindPlayer(this);
         GameManager.Instance.OnDieEnemy -= TakeExp;
-        GameManager.Instance.GoldSystem.OnGoldChanged -= GetGold;
+        goldSystem.OnGoldChanged -= GetGold;
     }
     private IEnumerator EffectCoroutine(ParticleSystem effect, float duration)
     {

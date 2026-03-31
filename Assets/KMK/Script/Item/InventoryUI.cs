@@ -13,8 +13,10 @@ public class InventoryUI : MonoBehaviour
 
     public Action<Item, ItemUI> OnClickItem;
     public Action<Item, ItemUI> OnDoubleClickItem;
+    public Action<int> OnRequestUseItem;
 
     private ItemUIMode currentMode = ItemUIMode.Use;
+
     private void OnEnable()
     {
         Refresh();
@@ -29,6 +31,7 @@ public class InventoryUI : MonoBehaviour
         for(int i = 0; i < itemUISlots.Length; i++)
         {
             itemUIs[i] = Instantiate(itemUIPrefab, itemUISlots[i]).GetComponent<ItemUI>();
+            itemUIs[i].InitInventory(inventroySystem);
         }
         SetUseMode();
     }
@@ -69,7 +72,8 @@ public class InventoryUI : MonoBehaviour
     public void UseItem(Item item, ItemUI ui)
     {
         int index = inventroySystem.HasItemList.IndexOf(item);
-        if (index != -1) inventroySystem.UseItem(index);
+        if (index == -1) return;
+        OnRequestUseItem?.Invoke(index);
     }
     public void SetUseMode()
     {

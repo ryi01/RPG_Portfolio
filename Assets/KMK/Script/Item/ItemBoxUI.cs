@@ -32,6 +32,7 @@ public class ItemBoxUI : MonoBehaviour
             {
                 // 아이템의 정보에 따른 prefab설정
                 ItemUI newUI = Instantiate(itemBoxItemUIPrefab, itemUISlots[i]).GetComponent<ItemUI>();
+                newUI.InitInventory(inventorySystem);
                 newUI.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
                 spawnUIs.Add(newUI);
 

@@ -27,7 +27,7 @@ public class PlayerRewardHandler : MonoBehaviour
         }
         if(data.RewardItem.ItemType == EnumTypes.ITEM_TYPE.CB)
         {
-            GameManager.Instance.InventroySystem.AddItem(data.RewardItem);
+            pc.InventorySystemComp.AddItem(data.RewardItem);
         }
     }
 }

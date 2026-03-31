@@ -11,6 +11,8 @@ using UnityEngine;
 public class StoreSystem : MonoBehaviour
 {
     [SerializeField] private StoreData currentStore;
+    [SerializeField] private GoldSystem goldSystem;
+    [SerializeField] private InventorySystem inventorySystem;
 
     public StoreData CurrentStore => currentStore;
 
@@ -28,7 +30,7 @@ public class StoreSystem : MonoBehaviour
         OnChangedStoreData?.Invoke();
     }
 
-    public void CloseShop()
+    public void CloseStore()
     {
         currentStore = null;
         OnCloseStore?.Invoke();
@@ -46,8 +48,7 @@ public class StoreSystem : MonoBehaviour
             FailTransaction("수량이 올바르지 않습니다");
             return false;
         }
-        var goldSystem = GameManager.Instance.GoldSystem;
-        var inventorySystem = GameManager.Instance.InventroySystem;
+
         if (goldSystem == null || inventorySystem == null) return false;
         int totalPrice = item.BuyPrice * amount;
         if(!goldSystem.IsEnoughGold(totalPrice))
@@ -85,7 +86,7 @@ public class StoreSystem : MonoBehaviour
             FailTransaction("수량이 올바르지 않습니다.");
             return false;
         }
-        var inventorySystem = GameManager.Instance.InventroySystem;
+
         if (!inventorySystem.HasItem(item, amount))
         {
             FailTransaction("아이템 수량이 부족합니다.");
@@ -104,14 +105,13 @@ public class StoreSystem : MonoBehaviour
             return false;
         }
 
-        GameManager.Instance.GoldSystem.AddGold(item.SellPrice * amount);
+        goldSystem.AddGold(item.SellPrice * amount);
         OnChangedStoreData?.Invoke();
         return true;
     }
 
     public int GetCurrentGold()
     {
-        var goldSystem = GameManager.Instance.GoldSystem;
         return goldSystem != null ? goldSystem.CurrentGold : 0;
     }
 
@@ -119,7 +119,7 @@ public class StoreSystem : MonoBehaviour
     {
         if (storeItem == null) return 0;
 
-        return GameManager.Instance.InventroySystem.GetItemCount(storeItem);
+        return inventorySystem.GetItemCount(storeItem);
     }
 
     private void FailTransaction(string message)

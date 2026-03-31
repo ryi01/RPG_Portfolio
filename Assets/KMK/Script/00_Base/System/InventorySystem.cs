@@ -8,13 +8,12 @@ public class InventorySystem : MonoBehaviour
 {
     // 아이템 정보 DB 역할 : 0 - 무기, 1 - 소모성
     [SerializeField] private ItemList[] itemLists;
-
     [SerializeField] private List<Item> hasItemList = new List<Item>();
-    public List<Item> HasItemList { get => hasItemList; set=>hasItemList = value; }
-
     [SerializeField] private int inventorySize;
-    
+    [SerializeField] private UIManager uiManager;
+    public List<Item> HasItemList { get => hasItemList; set=>hasItemList = value; }
     public Action OnChangedInventory;
+
     public ItemBox CurrentBox { get; set; }
 
     private void Start()
@@ -79,13 +78,13 @@ public class InventorySystem : MonoBehaviour
         return true;
     }
     // 아이템 사용
-    public void UseItem(int slotIndex)
+    public void UseItem(int slotIndex, GameObject target)
     {
         if (slotIndex < 0 || slotIndex >= HasItemList.Count || HasItemList[slotIndex] == null) return;
         Item item = HasItemList[slotIndex];
         if(item is ConsumableItem consume)
         {
-            consume.Consume();
+            consume.Consume(target);
             if (item.ItemCount > 1)
             {
                 item.ItemCount--;
@@ -160,5 +159,18 @@ public class InventorySystem : MonoBehaviour
         if (slotIndex < 0 || slotIndex >= hasItemList.Count) return null;
 
         return HasItemList[slotIndex];
+    }
+
+    public void OpenItemBox(ItemBox box)
+    {
+        if (box == null || uiManager == null) return;
+        CurrentBox = box;
+        uiManager.OpenItemBox(box);
+    }
+
+    public void CloseItemBox()
+    {
+        CurrentBox= null;
+        uiManager.CloseItemBox();
     }
 }
