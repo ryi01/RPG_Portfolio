@@ -5,23 +5,17 @@ public class EnemyUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject enemyHPBarPrefab;
     [SerializeField] private StatUI bossUI;
-    // Overlap UI 캔바스의 게임오브젝트 이름
-    [SerializeField] protected string uiCanvasRootName;
     // UI 요소 게임오브젝트 참조
-    protected GameObject uiGameObject;
-
-    // Overlap UI 캔바스의 Trasform 컴포넌트
-    protected Transform uiCanvasRoot;
+    [SerializeField] protected GameObject uiGameObject;
     private Dictionary<CharacterStatComponent, EnemyStatUI> enemyUIDic = new Dictionary<CharacterStatComponent, EnemyStatUI>();
 
     private void Start()
     {
-        uiCanvasRoot = GameObject.Find(uiCanvasRootName).transform;
         bossUI.gameObject.SetActive(false);
     }
     public void CreateEnemyHPBar(CharacterStatComponent enemyStat, float y = 2f)
     {
-        GameObject go = Instantiate(enemyHPBarPrefab, uiCanvasRoot);
+        GameObject go = Instantiate(enemyHPBarPrefab, uiGameObject.transform);
         EnemyStatUI enemyUI = go.GetComponent<EnemyStatUI>();
         enemyUI.SetUpUi(enemyStat.transform, y);
         enemyStat.OnHpChanged += enemyUI.UpdateHP;
