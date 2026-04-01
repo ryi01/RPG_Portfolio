@@ -18,11 +18,7 @@ public class InventorySystem : MonoBehaviour
 
     private void Start()
     {
-        // 미리 inventorySize만큼 hasItemList 생성
-        for (int i = 0; i < inventorySize; i++)
-        {
-            hasItemList.Add(null);
-        }
+        LoadInventoryFromDB();
     }
     // 실제 아이템 데이터를 들고 오는 함수 => DB 조회
     public Item FindItemData(EnumTypes.ITEM_TYPE type, int id)
@@ -45,7 +41,11 @@ public class InventorySystem : MonoBehaviour
             }
         }
         if(!isSucess) isSucess = TryAddItemToEmptySlot(itemInfo);
-        if (isSucess) OnChangedInventory?.Invoke();
+        if (isSucess)
+        {
+            OnChangedInventory?.Invoke();
+            SaveInventoryToDB();
+        }
 
         return isSucess; 
     }
@@ -89,6 +89,7 @@ public class InventorySystem : MonoBehaviour
             {
                 item.ItemCount--;
                 OnChangedInventory?.Invoke();
+                SaveInventoryToDB();
             }
             else RemoveItem(item);
 
@@ -110,11 +111,13 @@ public class InventorySystem : MonoBehaviour
                 HasItemList[index] = null;
             }
             OnChangedInventory?.Invoke();
+            SaveInventoryToDB();
             return true;
         }
 
         HasItemList[index] = null;
         OnChangedInventory?.Invoke();
+        SaveInventoryToDB();
         return true;
     }
 
@@ -127,6 +130,7 @@ public class InventorySystem : MonoBehaviour
         hasItemList[indexB] = temp;
 
         OnChangedInventory?.Invoke();
+        SaveInventoryToDB();
     }
 
     public bool HasItem(Item item, int amount = 1)
@@ -173,4 +177,83 @@ public class InventorySystem : MonoBehaviour
         CurrentBox= null;
         uiManager.CloseItemBox();
     }
+    #region SQLite
+    public void SaveInventoryToDB()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.DataManager == null || GameManager.Instance.SQLiteManager == null) return;
+        int playerId = GameManager.Instance.DataManager.Id;
+        var sqlLiteManager = GameManager.Instance.SQLiteManager;
+
+        // 인벤토리 데이터 전부 삭제 => 전체 덮어쓰기 저장이기에 한번 정리
+        sqlLiteManager.ClearInventory(playerId);
+
+        // 현재 인벤토리 슬롯 검사
+        for(int i = 0; i < hasItemList.Count; i++)
+        {
+            // 슬롯 기준으로 저장
+            Item item = hasItemList[i];
+            if (item == null) continue;
+            int count = 1;
+            // 소모품이면 갯수 저장
+            if(item is ConsumableItem consumable)
+            {
+                count = consumable.ItemCount;
+            }
+            sqlLiteManager.InsertInventoryItem(playerId, i,item.ItemID, count);
+        }
+
+    }
+    public void LoadInventoryFromDB()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.DataManager == null || GameManager.Instance.SQLiteManager == null) return;
+        int playerId = GameManager.Instance.DataManager.Id;
+        var sqlLiteManager = GameManager.Instance.SQLiteManager;
+
+        // 기존 인벤토리 비우기
+        hasItemList.Clear();
+        for (int i = 0; i < inventorySize; i++)
+        {
+            hasItemList.Add(null);
+        }
+
+        List<InventorySaveData> savedItems = sqlLiteManager.LoadInventory(playerId);
+        // DB 인벤토리 데이터 읽기
+        foreach(var saved in savedItems)
+        {
+            if (saved.SlotIndex < 0 || saved.SlotIndex >= inventorySize) continue;
+            
+            // DB의 itemid를 실제 item 데이터로 변경
+            Item itemData = FindItemById(saved.ItemId);
+            if (itemData == null) continue;
+
+            // 복사본 생성 => SO/원본데이터 공유 방지
+            Item cloneItem = itemData.Clone();
+
+            // 소모품이면 한 슬롯에 카운트 넣음
+            if(cloneItem is ConsumableItem consumable)
+            {
+                consumable.ItemCount = saved.Count;
+                hasItemList[saved.SlotIndex] = consumable;
+            }
+            else
+            {
+                hasItemList[saved.SlotIndex] = cloneItem;
+            }
+        }
+
+        OnChangedInventory?.Invoke();
+    }
+    private Item FindItemById(int itemId)
+    {
+        // 아이템 리스트 안의 모든 아이템 DB를 순회하면서 ID가 일치하는것 찾기
+        foreach(var itemList in itemLists)
+        {
+            if (itemList == null || itemList.List == null) continue;
+
+            Item foundItem = itemList.List.FirstOrDefault(item => item.ItemID == itemId);
+            if (foundItem != null) return foundItem;
+        }
+        return null;
+    }
+    #endregion
 }

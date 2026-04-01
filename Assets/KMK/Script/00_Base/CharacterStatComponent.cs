@@ -48,7 +48,11 @@ public class CharacterStatComponent : MonoBehaviour
         currentHP = statinfo.maxHP;
         OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
     }
-
+    public void SetCurrentHP(float hp)
+    {
+        currentHP = Mathf.Clamp(hp, 0, statinfo.maxHP);
+        OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
+    }
     public void ResetMat()
     {
         StopAllCoroutines();

@@ -107,6 +107,6 @@ public class SceneLoadManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.2f);
         loadingCanvas.SetActive(false);
-        GameManager.Instance.SoundManager.PlayBGM(EBGMType.FIELD_THEME);
+        GameManager.Instance.SoundManager.PlayBGM(EBGMType.DUNGEON);
     }
 }

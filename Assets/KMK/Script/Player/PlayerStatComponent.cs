@@ -12,42 +12,42 @@ public class PlayerStatComponent : CharacterStatComponent
     [SerializeField] private ParticleSystem coinEffectPrefab;
     [SerializeField] private GoldSystem goldSystem;
     private PlayerStatInfo playerInfo;
-    private float currentST;
-    public float CurrentExp { get; private set; }
-    public int CurrentLevel { get; private set; } = 1;
 
-    public float CurrentST { get => currentST; }
+    public int CurrentExp { get; private set; }
+    public int CurrentLevel { get; private set; } = 1;
     public float MaxST { get => playerInfo.maxST; }
     public float CriticalMultifle { get => playerInfo.criticalMultifle; }
 
     public Action<float, float> OnChangeST;
     public Action<float, float> OnChangeExp;
-    public Action<int> OncChangeLevel;
+    public Action<int> OnChangeLevel;
 
     private Coroutine currentEffectCoroutine;
     protected override void Awake()
     {
-        GameManager.Instance.OnBindPlayer(this);
         playerInfo = statinfo as PlayerStatInfo;
         if (playerInfo == null) Debug.Log($"playerinfo 없음");
         base.Awake();
-        
-        InitUI();
+
+        GameManager.Instance.OnBindPlayer(this);
+        ApplySaveData();
     }
-    private void InitUI()
+    private void Start()
     {
-        currentST = MaxST;
-        CurrentExp = 0;
-        OnChangeExp?.Invoke(CurrentExp, playerInfo.requiredExpByLevel[0]);
-        GameManager.Instance.OnDieEnemy += TakeExp;
+        RefreshUI();
+    }
+    private void RefreshUI()
+    {
+        int expIndex = Mathf.Clamp(CurrentLevel - 1, 0, playerInfo.requiredExpByLevel.Count - 1);
+
+        OnHpChanged?.Invoke(CurrentHP, MaxHP);
+        OnChangeExp?.Invoke(CurrentExp, playerInfo.requiredExpByLevel[expIndex]);
+        OnChangeLevel?.Invoke(CurrentLevel);
     }
     private void OnEnable()
     {
         goldSystem.OnGoldChanged += GetGold;
-    }
-    private void Start()
-    {
-        OncChangeLevel?.Invoke(CurrentLevel);
+        GameManager.Instance.OnDieEnemy += TakeExp;
     }
     public bool InvokeCri()
     {
@@ -60,10 +60,10 @@ public class PlayerStatComponent : CharacterStatComponent
         currentEffectCoroutine = StartCoroutine(EffectCoroutine(hpEffectPrefab, 0.3f));
         OnHpChanged?.Invoke(currentHP, statinfo.maxHP);
     }
-    public void TakeExp(float amount)
+    public void TakeExp(int amount)
     {
         CurrentExp += amount;
-        float maxExp = playerInfo.requiredExpByLevel[CurrentLevel - 1];
+        int maxExp = playerInfo.requiredExpByLevel[CurrentLevel - 1];
         OnChangeExp?.Invoke(CurrentExp, maxExp);
        
         if(CurrentExp >= maxExp)
@@ -72,14 +72,14 @@ public class PlayerStatComponent : CharacterStatComponent
         }
     }
 
-    private void LevelUp(float usedExp)
+    private void LevelUp(int usedExp)
     {
         CurrentExp -= usedExp;
         CurrentLevel++;
         OnChangeExp?.Invoke(CurrentExp, playerInfo.requiredExpByLevel[CurrentLevel - 1]);
         if (currentEffectCoroutine != null) StopCoroutine(currentEffectCoroutine);
         currentEffectCoroutine = StartCoroutine(EffectCoroutine(levelUpEffectPrefab, 0.5f));
-        OncChangeLevel?.Invoke(CurrentLevel);
+        OnChangeLevel?.Invoke(CurrentLevel);
     }
     private void GetGold(int gold)
     {
@@ -97,5 +97,30 @@ public class PlayerStatComponent : CharacterStatComponent
         effect.Play();
         yield return new WaitForSeconds(duration);
         effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+    }
+    // 저장된 데이터 불러오기
+    private void ApplySaveData()
+    {
+        if (GameManager.Instance.DataManager == null) return;
+        var data = GameManager.Instance.DataManager.PlayerData;
+        if (data == null) return;
+        float hp = data.CurrentHP;
+        if(hp <=0f)
+        {
+            hp = MaxHP;
+        }
+        SetCurrentHP(hp);
+        CurrentLevel = data.Level;
+        CurrentExp = data.CurrentExp;
+    }
+    // 데이터 저장하기
+    public void SyncToSaveData()
+    {
+        if (GameManager.Instance.DataManager == null) return;
+        DataManager datamanager = GameManager.Instance.DataManager;
+
+        datamanager.SetLevel(CurrentLevel);
+        datamanager.SetCurrentHP(CurrentHP);
+        datamanager.SetCurrentExp(CurrentExp);
     }
 }

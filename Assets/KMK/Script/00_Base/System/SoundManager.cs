@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-public enum EBGMType { MAIN_MENU, BOSS_BATTLE, FIELD_THEME}
+public enum EBGMType { MAIN_MENU, TOWN, BOSS_BATTLE, DUNGEON}
 [System.Serializable]
 public struct BGMData
 {
@@ -41,8 +41,8 @@ public class SoundManager : MonoBehaviour
         s_SFX.value = 100;
         ChangeBGM(100);
         ChangeSFX(100);
-        PlayBGM(EBGMType.MAIN_MENU);
     }
+
     public void PlayBGM(EBGMType type)
     {
         if (!bgmDict.TryGetValue(type, out AudioClip clip) || clip == null) return;
@@ -83,7 +83,6 @@ public class SoundManager : MonoBehaviour
                 return;
             }
         }
-
         lastPlayTimeDict[clip] = now;
         PlaySFX(clip, volumeScale);
     }    

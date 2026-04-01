@@ -6,23 +6,27 @@ public class StartUI : MonoBehaviour
     [SerializeField] private GameObject startCanvas;
     [SerializeField] private GameObject skillCanvas;
     [SerializeField] private GameObject settingCanvas;
+    [SerializeField] private GameObject pauseCanvas;
     [SerializeField] private GameObject I_Back;
 
     private void Start()
     {
-        ClickPlayButt(true);
+        ShowTitleMenu(true);
         settingCanvas.SetActive(false);
+        pauseCanvas.SetActive(false);
     }
+
     #region 스타트 ui
     public void OnClickStart()
     {
-        ClickPlayButt(false);
+        ShowTitleMenu(false);
+        GameManager.Instance.StartGameFromTitle();
     }
-    private void ClickPlayButt(bool isOn)
+    private void ShowTitleMenu(bool isOn)
     {
         startCanvas.SetActive(isOn);
-        I_Back.SetActive(isOn);
         skillCanvas.SetActive(!isOn);
+        I_Back.SetActive(isOn);
     }
 
     public void OnClickSetting()
@@ -33,7 +37,7 @@ public class StartUI : MonoBehaviour
 
     public void OnClickExit()
     {
-        Application.Quit();
+        GameManager.Instance.SaveAndQuitGame();
     }
 
     public void OnDoneSetting()
@@ -43,4 +47,24 @@ public class StartUI : MonoBehaviour
     }
 
     #endregion
+
+    #region 일시정지
+    public void SetPauseCanvas(bool isOn)
+    {
+        pauseCanvas.SetActive(isOn);
+    }
+    public void OnClickMain()
+    {
+        GameManager.Instance.SaveCurrentPlayerData();
+        GameManager.Instance.EnterTitleMenu();
+        ShowTitleMenu(true);
+        pauseCanvas.SetActive(false);
+    }
+    public void OnClickResume()
+    {
+        ShowTitleMenu(false);
+        GameManager.Instance.ResumeGame();
+    }
+    #endregion
+
 }

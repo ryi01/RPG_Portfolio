@@ -19,7 +19,7 @@ public class EnemyStatComponent : CharacterStatComponent
 
     public Vector3 RoamCenter { get; set; }
 
-    public float Exp { get => enemyStatInfo.exp; }
+    public int Exp { get => enemyStatInfo.exp; }
     public Transform WayPoint { get; set; }
     public float WanderNavCheckRadius { get => enemyStatInfo.wanderNavCheckRadius; }
     protected override void Awake()

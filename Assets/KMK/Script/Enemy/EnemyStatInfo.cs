@@ -19,5 +19,5 @@ public class EnemyStatInfo : StatInfo
     [Header("Boss")]
     public bool isBoss = false;
     [Header("Exp")]
-    public float exp;
+    public int exp;
 }

@@ -19,7 +19,7 @@ public class BossRoomTrigger : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             isTrigger = true;
-            GameManager.Instance.SoundManager.PlayBGM(EBGMType.BOSS_BATTLE);
+            GameManager.Instance.ChangeState(GameState.BossPhase);
 
             enemyUIManager.SetBossHP(true);
 

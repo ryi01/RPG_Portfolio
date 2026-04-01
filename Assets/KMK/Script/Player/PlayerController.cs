@@ -37,6 +37,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     // 피격 연출 카메라 연출
     public CombatFeedback CombatFeedback { get; private set; }
     public CameraShakeController CameraShakeController { get; private set; }
+
     // 외부에서 제어하는 상태값
     public bool IsDamage { get; set; }
     public bool IsBlink { get; set; }
@@ -65,7 +66,6 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private KeyCode[] skillKeys = { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.D, KeyCode.F };
 
     // 아이템 관련 변수들
-    private StoreNPC currentStoreNPC;
     private ItemBox openBox;
     private InteractionObject targetInteractable;
     private bool isMoveToInteraction = false;
@@ -81,13 +81,14 @@ public class PlayerController : BaseController<PlayerStatComponent>
         PickUpComp = GetComponent<InputPickUp>();
         CameraShakeController = GetComponentInChildren<CameraShakeController>();
         RewardHandler = GetComponent<PlayerRewardHandler>();
-        StatComp.OncChangeLevel += SkillComp.UnlockSkill;
         CombatFeedback = GetComponent<CombatFeedback>();        
         if(trail != null) trail.emitting = false;
         currentStepInterval = UnityEngine.Random.Range(interval.x, interval.y);
     }
+
     private void OnEnable()
     {
+        StatComp.OnChangeLevel += SkillComp.UnlockSkill;
         storeSystem.OnCloseStore += CloseStore;
         inventoryUI.OnRequestUseItem += UseInventoryItem;
     }
@@ -117,6 +118,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         HandleUseItem();
         CheckInteractionDistance();
         CheckBox();
+
     }
     /// <summary>
     /// 현재 마우스 월드 위치와 실시간 방향 갱신
@@ -241,14 +243,12 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public void OpenStore(StoreNPC npc)
     {
         if (npc == null) return;
-        currentStoreNPC = npc;
         isStoreOpen = true;
         PickUpComp.OpenStore(npc.StoreData);
     }
     public void CloseStore()
     {
         isStoreOpen = false;
-        currentStoreNPC = null;
     }
     public void OpenBox(ItemBox box)
     {
@@ -486,7 +486,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private void OnDestroy()
     {
-        StatComp.OncChangeLevel -= SkillComp.UnlockSkill;
+        StatComp.OnChangeLevel -= SkillComp.UnlockSkill;
     }
 
 

@@ -19,11 +19,12 @@ public class InventoryUI : MonoBehaviour
 
     private void OnEnable()
     {
+        inventroySystem.OnChangedInventory += UpdateInventoryUI;
         Refresh();
     }
     private void Start()
     {
-        inventroySystem.OnChangedInventory += UpdateInventoryUI;
+       
     }
     public void InitInventoryUI()
     {

@@ -10,10 +10,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private ItemBoxUI itemBoxUI;
     [SerializeField] private Text goldText;
     [SerializeField] private Text storeGoldText;
-
-    private void Start()
+    private void Awake()
     {
         inventoryUI.InitInventoryUI();
+    }
+    private void Start()
+    {
         goldText.text = "0";
         storeGoldText.text = "0";
     }
@@ -22,13 +24,13 @@ public class UIManager : MonoBehaviour
     {
         player.OnHpChanged += playerHUD.UpdateHP;
         player.OnChangeExp += playerHUD.UpdateExp;
-        player.OncChangeLevel += playerHUD.UpdateLevel;
+        player.OnChangeLevel += playerHUD.UpdateLevel;
     }
     public void UnBindPlayerUI(PlayerStatComponent player)
     {
         player.OnHpChanged -= playerHUD.UpdateHP;
         player.OnChangeExp -= playerHUD.UpdateExp;
-        player.OncChangeLevel -= playerHUD.UpdateLevel;
+        player.OnChangeLevel -= playerHUD.UpdateLevel;
     }
     #endregion
     #region 인벤토리 관련
@@ -60,5 +62,4 @@ public class UIManager : MonoBehaviour
         storeGoldText.text = amount.ToString();
     }
     #endregion
-
 }
