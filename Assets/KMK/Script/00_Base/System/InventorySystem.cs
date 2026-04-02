@@ -177,6 +177,24 @@ public class InventorySystem : MonoBehaviour
         CurrentBox= null;
         uiManager.CloseItemBox();
     }
+
+    public Item FindItemDataById(int itemId)
+    {
+        if(itemLists == null || itemLists.Length  == 0) return null;   
+        for(int i = 0;i < itemLists.Length;i++)
+        {
+            if (itemLists[i] == null) continue;
+            for(int j = 0; j < itemLists[i].List.Count;j++)
+            {
+                Item item = itemLists[i].List[j];
+                if(item != null && item.ItemID == itemId)
+                {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
     #region SQLite
     public void SaveInventoryToDB()
     {

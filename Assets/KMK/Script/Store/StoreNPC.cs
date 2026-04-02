@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class StoreNPC : BaseNPCInteraction
 {
-    [SerializeField] private StoreData storeData;
+    [SerializeField] private int storeId;
     [SerializeField] private Sprite storeSprite;
 
-    public StoreData StoreData => storeData;
+    public int StoreId => storeId;
     protected override void RefreshNPCUI()
     {
         if (storeSprite != null) SetIcon(storeSprite);

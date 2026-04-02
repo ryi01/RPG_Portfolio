@@ -119384,7 +119384,7 @@ AnimationClip:
     floatParameter: 1.1
     intParameter: 0
     messageOptions: 0
-  - time: 0.5
+  - time: 0.46666667
     functionName: TrailOff
     data: 
     objectReferenceParameter: {fileID: 0}

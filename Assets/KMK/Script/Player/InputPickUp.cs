@@ -27,10 +27,10 @@ public class InputPickUp : MonoBehaviour
         if (pc.InventorySystemComp == null) return;
         pc.InventorySystemComp.CloseItemBox();
     }
-    public void OpenStore(StoreData storeData)
+    public void OpenStore(int storeId)
     {
-        if(storeData == null || pc.StoreSystem == null) return;
-        pc.StoreSystem.OpenStore(storeData);
+        if(storeId < 0 || pc.StoreSystem == null) return;
+        pc.StoreSystem.OpenStore(storeId);
     }
     public void CloseStore()
     {

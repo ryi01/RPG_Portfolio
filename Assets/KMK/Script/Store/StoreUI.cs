@@ -69,7 +69,7 @@ public class StoreUI : MonoBehaviour
         storeSystem.CloseStore();
     }
 
-    private void HandleOpenStore(StoreData storeData)
+    private void HandleOpenStore()
     {
         skillPanel.SetActive(false);
         storePanel.SetActive(true);
@@ -114,7 +114,7 @@ public class StoreUI : MonoBehaviour
     public void RefreshStoreUI()
     {
         if (itemUIs == null || itemUIs.Length == 0) return;
-        List<Item> currentStoreItems = storeSystem.CureentStoreItems;
+        List<Item> currentStoreItems = storeSystem.CurrentStoreItems;
         for (int i = 0; i < itemUIs.Length; i++)
         {
             if (currentStoreItems != null && i < currentStoreItems.Count && currentStoreItems[i] != null)

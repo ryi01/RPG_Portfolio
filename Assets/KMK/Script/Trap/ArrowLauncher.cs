@@ -7,7 +7,8 @@ public class ArrowLauncher : MonoBehaviour
     [SerializeField] private Transform[] launchTrans;
     [SerializeField] protected float launchTime = 0.3f;
     [SerializeField] private GameObject trapPrefab;
-    
+    [SerializeField] private float arrowLifeTime = 2f;
+
     public virtual void LaunchTrap()
     {
         StartCoroutine(LaunchCor());
@@ -18,7 +19,8 @@ public class ArrowLauncher : MonoBehaviour
         yield return new WaitForSeconds(launchTime);
         for(int i = 0; i < launchTrans.Length;i++)
         {
-            Instantiate(trapPrefab, launchTrans[i].position, launchTrans[i].rotation);
+            GameObject arrow = Instantiate(trapPrefab, launchTrans[i].position, launchTrans[i].rotation);
+            Destroy(arrow, arrowLifeTime);
             yield return new WaitForSeconds(0.05f);
         }
     }

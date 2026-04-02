@@ -244,7 +244,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         if (npc == null) return;
         isStoreOpen = true;
-        PickUpComp.OpenStore(npc.StoreData);
+        PickUpComp.OpenStore(npc.StoreId);
     }
     public void CloseStore()
     {
