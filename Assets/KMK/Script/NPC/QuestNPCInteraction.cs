@@ -51,6 +51,10 @@ public class QuestNPCInteraction : BaseNPCInteraction
         {
             SetIcon(doneSprite);
         }
+        if (state == EnumTypes.QUEST.IN_PROGRESS || state == EnumTypes.QUEST.OBJECTIVE_DONE)
+        {
+            EnsurePortal();
+        }
     }
     private void HandleQuestComplete(QuestData completeData)
     {
@@ -79,7 +83,15 @@ public class QuestNPCInteraction : BaseNPCInteraction
         switch (currentState)
         {
             case EnumTypes.QUEST.NOT_START:
-                if (questManager.StartQuest(myQuestData) && !isPortalSpawned) SpawnPortal();
+                bool started = questManager.StartQuest(myQuestData);
+                if(started)
+                {
+                    QuestData currentQuest = questManager.GetCurrentQuestData();
+                    if(currentQuest != null && currentQuest.QuestID == myQuestData.QuestID)
+                    {
+                        EnsurePortal();
+                    }
+                }
                 break;
             case EnumTypes.QUEST.OBJECTIVE_DONE:
                 questManager.CompletedQuest(myQuestData);
@@ -87,8 +99,10 @@ public class QuestNPCInteraction : BaseNPCInteraction
         }
         RefreshNPCUI();
     }
-    private void SpawnPortal()
+    private void EnsurePortal()
     {
+        if (isPortalSpawned) return;
+        if (myQuestData == null || myQuestData.BossPrefab == null) return;
         GameManager.Instance.SpawnPortal("GameScene", transform.position + Vector3.right * 2);
         isPortalSpawned = true;
     }

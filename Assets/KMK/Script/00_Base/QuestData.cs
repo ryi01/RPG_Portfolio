@@ -50,4 +50,11 @@ public class QuestInstance
     {
         this.State = newState;
     }
+
+    public void SetProgress(int count)
+    {
+        CurrentCount = Mathf.Clamp(count, 0, Data.TargetCount);
+        if (CurrentCount >= Data.TargetCount) State = EnumTypes.QUEST.OBJECTIVE_DONE;
+        else State = EnumTypes.QUEST.IN_PROGRESS;
+    }
 }

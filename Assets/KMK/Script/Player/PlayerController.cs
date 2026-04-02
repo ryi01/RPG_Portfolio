@@ -313,7 +313,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         stepTimer = 0;
         currentStepInterval = UnityEngine.Random.Range(interval.x, interval.y);
 
-        GameManager.Instance.SoundManager.PlaySFXWithCooldown(footStepClip, 0.08f, 0.8f);
+        GameManager.Instance.SoundManager.PlaySFXWithCooldown(footStepClip, 0.08f, 0.7f);
     }
     private void HandleRotation()
     {

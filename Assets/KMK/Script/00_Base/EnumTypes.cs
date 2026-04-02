@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnumTypes
 {
-    public enum ITEM_TYPE { CB }
+    public enum ITEM_TYPE { CB, WP }
     public enum WP_TYPE { ARMOR, MELEE }
     public enum CB_TYPE { GEM_UP, HP_UP, MP_UP }
     public enum STATE 

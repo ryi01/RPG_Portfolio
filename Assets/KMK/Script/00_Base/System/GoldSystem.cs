@@ -8,10 +8,20 @@ public class GoldSystem : MonoBehaviour
 
     public Action<int> OnGoldChanged;
 
+    public void InitializeGold(int startGold)
+    {
+        gold = Mathf.Max(0, startGold);
+        OnGoldChanged?.Invoke(gold);
+    }
     public void AddGold(int getGold)
     {
         if (getGold <= 0) return;
         gold += getGold;
+        if(GameManager.Instance != null && GameManager.Instance.DataManager != null)
+        {
+            GameManager.Instance.DataManager.SetGold(gold);
+            GameManager.Instance.DataManager.SaveData();
+        }
         OnGoldChanged?.Invoke(gold);
     }
 
@@ -26,6 +36,11 @@ public class GoldSystem : MonoBehaviour
         if (amount <= 0) return false;
         if (!IsEnoughGold(amount)) return false;
         gold -= amount;
+        if (GameManager.Instance != null && GameManager.Instance.DataManager != null)
+        {
+            GameManager.Instance.DataManager.SetGold(gold);
+            GameManager.Instance.DataManager.SaveData();
+        }
         OnGoldChanged?.Invoke(gold);
         return true;
     }    

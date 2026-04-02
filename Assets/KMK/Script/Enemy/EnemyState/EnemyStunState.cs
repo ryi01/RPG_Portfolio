@@ -32,7 +32,7 @@ public class EnemyStunState : EnemyState
     {
         if (stunParticle != null)
         {
-            stunParticle.Stop();
+            stunParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
     }
 }

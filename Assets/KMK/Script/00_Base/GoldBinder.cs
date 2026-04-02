@@ -10,6 +10,7 @@ public class GoldBinder : MonoBehaviour
     {
         if (goldSystem == null) return;
         goldSystem.OnGoldChanged += HandleGoldChanged;
+        goldSystem.InitializeGold(dataManager.Gold);
     }
     private void OnDisable()
     {

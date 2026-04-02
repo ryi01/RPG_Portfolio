@@ -24147,7 +24147,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -180, y: 90}
+  m_AnchoredPosition: {x: -113, y: 77}
   m_SizeDelta: {x: 64, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &358043802
@@ -25866,7 +25866,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 60, y: -35}
-  m_SizeDelta: {x: 500, y: 200}
+  m_SizeDelta: {x: 400, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &514631082
 MonoBehaviour:
@@ -41884,6 +41884,7 @@ MonoBehaviour:
   - {fileID: 1954532774}
   buttText: {fileID: 686937677}
   popupText: {fileID: 764540586}
+  storeNameText: {fileID: 1990202866}
   showPopupTime: 1.5
   storeSlotParents:
   - {fileID: 142572891}
@@ -54774,7 +54775,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -43.7}
+  m_AnchoredPosition: {x: 21, y: -28}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &993543807
@@ -67356,8 +67357,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 25, y: -25}
-  m_SizeDelta: {x: 0, y: 30}
+  m_AnchoredPosition: {x: 26, y: -31}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1251417481
 MonoBehaviour:
@@ -82520,6 +82521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySystem
   itemLists:
   - {fileID: 11400000, guid: e0f16c6acdc47c849bb4690f982cd5f3, type: 2}
+  - {fileID: 11400000, guid: f41f305c17ec0b441a125c6fae0b7879, type: 2}
   hasItemList: []
   inventorySize: 8
   uiManager: {fileID: 1779133854}
@@ -82578,10 +82580,10 @@ MonoBehaviour:
     useFog: 1
     fogMode: 2
     fogColor: {r: 0.18039216, g: 0.2, b: 0.23137255, a: 1}
-    fogDensity: 0.012
+    fogDensity: 0.04
     ambientColor: {r: 0.34901962, g: 0.36862746, b: 0.4, a: 1}
     directionalLightColor: {r: 0.72156864, g: 0.78039217, b: 0.8509804, a: 1}
-    directionalLightIntensity: 0.35
+    directionalLightIntensity: 0.18
     useBloom: 1
     bloomIntensity: 0.25
     bloomThreshold: 1.1
@@ -104857,7 +104859,7 @@ GameObject:
   - component: {fileID: 1990202867}
   - component: {fileID: 1990202866}
   m_Layer: 5
-  m_Name: Text (Legacy) (1)
+  m_Name: T_StoreName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104904,7 +104906,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: c60dc85f8a369684986c05f716d20dcf, type: 3}
-    m_FontSize: 23
+    m_FontSize: 20
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -104915,7 +104917,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Store
+  m_Text: Weapon Store
 --- !u!222 &1990202867
 CanvasRenderer:
   m_ObjectHideFlags: 0

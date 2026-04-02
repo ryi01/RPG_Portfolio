@@ -14,15 +14,15 @@ public class DataManager : MonoBehaviour
     public void SetId(int id) => PlayerData.Id = Mathf.Max(1, id);
     public void SetName(string name) => PlayerData.Name = string.IsNullOrEmpty(name) ? "Player" : name;
     public void ChangeGold(int amount) => PlayerData.Gold = Mathf.Max(0, PlayerData.Gold + amount);
+    public void SetGold(int gold) => PlayerData.Gold = Mathf.Max(0, gold);
     public void SetCurrentExp(int exp) => PlayerData.CurrentExp = Mathf.Max(0, exp);
-    public void SetLevel(int level) => PlayerData.Level = Mathf.Max(0, level);
+    public void SetLevel(int level) => PlayerData.Level = Mathf.Max(1, level);
     public void SetCurrentHP(float hp) => PlayerData.CurrentHP = Mathf.Max(0, hp);
 
     private void Awake()
     {
         LoadFromDB();
     }
-
     public void LoadFromDB()
     {
         if (GameManager.Instance.SQLiteManager == null) return;

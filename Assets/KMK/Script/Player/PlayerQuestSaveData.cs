@@ -8,5 +8,5 @@ public class PlayerQuestSaveData
     public int CurrentCount;
     public int IsAccepted;
     public int IsCompleted;
-    public int IsReward;
+    public int IsRewardClaimed;
 }

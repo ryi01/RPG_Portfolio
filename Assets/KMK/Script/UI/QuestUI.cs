@@ -8,8 +8,7 @@ public class QuestUI : MonoBehaviour
     private void OnEnable()
     {
         QuestManager.OnQuestUpdate += UpdateQuestUI;
-        questTitle.text = "퀘스트 없음";
-        questDescription.text = "";
+        UpdateQuestUI();
     }
     private void OnDisable()
     {

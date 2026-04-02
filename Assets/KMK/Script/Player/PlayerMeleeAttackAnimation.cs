@@ -28,11 +28,9 @@ public class PlayerMeleeAttackAnimation : PlayerMeleeAttack
         if (lastEventFrame == Time.frameCount) return;
         lastEventFrame = Time.frameCount;
         comboIndex = n;
-      
-        PlayComboAttackSFX(comboIndex);
     }
 
-    private void PlayComboAttackSFX(int comboIndex)
+    public void PlayComboAttackSFX()
     {
         GameManager.Instance.SoundManager.PlayCombatSFX(comboSFX[comboIndex], volume);
     }

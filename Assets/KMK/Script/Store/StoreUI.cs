@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
@@ -14,6 +15,7 @@ public class StoreUI : MonoBehaviour
     [SerializeField] private Text[] informations;
     [SerializeField] private Text buttText;
     [SerializeField] private Text popupText;
+    [SerializeField] private Text storeNameText;
 
     [SerializeField] private float showPopupTime = 1.5f;
 
@@ -25,9 +27,10 @@ public class StoreUI : MonoBehaviour
     private Item selectedInventoryItem;
 
     private ItemUI selectedItemUI;
-    private void Start()
+    private Coroutine popupCoroutine;
+
+    private void OnEnable()
     {
-        InitStoreUI();
         if (storeSystem != null)
         {
             storeSystem.OnOpenStore += HandleOpenStore;
@@ -35,6 +38,11 @@ public class StoreUI : MonoBehaviour
             storeSystem.OnChangedStoreData += RefreshStoreUI;
             storeSystem.OnFailedTransaction += HandleFailedTransaction;
         }
+    }
+    private void Start()
+    {
+        InitStoreUI();
+
         storePanel.SetActive(false);
         ShowPopUp(false);
     }
@@ -67,6 +75,8 @@ public class StoreUI : MonoBehaviour
         storePanel.SetActive(true);
         ClearSelection();
 
+        if (storeNameText != null) storeNameText.text = storeSystem.GetCurrentStoreName();
+
         inventoryUI.SetShopMode(SelectInventoryItem);
         inventoryUI.UpdateInventoryUI();
 
@@ -77,6 +87,7 @@ public class StoreUI : MonoBehaviour
         skillPanel.SetActive(true);
         storePanel.SetActive(false);
         ClearSelection();
+        if (storeNameText != null) storeNameText.text = "";
         inventoryUI.SetUseMode();
         inventoryUI.UpdateInventoryUI();
         ClearStoreUI();
@@ -94,7 +105,7 @@ public class StoreUI : MonoBehaviour
     }
     private void SelectInform(Item item)
     {
-        informations[0].text = item.ItemName;
+        informations[0].text = item.ItemName + " / (" + GetTypeText(item.ItemType) + ")";
         informations[1].text = item.ItemDescription;
         if(selectedInventoryItem != null) informations[2].text = item.SellPrice.ToString();
         else if(selectedStoreItem != null) informations[2].text = item.BuyPrice.ToString();
@@ -103,17 +114,17 @@ public class StoreUI : MonoBehaviour
     public void RefreshStoreUI()
     {
         if (itemUIs == null || itemUIs.Length == 0) return;
-        StoreData currentStore = storeSystem.CurrentStore;
+        List<Item> currentStoreItems = storeSystem.CureentStoreItems;
         for (int i = 0; i < itemUIs.Length; i++)
         {
-            if (currentStore != null && currentStore.ShopItems != null && i < currentStore.ShopItems.Count && currentStore.ShopItems[i] != null)
+            if (currentStoreItems != null && i < currentStoreItems.Count && currentStoreItems[i] != null)
             {
-                Item storeItem = currentStore.ShopItems[i];
+                Item storeItem = currentStoreItems[i];
                 ItemUI currentUI = itemUIs[i];
 
-                itemUIs[i].SlotIndex = i;
-                itemUIs[i].SetMode(EnumTypes.ItemUIMode.StoreBuy);
-                itemUIs[i].InitItemUI(storeItem, () => SelectStoreItem(storeItem, currentUI));
+                currentUI.SlotIndex = i;
+                currentUI.SetMode(EnumTypes.ItemUIMode.StoreBuy);
+                currentUI.InitItemUI(storeItem, () => SelectStoreItem(storeItem, currentUI));
             }
             else
             {
@@ -200,12 +211,27 @@ public class StoreUI : MonoBehaviour
             storeSystem.OnFailedTransaction -= HandleFailedTransaction;
         }
     }
+    private string GetTypeText(EnumTypes.ITEM_TYPE type)
+    {
+        switch(type)
+        {
+            case EnumTypes.ITEM_TYPE.WP:
+                return "무기";
+            case EnumTypes.ITEM_TYPE.CB:
+                return "소비 아이템";
+            default:
+                return "기타";
+        }
+    }
     #region 팝업 전용
     public void ShowPopUp(bool enabled, string text = "")
     {
         popupText.text = text;
         popupPanel.SetActive(enabled);
-        StartCoroutine(OffPopUpTimer());
+        if (popupCoroutine != null)
+            StopCoroutine(popupCoroutine);
+
+        popupCoroutine = StartCoroutine(OffPopUpTimer());
     }
     IEnumerator OffPopUpTimer()
     {

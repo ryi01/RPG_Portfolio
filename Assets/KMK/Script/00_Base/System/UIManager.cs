@@ -12,13 +12,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Text storeGoldText;
     private void Awake()
     {
-        inventoryUI.InitInventoryUI();
-    }
-    private void Start()
-    {
         goldText.text = "0";
         storeGoldText.text = "0";
+        inventoryUI.InitInventoryUI();
     }
+
     #region 체력 관련
     public void BindPlayerUI(PlayerStatComponent player)
     {

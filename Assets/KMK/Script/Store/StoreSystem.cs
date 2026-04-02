@@ -1,4 +1,6 @@
+
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
 /// 해야하는 일 
@@ -21,13 +23,17 @@ public class StoreSystem : MonoBehaviour
     public Action OnChangedStoreData;
     public Action<string> OnFailedTransaction;
 
+    private List<Item> currentStoreItems = new List<Item>();
+    public List<Item> CureentStoreItems => currentStoreItems;
+
     public void OpenStore(StoreData storeData)
     {
         if (storeData == null) return;
         currentStore = storeData;
+        currentStoreItems = GetCurrentStoreItemsFromDB();
         OnOpenStore?.Invoke(currentStore);
-        
         OnChangedStoreData?.Invoke();
+        DebugStoreJoinAndType();
     }
 
     public void CloseStore()
@@ -125,5 +131,58 @@ public class StoreSystem : MonoBehaviour
     private void FailTransaction(string message)
     {
         OnFailedTransaction?.Invoke(message);
+    }
+
+    public string GetCurrentStoreName()
+    {
+        var sqliteManager = GameManager.Instance.SQLiteManager;
+        if (sqliteManager == null) return "";
+        var rows = sqliteManager.LoadStoreItemsByJoin(currentStore.StoreId);
+        if (rows == null || rows.Count == 0) return "";
+        return rows[0].StoreName;
+    }
+    private void DebugStoreJoinAndType()
+    {
+        var sqliteManager = GameManager.Instance.SQLiteManager;
+        if (sqliteManager == null) return;
+        var storeRows = sqliteManager.LoadStoreItemsByJoin(currentStore.StoreId);
+        Debug.Log($"===== [상점 연결 확인] / StoreId:{currentStore.StoreId} =====");
+        foreach (var row in storeRows)
+        {
+            Item matchedItem = currentStore.ShopItems.Find(x => x != null && x.ItemID == row.ItemId);
+            if (matchedItem == null)
+            {
+                Debug.Log($"DB ItemId:{row.ItemId} -> SO에서 못 찾음");
+                continue;
+            }
+            int dbTypeValue = sqliteManager.LoadItemType(row.ItemId);
+            string dbTypeText = dbTypeValue >= 0 ? ((EnumTypes.ITEM_TYPE)dbTypeValue).ToString() : "UnKnown";
+            Debug.Log(
+            $"상점:{row.StoreName} / " +
+            $"ItemId:{row.ItemId} / " +
+            $"이름:{matchedItem.ItemName} / " +
+            $"SO타입:{matchedItem.ItemType} / " +
+            $"DB타입:{dbTypeText} / " +
+            $"가격:{matchedItem.BuyPrice} / " );
+        }
+        Debug.Log("===== [상점 연결 확인 끝] =====");
+    }
+
+    public List<Item> GetCurrentStoreItemsFromDB()
+    {
+        List<Item> result = new List<Item>();
+        var sqliteManager = GameManager.Instance.SQLiteManager;
+        if (sqliteManager == null || currentStore == null || currentStore.ShopItems == null) return result;
+
+        var rows = sqliteManager.LoadStoreItemsByJoin(currentStore.StoreId);
+        foreach(var row in rows)
+        {
+            Item matchedItem = currentStore.ShopItems.Find(x => x != null && x.ItemID == row.ItemId);
+            if (matchedItem != null)
+            {
+                result.Add(matchedItem);
+            }
+        }
+        return result;
     }
 }
