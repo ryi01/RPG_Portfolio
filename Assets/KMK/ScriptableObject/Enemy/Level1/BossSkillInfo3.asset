@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BossSkillInfo3
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   attackMultifle: 0.8
-  attackMinRange: 6
-  attackMaxRange: 14
+  attackMinRange: 7.5
+  attackMaxRange: 15
   attackRadius: 4
   hitAngle: 360
   attackTime: 2

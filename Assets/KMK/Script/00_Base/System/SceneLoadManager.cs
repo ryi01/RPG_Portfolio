@@ -16,6 +16,12 @@ public class SceneLoadManager : MonoBehaviour
     }
     public IEnumerator ChangeSceneCor(string unloadSceneName, string loadSceneName)
     {
+        if (unloadSceneName == "PersistentScene")
+        {
+            Debug.LogError("PersistentScene은 언로드하면 안 됩니다.");
+            yield break;
+        }
+
         loadingCanvas.SetActive(true);
         loadingImage.fillAmount = 0;
 
@@ -63,7 +69,7 @@ public class SceneLoadManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
-            finalPos = dungeonGenerator.WorldStartPoint + Vector3.up * 5f;
+            finalPos = dungeonGenerator.WorldEndPoint + Vector3.up * 5f;
 
             RaycastHit hit;
 
@@ -71,7 +77,7 @@ public class SceneLoadManager : MonoBehaviour
             {
                 finalPos = hit.point + Vector3.up * 0.1f;
             }
-            else finalPos = dungeonGenerator.WorldStartPoint;
+            else finalPos = dungeonGenerator.WorldEndPoint;
         }
         else
         {

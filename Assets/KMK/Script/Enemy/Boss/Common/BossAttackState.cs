@@ -14,8 +14,15 @@ public class BossAttackState : EnemyAttackState
     private AttackPhase phase;
 
     private EnemySkillAttack currentSkill;
+    private EnemySkillAttack reservedChainSkill;
     private bool isChaniedSkill = false;
     private bool isSetAnim = false;
+
+    private int lastSkillIndex = -1;
+
+    private float prepareMoveTime = 0f;
+    [SerializeField] private float maxPrepareMoveTime = 1.2f;
+
 
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -24,6 +31,7 @@ public class BossAttackState : EnemyAttackState
         controller.NavigationStop();
         isSetAnim = false;
         isChaniedSkill = false;
+        currentSkill = null;
         if (controller.BossLightning != null) Anim.SetBool("Run", false);
 
         // 만약 외부(Idle)에서 주입된 스킬 데이터가 있다면 바로 할당
@@ -32,7 +40,7 @@ public class BossAttackState : EnemyAttackState
             currentSkill = skillData;
             phase = AttackPhase.Prepare; // 선택 건너뛰고 바로 준비로
         }
-        else currentSkill = null;
+
     }
     // originMaterial 기억
 
@@ -64,34 +72,34 @@ public class BossAttackState : EnemyAttackState
     {
         // 컨트롤러를 
         float dis = controller.GetPlayerDis();
-        List<EnemySkillAttack> candiateSkills = new List<EnemySkillAttack>();
-        foreach(var skill in controller.BossSkill.SkillList)
+        List<EnemySkillAttack> candidateSkills = new List<EnemySkillAttack>();
+
+        foreach (var skill in controller.BossSkill.SkillList)
         {
             if (skill == null || !skill.IsReady) continue;
-            if(skill is BossSummonSkillAttack)
+
+            if (skill is BossSummonSkillAttack)
             {
                 if (controller.BossSummon == null || !controller.BossSummon.CanSummon()) continue;
             }
-            if(dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
+
+            if (dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
             {
-                candiateSkills.Add(skill);
+                candidateSkills.Add(skill);
             }
         }
-        if(candiateSkills.Count == 0)
+
+        if (candidateSkills.Count == 0)
         {
             currentSkill = null;
             controller.TransitionToState(EnumTypes.STATE.DETECT);
             return;
         }
-        else
-        {
-            // 후보 스킬 중 랜덤 선택
-            int rand = UnityEngine.Random.Range(0, candiateSkills.Count);
-            currentSkill = candiateSkills[rand];
-        }
 
+        currentSkill = ChooseBossSkill(candidateSkills, dis);
         phase = AttackPhase.Prepare;
     }
+
     private void PrepareAttack()
     {
         if (currentSkill == null)
@@ -99,6 +107,23 @@ public class BossAttackState : EnemyAttackState
             controller.TransitionToState(EnumTypes.STATE.DETECT);
             return;
         }
+        float dis = controller.GetPlayerDis();
+        if (!isChaniedSkill && !IsGoodAttackDistance(currentSkill, dis))
+        {
+            prepareMoveTime += Time.deltaTime;
+            controller.NavigationResume(1.2f);
+            controller.NavMeshAgent.SetDestination(controller.Player.transform.position);
+            if(prepareMoveTime >= maxPrepareMoveTime)
+            {
+                prepareMoveTime = 0f;
+                currentSkill = null;
+                isChaniedSkill = false;
+                phase = AttackPhase.Select;
+            }
+            return;
+        }
+        prepareMoveTime = 0f;
+        controller.NavigationStop();
         if (!isSetAnim)
         {
             isSetAnim = true;
@@ -141,20 +166,19 @@ public class BossAttackState : EnemyAttackState
     }
     private void Recover()
     {
-        
+        lastSkillIndex = currentSkill != null ? currentSkill.SkillIndex : -1;
         if (currentSkill != null && currentSkill.ChainNextSkill)
         {
             currentSkill = controller.BossSkill.SkillList[currentSkill.NextSkillIndex];
             isChaniedSkill = true;
+            isSetAnim = false;
             phase = AttackPhase.Prepare;
+            return;
         }
-        else
-        {
-            isChaniedSkill = false;
-            currentSkill = null;
-            controller.TransitionToState(EnumTypes.STATE.IDLE);
-        }
+        isChaniedSkill = false;
         isSetAnim = false;
+        currentSkill = null;
+        phase = AttackPhase.Select;
     }
 
 
@@ -175,7 +199,8 @@ public class BossAttackState : EnemyAttackState
     {
         // 0번 레이어의 현재 상태 정보를 가져옴
         AnimatorStateInfo stateInfo = Anim.GetCurrentAnimatorStateInfo(0);
-        
+
+        if (Anim.IsInTransition(0)) return true;
         // 태그가 "Attack"인가?
         if (!stateInfo.IsTag("Attack")) return false;
 
@@ -192,5 +217,42 @@ public class BossAttackState : EnemyAttackState
         controller.NavMeshAgent.speed = controller.StatComp.SetSpeedMultifle(1f);
         controller.NavMeshAgent.acceleration = 8f;
 
+    }
+
+    private EnemySkillAttack ChooseBossSkill(List<EnemySkillAttack> candidateSkills, float dis)
+    {
+        if (dis >= 7f)
+        {
+            foreach (var skill in candidateSkills)
+            {
+                if (skill is BossDashSkillAttack)
+                    return skill;
+            }
+        }
+
+        // 같은 스킬 반복 줄이기
+        List<EnemySkillAttack> filtered = new List<EnemySkillAttack>();
+        foreach (var skill in candidateSkills)
+        {
+            if (skill.SkillIndex != lastSkillIndex)
+                filtered.Add(skill);
+        }
+
+        if (filtered.Count > 0)
+            return filtered[UnityEngine.Random.Range(0, filtered.Count)];
+
+        return candidateSkills[UnityEngine.Random.Range(0, candidateSkills.Count)];
+    }
+
+    private bool IsGoodAttackDistance(EnemySkillAttack skill, float dis)
+    {
+        if (skill == null) return false;
+
+        float preferredMin = skill.AttackMinRange;
+        float preferredMax = skill.AttackMaxRange;
+
+        if (!(skill is BossDashSkillAttack)) preferredMax -= 0.7f;
+
+        return dis >= preferredMin && dis <= preferredMax;
     }
 }

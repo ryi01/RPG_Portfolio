@@ -14,7 +14,7 @@ public abstract class EnemyState : MonoBehaviour
     [Range(1f, 2f)]
     [SerializeField] protected float animSpeed;
 
-
+    protected ParticleSystem effect;
     public virtual void Intialize(EnemyController owner)
     {
         controller = owner;
@@ -27,7 +27,25 @@ public abstract class EnemyState : MonoBehaviour
 
     public abstract void UpdateState();
     public virtual void ExitState() { }
-
+    protected void SetEffect(ParticleSystem particle)
+    {
+        effect = particle;
+    }
+    protected virtual void PlayEffect()
+    {
+        if (effect != null)
+        {
+            effect.Play();
+        }
+    }
+    protected virtual void StopPlayEffect(bool isClear = false)
+    {
+        if (effect != null)
+        {
+            if(isClear) effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            else effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
     protected virtual bool CheckDeath()
     {
         if(controller.StatComp.CurrentHP <= 0)
@@ -63,5 +81,26 @@ public abstract class EnemyState : MonoBehaviour
         Vector3 dir = GetFlatDir(target);
         if (dir.sqrMagnitude < 0.001f) return;
         controller.transform.rotation = Quaternion.LookRotation(dir);
+    }
+
+    protected bool HasAnyAvailableSkillInRange(float dis)
+    {
+        if (controller.BossSkill == null || controller.BossSkill.SkillList == null) return false;
+
+        foreach (var skill in controller.BossSkill.SkillList)
+        {
+            if (skill == null || !skill.IsReady) continue;
+
+            if (skill is BossSummonSkillAttack)
+            {
+                if (controller.BossSummon == null || !controller.BossSummon.CanSummon())
+                    continue;
+            }
+
+            if (dis >= skill.AttackMinRange && dis <= skill.AttackMaxRange)
+                return true;
+        }
+
+        return false;
     }
 }

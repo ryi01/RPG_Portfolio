@@ -51,7 +51,7 @@ public class QuestNPCInteraction : BaseNPCInteraction
         {
             SetIcon(doneSprite);
         }
-        if (state == EnumTypes.QUEST.IN_PROGRESS || state == EnumTypes.QUEST.OBJECTIVE_DONE)
+        if (state == EnumTypes.QUEST.IN_PROGRESS)
         {
             EnsurePortal();
         }

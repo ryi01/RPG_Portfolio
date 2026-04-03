@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -45,6 +46,7 @@ public class BulletCollision : MonoBehaviour
         {
             return;
         }
+
         if ((hitLayer.value & (1 << other.gameObject.layer)) > 0)
         {
             OnHitTarget(other, hitPoint);
@@ -91,12 +93,11 @@ public class BulletCollision : MonoBehaviour
         }
 
         ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
+        
         foreach(var ps in particles)
         {
-            if (ps.gameObject == gameObject) continue;
             ps.transform.SetParent(null);
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            Destroy(ps.gameObject, 2);
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
 
         TargetMovement movement = GetComponentInParent<TargetMovement>();

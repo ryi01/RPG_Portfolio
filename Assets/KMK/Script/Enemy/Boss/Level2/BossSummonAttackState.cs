@@ -13,7 +13,11 @@ public class BossSummonAttackState : EnemyAttackState
     private EnemySkillAttack lastUsedSkill = null;
 
     [SerializeField] private float summonChance = 0.3f;
-    [SerializeField] private bool IsReturnToDetectIsNoSkill = true;
+    [SerializeField] private float summonBlockTime = 5f;
+    [SerializeField] private bool isReturnToDetectIfNoSkill = true;
+    [SerializeField] private bool allowSameSkillTwice = false;
+
+    private float lastSummonTime = -999f;
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
@@ -24,6 +28,10 @@ public class BossSummonAttackState : EnemyAttackState
         if (data is EnemySkillAttack skillData)
         {
             currentSkill = skillData;
+        }
+        if (Anim != null)
+        {
+            Anim.SetInteger("State", (int)EnumTypes.STATE.ATTACK);
         }
     }
 
@@ -44,12 +52,13 @@ public class BossSummonAttackState : EnemyAttackState
         if (currentSkill == null) currentSkill = SelectSkillDistance();
         if (currentSkill == null)
         {
-            controller.TransitionToState(EnumTypes.STATE.DETECT);
+            if (isReturnToDetectIfNoSkill) controller.TransitionToState(EnumTypes.STATE.DETECT);
+            else controller.TransitionToState(EnumTypes.STATE.IDLE);
+
             return;
         }
 
         StartSkill();
-
     }
 
     public override void ExitState()
@@ -59,6 +68,11 @@ public class BossSummonAttackState : EnemyAttackState
     }
     private void InitSkills()
     {
+        summonSkill = null;
+        homingSkill = null;
+        knockbackSkill = null;
+        linearSkill = null;
+
         var skills = controller.BossSkill.SkillList;
 
         if (skills == null) return;
@@ -75,25 +89,50 @@ public class BossSummonAttackState : EnemyAttackState
     {
         float dis = controller.GetPlayerDis();
 
-        EnemySkillAttack[] skills = controller.BossSkill.SkillList;
-        List<EnemySkillAttack> candidates = new List<EnemySkillAttack>();
-
-        if (dis <= 5 && CanUseSkill(knockbackSkill, dis)) return knockbackSkill;
-        if(CanUseSkill(linearSkill, dis)) candidates.Add(linearSkill);
-        if (CanUseSkill(homingSkill, dis)) candidates.Add(homingSkill);
-        if (CanUseSummonSkill(summonSkill, dis) && lastUsedSkill != summonSkill && Random.value < summonChance) candidates.Add(summonSkill);
-        
-        if (candidates.Count > 0)
+        if (dis <= 5 && CanSelectSkill(knockbackSkill, dis, true))
         {
-            int rnd = Random.Range(0, candidates.Count);
-            return candidates[rnd];
+            return knockbackSkill;
         }
+
+        List<EnemySkillAttack> candidates = new List<EnemySkillAttack>();
+        AddCandidate(candidates, linearSkill, dis);
+        AddCandidate(candidates, homingSkill, dis);
+
+        if (CanSelectSummonSkill(summonSkill, dis, true) && Random.value < summonChance)
+        {
+            candidates.Add(summonSkill);
+        }
+        
+        EnemySkillAttack selected = SelectRandomCandidate(candidates);
+        if (selected != null) return selected;
 
         if (CanUseSkill(linearSkill, dis)) return linearSkill;
         if (CanUseSkill(homingSkill, dis)) return homingSkill;
         if (CanUseSkill(knockbackSkill, dis)) return knockbackSkill;
-        if (CanUseSummonSkill(summonSkill, dis) && Random.value < summonChance) return summonSkill;
+
         return null;
+    }
+    private void AddCandidate(List<EnemySkillAttack> list, EnemySkillAttack skill, float dis)
+    {
+        if (CanSelectSkill(skill, dis, true))
+        {
+            list.Add(skill);
+        }
+    }
+
+    private EnemySkillAttack SelectRandomCandidate(List<EnemySkillAttack> list)
+    {
+        if (list == null || list.Count == 0) return null;
+
+        int rndIndex = Random.Range(0, list.Count);
+        return list[rndIndex];
+    }
+
+    private bool CanSelectSkill(EnemySkillAttack skill, float dis, bool blockSameSkill)
+    {
+        if (!CanUseSkill(skill, dis)) return false;
+        if (!allowSameSkillTwice && blockSameSkill && blockSameSkill && skill == lastUsedSkill) return false;
+        return true;
     }
     private void StartSkill()
     {
@@ -113,15 +152,25 @@ public class BossSummonAttackState : EnemyAttackState
     {
         if (currentSkill == null) return;
         lastUsedSkill = currentSkill;
-
         currentSkill.SetLastTime();
+        if (currentSkill == summonSkill)
+        {
+            lastSummonTime = Time.time;
+        }
+    }
+
+    private bool CanSelectSummonSkill(EnemySkillAttack skill, float dis, bool blockSameSkill)
+    {
+        if(!CanUseSummonSkill(skill, dis)) return false;
+        if (!allowSameSkillTwice && blockSameSkill && skill == lastUsedSkill) return false;
+        return true;
     }
 
     private bool CanUseSummonSkill(EnemySkillAttack skill, float distance)
     {
-        if(!CanUseSkill(skill, distance)) return false;
-        if(!controller.BossSummon.CanSummon()) return false;
-        if(!skill.IsReady) return false;
+        if (!CanUseSkill(skill, distance)) return false;
+        if (controller.BossSummon == null || !controller.BossSummon.CanSummon()) return false;
+        if (Time.time < lastSummonTime + summonBlockTime) return false;
         return true;
     }
     private bool CanUseSkill(EnemySkillAttack skill, float distance)
@@ -136,7 +185,7 @@ public class BossSummonAttackState : EnemyAttackState
     public void OnAttackFinish()
     {
         currentSkill = null;
-        if (IsReturnToDetectIsNoSkill) controller.TransitionToState(EnumTypes.STATE.DETECT);
+        if (isReturnToDetectIfNoSkill) controller.TransitionToState(EnumTypes.STATE.DETECT);
         else controller.TransitionToState(EnumTypes.STATE.IDLE);
     }
 }

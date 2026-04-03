@@ -8,6 +8,7 @@ public class EnemyDamageState : EnemyState
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
         base.EnterState(state, data);
+        SetEffect(hitParticle);
         float force = statComp.NockbackForce;
         Transform attacker = null;
         if (data is HitData hitData)
@@ -22,7 +23,7 @@ public class EnemyDamageState : EnemyState
         controller.NavigationStop();
         // 파티클 
         // 애니메이션
-        if (hitParticle != null) hitParticle.Play();
+        PlayEffect();
         if (Anim != null) Anim.SetInteger("State", (int)state);
         if (hitCoroutine != null) StopCoroutine(hitCoroutine);
         Vector3 dir;

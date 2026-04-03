@@ -17,7 +17,7 @@ MonoBehaviour:
   attackMaxRange: 15
   attackRadius: 2.5
   hitAngle: 360
-  attackTime: 3
+  attackTime: 2
   nockbackForce: 2
   coolTime: 15
   animTrigger: Skill2
@@ -26,3 +26,4 @@ MonoBehaviour:
   needDash: 0
   nextSkillIndex: 1
   chainNextSkill: 0
+  audioClip: {fileID: 0}

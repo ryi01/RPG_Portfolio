@@ -2,17 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BossLightningComponent : MonoBehaviour
 {
     [SerializeField] private GameObject wariningPrefab;
     [SerializeField] private GameObject lightningPrefab;
-    [SerializeField] private float lightningInterval = 2.0f;
-    [SerializeField] private float strikeDelay = 1.0f;
+
+    [SerializeField] private float lightningInterval = 1.8f;
+    [SerializeField] private float strikeDelay = 0.55f;
+    [SerializeField] private float multiStrikeGap = 0.12f;
+
+    [SerializeField] private int strikeCount = 3;
+    [SerializeField] private float strikeRadius = 2.8f;
+    [SerializeField] private float groundY = 0.5f;
+    [SerializeField] private float boltLifeTime = 1.5f;
 
     private EnemyController controller;
     private Coroutine lightCoroutine;
-    private List<GameObject> lightList = new List<GameObject>();
+
+    private List<GameObject> activeWarnings = new List<GameObject>();
+    private List<GameObject> activeBolts = new List<GameObject>();
 
     private void Awake()
     {
@@ -38,54 +48,126 @@ public class BossLightningComponent : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(lightningInterval);
-            if (controller.Player == null) yield break;
-            if (controller.CurrentState != null && controller.CurrentState.StateType == EnumTypes.STATE.DEATH) yield break;
-            Vector3 strikePos = controller.Player.transform.position;
-            strikePos.y = 0.5f;
+            if(!CanRunPattern())
+            {
+                StopPattern();
+                yield break;
+            }
 
-            yield return StartCoroutine(ExecuteLightning(strikePos));
+            List<Vector3> strikePos = BuildStrikePositions();
+
+            for (int i = 0; i < strikePos.Count; i++)
+            {
+                StartCoroutine(ExecuteLightning(strikePos[i]));
+                if (i < strikePos.Count - 1) yield return new WaitForSeconds(multiStrikeGap);
+            }
         }
     }
+    private bool CanRunPattern()
+    {
+        if (controller == null) return false;
+        if (controller.Player == null) return false;
+        if (controller.CurrentState != null &&
+            controller.CurrentState.StateType == EnumTypes.STATE.DEATH) return false;
+
+        return true;
+    }
+    private List<Vector3> BuildStrikePositions()
+    {
+        List<Vector3> positions = new List<Vector3>();
+
+        Vector3 center = controller.Player.transform.position;
+        center.y = groundY;
+
+        float startAngle = UnityEngine.Random.Range(0f, 360f);
+        float angleStep = 360f / strikeCount;
+
+        for (int i = 0; i< strikeCount; i++)
+        {
+            float angle = startAngle + angleStep * i + UnityEngine.Random.Range(-20f, 20f);
+            float rad = angle * Mathf.Deg2Rad;
+
+            Vector3 dir = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad));
+            Vector3 pos = center + dir * strikeRadius;
+            pos.y = groundY;
+
+            positions.Add(pos);
+        }
+
+        return positions;
+    }
+
     private IEnumerator ExecuteLightning(Vector3 pos)
     {
-        GameObject warning = Instantiate(wariningPrefab, pos, Quaternion.identity);
+        GameObject warning = null;
 
-        lightList.Add(warning);
-
-        warning.transform.localScale = Vector3.zero;
+        if(wariningPrefab != null)
+        {
+            warning = Instantiate(wariningPrefab, pos, Quaternion.identity);
+            activeWarnings.Add(warning);
+            warning.transform.localScale = Vector3.zero;
+        }
         float elapsed = 0;
 
         while (elapsed < strikeDelay)
         {
-            if (warning == null) yield break;
-            elapsed += Time.deltaTime;
-            float ratio = elapsed / strikeDelay;
+            if(!CanRunPattern())
+            {
+                RemoveWarning(warning);
+                yield break;
+            }
 
-            warning.transform.localScale = Vector3.one * ratio;
+            elapsed += Time.deltaTime;
+            float ratio = Mathf.Clamp01(elapsed / strikeDelay);
+            if (warning != null)
+            {
+                // 마지막으로 갈수록 더 빠르게 커지는 느낌
+                float scale = Mathf.Lerp(0f, 1f, ratio * ratio * 1.15f);
+                warning.transform.localScale = Vector3.one * Mathf.Clamp01(scale);
+            }
+
             yield return null;
         }
 
-        if (warning != null)
+        RemoveWarning(warning);
+
+        if (!CanRunPattern()) yield break;
+
+        GameObject bolt = Instantiate(lightningPrefab, pos, Quaternion.identity);
+        activeBolts.Add(bolt);
+        StartCoroutine(DestroyBoltAfterTime(bolt, boltLifeTime));
+    }
+    private IEnumerator DestroyBoltAfterTime(GameObject bolt, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if(bolt != null)
         {
-            lightList.Remove(warning);
+            activeBolts.Remove(bolt);
+            Destroy(bolt);
+        }
+    }    
+
+    private void RemoveWarning(GameObject warning)
+    {
+        if(warning != null)
+        {
+            activeWarnings.Remove(warning);
             Destroy(warning);
         }
-        
-        GameObject bolt = Instantiate(lightningPrefab, pos, Quaternion.identity);
-        Destroy(bolt, 2);
     }
-
     private void ClearAll()
     {
-        if(lightCoroutine != null)
+        for(int i = 0; i < activeWarnings.Count; i++)
         {
-            StopCoroutine(lightCoroutine);
-            lightCoroutine = null;
+            if (activeWarnings[i] != null) Destroy(activeWarnings[i]);
         }
-        foreach(var obj in lightList)
+        activeWarnings.Clear();
+
+        for(int i = 0; i < activeBolts.Count;i++)
         {
-            if (obj != null) Destroy(obj);
+            if (activeBolts[i] != null) Destroy(activeBolts[i]);
         }
-        lightList.Clear();
+        activeBolts.Clear();
     }
 }

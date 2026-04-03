@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class BossDashSkillAttack : EnemySkillAttack
 {
     [SerializeField] private BossMaterialHandle dashEffectHandler;
+    [SerializeField] private float chargeDuration = 0.6f;
+    [SerializeField] private float dashDistance = 10f;
+    [SerializeField] private float endDelay = 0.05f;
 
     private Coroutine dashCoroutine;
 
@@ -43,7 +46,6 @@ public class BossDashSkillAttack : EnemySkillAttack
         transform.forward = dashDir;
 
         owner.NavigationStop();
-        float chargeDuration = 2;
         float elapsed = 0;
 
         while (elapsed < chargeDuration)
@@ -77,7 +79,7 @@ public class BossDashSkillAttack : EnemySkillAttack
         owner.NavMeshAgent.speed = owner.StatComp.SetSpeedMultifle(6);
         owner.NavMeshAgent.acceleration = 1000f;
         // 최종 위치 결정
-        Vector3 targetPos = transform.position + (dashDir * 10f);
+        Vector3 targetPos = transform.position + (dashDir * dashDistance);
 
         owner.NavMeshAgent.SetDestination(targetPos);
         dashEffectHandler.ClearChargingOutline();
@@ -97,7 +99,7 @@ public class BossDashSkillAttack : EnemySkillAttack
             if (!owner.NavMeshAgent.pathPending && owner.NavMeshAgent.remainingDistance <= 0.5f) break;
             yield return null;
         }
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(endDelay);
 
         ForceStop();
     }

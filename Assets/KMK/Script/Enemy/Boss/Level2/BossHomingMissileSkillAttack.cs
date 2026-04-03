@@ -13,10 +13,17 @@ public class BossHomingMissileSkillAttack : EnemySkillAttack
             missile.GetComponentInChildren<BulletCollision>().Owner = this.GetComponent<BaseController>();
         }
     }
-
-    public void OnFireMissile()
+    public void OnMissileEffect()
     {
         PlayEffect();
+    }
+    public void OnMissileEffectOff()
+    {
+        StopPlayEffect();
+    }
+    public void OnFireMissile()
+    {
+        
         Attack();
     }
 }

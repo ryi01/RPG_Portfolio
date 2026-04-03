@@ -3,7 +3,7 @@ using UnityEngine;
 public class BossIdleState : EnemyIdleState
 {
     private float nextAttackTime = 0f;
-    private const float ATTACK_COOLDOWN = 1;
+    private const float ATTACK_COOLDOWN = 0.3f;
 
     public override void EnterState(EnumTypes.STATE state, object data = null)
     {
@@ -17,7 +17,7 @@ public class BossIdleState : EnemyIdleState
 
         float dis = controller.GetPlayerDis();
 
-        if (dis <= statComp.AttackRange)
+        if (HasAnyAvailableSkillInRange(dis))
         {
             controller.TransitionToState(EnumTypes.STATE.ATTACK);
             return;
@@ -30,6 +30,7 @@ public class BossIdleState : EnemyIdleState
         }
 
     }
+
     private void RotateToPlayer()
     {
         Vector3 dir = controller.Player.transform.position - controller.transform.position;

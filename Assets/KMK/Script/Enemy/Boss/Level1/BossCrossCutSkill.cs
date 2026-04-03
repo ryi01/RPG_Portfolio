@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class BossCrossCutSkill : EnemySkillAttack
 {
-
     private void OnEnable()
     {
         owner.BossPhase.OnPhaseTwoStarted += EnterBossPhase;
@@ -10,13 +9,6 @@ public class BossCrossCutSkill : EnemySkillAttack
     private void OnDisable()
     {
         owner.BossPhase.OnPhaseTwoStarted -= EnterBossPhase;
-    }
-    private void Start()
-    {
-        if (TryGetComponent<TrailRenderer>(out TrailRenderer trail))
-        {
-            trail.emitting = false;
-        }
     }
 
     private void EnterBossPhase()
@@ -29,19 +21,13 @@ public class BossCrossCutSkill : EnemySkillAttack
         Attack();
     }
 
-    public void TrailOn()
+    public void EffectOn()
     {
-        if(TryGetComponent<TrailRenderer>(out TrailRenderer trail))
-        {
-            trail.emitting = true;  
-        }
+        PlayEffect();
     }
 
-    public void TrailOff()
+    public void EffectOff()
     {
-        if (TryGetComponent<TrailRenderer>(out TrailRenderer trail))
-        {
-            trail.emitting = false;
-        }
+        StopPlayEffect();
     }
 }

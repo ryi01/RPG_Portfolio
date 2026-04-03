@@ -21,8 +21,10 @@ public class Portal : InteractionObject
 
         string currentSceneName = gameObject.scene.name;
 
-        sceneCoordinator.ChangeScene(currentSceneName, targetSceneName);
+        sceneCoordinator.ChangeScene(targetSceneName);
 
         isChangeScene = true;
+
+        Destroy(gameObject, 2f);
     }
 }

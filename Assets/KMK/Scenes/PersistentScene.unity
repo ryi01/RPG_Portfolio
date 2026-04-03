@@ -11281,9 +11281,9 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: ece45c69151ab864db5e35eb571908c5, type: 3}
   - type: 1
     clip: {fileID: 8300000, guid: 4524f6cc20daa624d8013966ea233aee, type: 3}
-  - type: 3
-    clip: {fileID: 8300000, guid: cabc8209bcf62404bbfb69f3668db1c3, type: 3}
   - type: 2
+    clip: {fileID: 8300000, guid: cabc8209bcf62404bbfb69f3668db1c3, type: 3}
+  - type: 3
     clip: {fileID: 8300000, guid: 37e03668d1997584eb372937c30eaab2, type: 3}
 --- !u!82 &117154607
 AudioSource:
@@ -82504,7 +82504,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b28d4d8f40cfd474a802ae7cb1f21798, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoreSystem
-  currentStore: {fileID: 0}
   goldSystem: {fileID: 1779133851}
   inventorySystem: {fileID: 1779133843}
 --- !u!114 &1779133843
@@ -82670,9 +82669,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DungeonGenerator
   pointCount: 5
   areaSize: 100
-  minDis: 12
-  mapWidth: 150
-  mapHeight: 150
+  minDis: 20
+  mapWidth: 200
+  mapHeight: 200
   tileSize: 2
   roomPrefab: {fileID: 311458151896177282, guid: 07abe8bc569969949b373ef2c5fbf8b6, type: 3}
   corridorPrefab: {fileID: 8349804408905604410, guid: c2cd213adc927324dbb057d6822d9017, type: 3}
@@ -83438,7 +83437,7 @@ MonoBehaviour:
   attackShake: {x: 1.1, y: 0.3}
   impactScaleAndDuration: {x: 0.25, y: 0.15}
   zoomSizeAndDuration: {x: 44, y: 0.15}
-  stopTime: 0.08
+  stopTime: 0.05
   isAttackShake: 0
   isHitShake: 0
   isHitStop: 0

@@ -149,11 +149,20 @@ public class EnemyController : BaseController<EnemyStatComponent>
             Animator.SetInteger("State", 2);
         }
     }
+    private void OffCollider()
+    {
+        Collider[] cols = GetComponentsInChildren<Collider>();
 
+        for (int i = 0; i < cols.Length; i++)
+        {
+            cols[i].enabled = false;
+        }
+    }
     public virtual void OnDeathEntered(object data = null)
     {
         BossQuest?.HandleBossDeath();
         BossSummon?.ClearAll();
         BossLightning?.StopPattern();
+        OffCollider();
     }
 }

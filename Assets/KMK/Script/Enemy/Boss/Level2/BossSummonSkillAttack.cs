@@ -14,9 +14,18 @@ public class BossSummonSkillAttack : EnemySkillAttack
         owner.BossSummon.SummonAround(center);
     }
 
-    public void OnSummon()
+    public void OnEffectPlay()
     {
         PlayEffect();
+    }
+
+    public void OnSummon()
+    {
         Attack();
+    }
+
+    public void OnEffectOff()
+    {
+        StopPlayEffect();
     }
 }

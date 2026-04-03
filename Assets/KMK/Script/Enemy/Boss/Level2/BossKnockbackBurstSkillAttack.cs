@@ -6,10 +6,18 @@ public class BossKnockbackBurstSkillAttack : EnemySkillAttack
     {
         RangeAngleTargetAttack(skillInfo);
     }
+    public void OnBurstEffect()
+    {
+        PlayEffect();
+    }
+    public void OnBurstEffectOff()
+    {
+        StopPlayEffect();
+    }
 
     public void OnBurst()
     {
-        PlayEffect();
+       
         Attack();
     }
 }
