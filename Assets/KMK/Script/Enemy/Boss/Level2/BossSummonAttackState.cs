@@ -97,14 +97,20 @@ public class BossSummonAttackState : EnemyAttackState
         List<EnemySkillAttack> candidates = new List<EnemySkillAttack>();
         AddCandidate(candidates, linearSkill, dis);
         AddCandidate(candidates, homingSkill, dis);
-
-        if (CanSelectSummonSkill(summonSkill, dis, true) && Random.value < summonChance)
+        EnemySkillAttack attackSelected = SelectRandomCandidate(candidates);
+        if(attackSelected != null)
         {
-            candidates.Add(summonSkill);
+            if (CanSelectSummonSkill(summonSkill, dis, true) && Random.value < summonChance)
+            {
+                return summonSkill;
+            }
+            return attackSelected;
         }
-        
-        EnemySkillAttack selected = SelectRandomCandidate(candidates);
-        if (selected != null) return selected;
+
+        if (CanSelectSummonSkill(summonSkill, dis, true))
+        {
+            return summonSkill;
+        }
 
         if (CanUseSkill(linearSkill, dis)) return linearSkill;
         if (CanUseSkill(homingSkill, dis)) return homingSkill;

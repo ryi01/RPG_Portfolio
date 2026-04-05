@@ -14,7 +14,7 @@ public class BossAttackState : EnemyAttackState
     private AttackPhase phase;
 
     private EnemySkillAttack currentSkill;
-    private EnemySkillAttack reservedChainSkill;
+
     private bool isChaniedSkill = false;
     private bool isSetAnim = false;
 
@@ -108,6 +108,24 @@ public class BossAttackState : EnemyAttackState
             return;
         }
         float dis = controller.GetPlayerDis();
+        if(currentSkill is BossThrowSkill throwSkill)
+        {
+            controller.NavigationStop();
+            if(!isSetAnim)
+            {
+                isSetAnim = true;
+                if (currentSkill.NeedLookAtTarget && !isChaniedSkill)
+                {
+                    LookAtTarget();
+                }
+                controller.IsSkillLocked = currentSkill.LockStateDuringSkill;
+                Anim.SetInteger("State", 3);
+                Anim.SetInteger("Skill", currentSkill.SkillIndex);
+            }
+
+            phase = AttackPhase.Execute;
+            return;
+        }
         if (!isChaniedSkill && !IsGoodAttackDistance(currentSkill, dis))
         {
             prepareMoveTime += Time.deltaTime;
@@ -135,6 +153,9 @@ public class BossAttackState : EnemyAttackState
             {
                 LookAtTarget();
             }
+
+            controller.IsSkillLocked = currentSkill.LockStateDuringSkill;
+
             Anim.SetInteger("State", 3);
             Anim.SetInteger("Skill", currentSkill.SkillIndex);
 
@@ -166,6 +187,7 @@ public class BossAttackState : EnemyAttackState
     }
     private void Recover()
     {
+        controller.IsSkillLocked = false;
         lastSkillIndex = currentSkill != null ? currentSkill.SkillIndex : -1;
         if (currentSkill != null && currentSkill.ChainNextSkill)
         {
@@ -191,7 +213,7 @@ public class BossAttackState : EnemyAttackState
 
         ResetAttackState();
         currentSkill = null;
-
+        controller.IsSkillLocked = false;
         base.ExitState();
     }
 
@@ -221,7 +243,7 @@ public class BossAttackState : EnemyAttackState
 
     private EnemySkillAttack ChooseBossSkill(List<EnemySkillAttack> candidateSkills, float dis)
     {
-        if (dis >= 7f)
+        if (dis >= 11f)
         {
             foreach (var skill in candidateSkills)
             {

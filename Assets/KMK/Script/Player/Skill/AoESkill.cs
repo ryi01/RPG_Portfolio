@@ -13,11 +13,12 @@ public class AoESkill : PlayerSkillAttack
     }
     public void OnAoESkill()
     {
-        pc.CameraShakeController.PlayMotionBlur(0.35f, 0.1f);
+        var gm = GameManager.Instance;
+        gm.CameraShakeController.PlayMotionBlur(0.35f, 0.1f);
 
-        pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
-        pc.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y, 0.08f);
-        pc.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
+        gm.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
+        gm.CameraShakeController.Zoom(zoomSizeAndDuration.x, zoomSizeAndDuration.y, 0.08f);
+        gm.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
         
         Attack();
     }
@@ -56,5 +57,6 @@ public class AoESkill : PlayerSkillAttack
     public void MakeEffect()
     {
         PlayEffect();
+        PlayImpactSFX();
     }
 }

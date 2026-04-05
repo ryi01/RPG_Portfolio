@@ -9,7 +9,6 @@ using UnityEngine.UIElements;
 
 // 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
 [RequireComponent(typeof(PlayerStatComponent))]
-[RequireComponent(typeof(CombatFeedback))]
 // 추가로 할일
 // 조준 보정 => 마우스포인터와 가장 가까이 있는 Enemy로 회전
 public class PlayerController : BaseController<PlayerStatComponent>
@@ -23,6 +22,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private InventorySystem inventorySystem;
     [SerializeField] private StoreSystem storeSystem;
+    [SerializeField] private ParticleSystem hitParticle;
 
     // 입력 및 행동 관련 하위 컴포넌트
     public InputMovement MovementComp { get; private set; }
@@ -34,9 +34,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     public StoreSystem StoreSystem => storeSystem;
 
     public PlayerRewardHandler RewardHandler { get; private set; }
-    // 피격 연출 카메라 연출
-    public CombatFeedback CombatFeedback { get; private set; }
-    public CameraShakeController CameraShakeController { get; private set; }
+
 
     // 외부에서 제어하는 상태값
     public bool IsDamage { get; set; }
@@ -70,6 +68,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private InteractionObject targetInteractable;
     private bool isMoveToInteraction = false;
     private bool isStoreOpen;
+
+    [SerializeField] private float inputBufferWindow = 0.2f;
+    private float bufferedAttackTime = -1f;
+    private InputSkill.SKILLS bufferedSkill = (InputSkill.SKILLS)(-1);
+
     #endregion
     protected override void Awake()
     {
@@ -79,9 +82,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
         AttackComp = GetComponent<InputAttack>();
         SkillComp = GetComponent<InputSkill>();
         PickUpComp = GetComponent<InputPickUp>();
-        CameraShakeController = GetComponentInChildren<CameraShakeController>();
-        RewardHandler = GetComponent<PlayerRewardHandler>();
-        CombatFeedback = GetComponent<CombatFeedback>();        
+        RewardHandler = GetComponent<PlayerRewardHandler>();      
         if(trail != null) trail.emitting = false;
         currentStepInterval = UnityEngine.Random.Range(interval.x, interval.y);
     }
@@ -100,15 +101,20 @@ public class PlayerController : BaseController<PlayerStatComponent>
     // Update is called once per frame
     void Update()
     {
-        if (IsDamage || GameManager.Instance.CurrentState == GameState.Pause || GameManager.Instance.CurrentState == GameState.Dialogue)
-        {
-            MovementComp.StopMove();
-            return;
-        }
         // 마우스 위치와 방향 갱신
         UpdateAimData();
         // 공격 중 버퍼 체크
         UpdateAttackLogic();
+        if (GameManager.Instance.CurrentState == GameState.Pause || GameManager.Instance.CurrentState == GameState.Dialogue)
+        {
+            MovementComp.StopMove();
+            return;
+        }
+        if(IsDamage)
+        {
+            TryConsumeBufferedInput();
+        }
+
         // 일반 입력
         HandleInput();
 
@@ -139,9 +145,16 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private bool LockAimDir()
     {
         UpdateAimData();
-        if (aimDir == Vector3.zero) return false;
-        lockedAimDir = aimDir;
-        return true;
+        if (aimDir.sqrMagnitude > 0.001f)
+        {
+            lockedAimDir = aimDir;
+            return true;
+        }
+        if (lockedAimDir.sqrMagnitude > 0.001f) return true;
+        lockedAimDir = transform.forward;
+        lockedAimDir.y = 0;
+
+        return lockedAimDir.sqrMagnitude > 0.001f;
     }
     /// <summary>
     /// 공격 중이고 버퍼가 있다면 로직 갱신
@@ -337,8 +350,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
     #region 공격 / 스킬 관련
     private void HandleAttackInput()
     {
-        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
         if (!Input.GetMouseButtonDown(0)) return;
+        if (SkillComp.IsSkillAnimation(currentSkill) || GameManager.Instance.CurrentState == GameState.Town) return;
         if (!LockAimDir()) return;
 
         ClearTarget();
@@ -349,7 +362,36 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
         AttackComp.RequestAttack(aimPoint, lockedAimDir);
     }
+    private void TryConsumeBufferedInput()
+    {
+        if (IsDamage) return;
+        if(bufferedAttackTime > 0 && Time.time - bufferedAttackTime <= inputBufferWindow)
+        {
+            bufferedAttackTime = -1f;
+            if(GameManager.Instance.CurrentState != GameState.Town && LockAimDir())
+            {
+                ClearTarget();
+                MovementComp.StopMove();
+                SetAttackLookDir(lockedAimDir);
+                RotateToAttackDir();
+                AttackComp.RequestAttack(aimPoint, lockedAimDir);
+                return;
+            }
+        }
+        if((int)bufferedSkill >=0)
+        {
+            var skill = bufferedSkill;
+            bufferedSkill = (InputSkill.SKILLS)(-1);
 
+            if (!SkillComp.IsSkillAnimation(currentSkill) && LockAimDir())
+            {
+                ClearTarget();
+                SetAttackLookDir(lockedAimDir);
+                RotateToAttackDir();
+                ExcuteSkillLogic(skill);
+            }
+        }
+    }
     private void HandleSkill()
     {
         if (SkillComp.IsSkillAnimation(currentSkill)) return;
@@ -358,8 +400,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
         {
             if (!Input.GetKeyDown(skillKeys[i])) continue;
             InputSkill.SKILLS select = (InputSkill.SKILLS)i;
-            if (SkillComp.CurrentSkillActive(select)) break;
-            if (!LockAimDir()) break;
+            if (SkillComp.CurrentSkillActive(select)) continue;
+            if (!LockAimDir()) continue;
 
             ClearTarget();
 
@@ -422,30 +464,48 @@ public class PlayerController : BaseController<PlayerStatComponent>
         if (IsBlink || IsDamage) return;
         TrailOff();
         base.Damage(damage, force, attacker);
-        if(SkillComp.IsSkillAnimation(currentSkill)) return;
+        var gm = GameManager.Instance;
         bool isBoss = false;
-        if (attacker == null) return;
-        var attackerStat = attacker.GetComponentInChildren<BaseController>() as EnemyController;
-        if (attackerStat != null && attackerStat.StatComp.IsBoss) isBoss = true;
+        hitParticle.Play();
+        if (attacker != null)
+        {
+            var enemy = attacker.GetComponentInChildren<EnemyController>();
+            if (enemy != null && enemy.StatComp.IsBoss) isBoss = true;
+        }
+
         if(isBoss)
         {
-            Vector3 dir = (transform.position - attacker.position).normalized;
-            dir.y = 0;
-            Animator.SetTrigger("Damage");
-            transform.forward = -dir;
-            CameraShakeController.PlayMotionBlur(0.3f, 0.07f);
-            CameraShakeController.ShakeCamDirectional(dir, 1.2f, 0.08f, 3.4f, true, 1.7f);
-            CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Boss);
-            MovementComp.PushByBoss(dir, force, 0.08f);
+            Vector3 dir = Vector3.zero;
+            if(attacker != null)
+            {
+                dir = (transform.position - attacker.transform.position).normalized;
+                dir.y = 0;
+            }
+            var shake = GameManager.Instance.CameraShakeController;
+            var feedback = GameManager.Instance.CombatFeedback;
+            if(shake != null)
+            {
+                shake.PlayMotionBlur(0.14f, 0.06f);
+                if(dir != Vector3.zero) shake.ShakeCamDirectional(dir, 0.32f, 0.12f, 2.6f, true, 0.85f);
+                else shake.GenerateImpulse(0.45f);
+            }
+            if (feedback != null)
+            {
+                feedback.HitStopByStrength(CombatFeedback.HitStrength.Medium);
+            }
+            if(force > 2.5f)
+            {
+                Animator.SetTrigger("Damage");
+            }
+            MovementComp.PushByBoss(dir, force * 0.4f, 0.08f);
+            return;
         }
-        else
-        {
-            CameraShakeController.GenerateImpulse(0.5f);
-            CameraShakeController.ShakeCam(0.3f, 0.07f, 2.4f);
-            CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Light);
-        }
-        
+        gm.CameraShakeController.GenerateImpulse(0.5f);
+        gm.CameraShakeController.ShakeCam(0.3f, 0.07f, 2.4f);
+        gm.CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Light);
+        hitParticle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
+
     public void OnAttackDash(float distance)
     {
         MovementComp.Push(transform.forward, distance, StatComp.KnckBackTime);
@@ -481,7 +541,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
     private bool CheckAttackSkillDamage()
     {
-        return AttackComp.IsAttackAnimation() || SkillComp.IsSkillAnimation(currentSkill) || IsDamage;
+        return AttackComp.IsAttackAnimation() || SkillComp.IsSkillAnimation(currentSkill);
     }
 
     private void OnDestroy()

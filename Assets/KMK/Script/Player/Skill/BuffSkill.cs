@@ -10,6 +10,7 @@ public class BuffSkill : PlayerSkillAttack
     {
         if (isBuff) return;
         PlayEffect();
+        PlayImpactSFX();
         StartCoroutine(BuffRoutine());
     }
     IEnumerator BuffRoutine()

@@ -14899,6 +14899,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ef6afd8e8b6bcb49b9f8a4af2d703a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightingCollision
+  clipVolume: 0.775
+  clip: {fileID: 8300000, guid: e372f7f52cf66eb45a97d411edf0f451, type: 3}
 --- !u!1 &4166887066216097152
 GameObject:
   m_ObjectHideFlags: 0

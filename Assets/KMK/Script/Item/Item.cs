@@ -11,6 +11,9 @@ public class Item : ScriptableObject
     [SerializeField] private bool isEquip;
     [SerializeField] private int buyPrice;
     [SerializeField] private int sellPrice;
+    [SerializeField]
+    [Range(0f, 1f)] protected float itemClipVolume = 0.75f;
+    [SerializeField] protected AudioClip itemClip;
 
     public EnumTypes.ITEM_TYPE ItemType { get => itemType; set => itemType = value; }
     public int ItemID { get => itemId; set => itemId = value; }

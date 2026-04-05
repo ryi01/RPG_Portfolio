@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BombMovement
   throwPower: 6.5
-  bias: 2
+  upwardForce: 4
 --- !u!135 &4352112325380732782
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -228,12 +228,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 37120
   sfxString: Portion
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
   destroyTime: 0.5
-  bulletParticle: {fileID: 4593184484909914552, guid: 2e1e9506f5904a64b81744324fb7cd50, type: 3}
+  bulletParticle: {fileID: 100000, guid: f2dba9e16cd347f44a395b8204544ee5, type: 3}
   isArrow: 1
+  impactClipVolume: 0.6
+  impactClip: {fileID: 8300000, guid: 82394cd7c127edd4788a07f0b8198677, type: 3}
 --- !u!114 &6621624955881208750
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayerMeleeAttack : MeleeAttack
 {
     protected PlayerController pc => bc as PlayerController;
-    protected bool isHitShakeSwing = false;
     protected int comboIndex = 0;
     [SerializeField] protected Vector2 hitShake;
     [SerializeField] protected Vector2 attackShake;
@@ -16,29 +15,35 @@ public class PlayerMeleeAttack : MeleeAttack
     [SerializeField] protected bool isHitStop = true;
     public override void Attack()
     {
-        isHitShakeSwing = false;
-        if(isAttackShake)
+
+        if (isAttackShake)
         {
             float multifle = 1f + comboIndex * 0.2f;
-            pc.CameraShakeController.ShakeCam(attackShake.x * multifle, attackShake.y);
+            GameManager.Instance.CameraShakeController.ShakeCam(attackShake.x * multifle, attackShake.y);
         }
         base.Attack();
     }
+    protected override void AttackReady()
+    {
+        float multifle = 1f + comboIndex * 0.25f;
 
+        // "맞았을 때" 1회만 실행되는 연출
+        if (isHitShake)
+            GameManager.Instance.CameraShakeController.ShakeCam(hitShake.x * multifle, hitShake.y);
+
+        if (isHitStop)
+            GameManager.Instance.CombatFeedback.HitStopByStrength(GetComboHitStrenght());
+        
+    }
     protected override void AttackHit(Collider hit)
     {
         base.AttackHit(hit);
-            
-        if (!isHitShakeSwing)
-        {
-            float multifle = 1f + comboIndex * 0.25f;
-            if(isHitShake)pc.CameraShakeController.ShakeCam(hitShake.x * multifle, hitShake.y);
-            if (isHitStop) pc.CombatFeedback.HitStopByStrength(GetComboHitStrenght());
-            isHitShakeSwing = true;
-        }
+          
         if (hit.TryGetComponent<BaseController>(out var target))
         {
             target.Damage(CS.FinalAttack, CS.NockbackForce, transform);
+
+            PlayImpactSFX();
         }
     }
     protected CombatFeedback.HitStrength GetComboHitStrenght()

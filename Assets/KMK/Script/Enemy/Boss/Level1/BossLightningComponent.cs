@@ -24,6 +24,10 @@ public class BossLightningComponent : MonoBehaviour
     private List<GameObject> activeWarnings = new List<GameObject>();
     private List<GameObject> activeBolts = new List<GameObject>();
 
+    [SerializeField]
+    [Range(0f, 1f)] protected float clipVolume = 1;
+    [SerializeField] protected AudioClip clip;
+
     private void Awake()
     {
         controller = GetComponent<EnemyController>();
@@ -134,6 +138,7 @@ public class BossLightningComponent : MonoBehaviour
         if (!CanRunPattern()) yield break;
 
         GameObject bolt = Instantiate(lightningPrefab, pos, Quaternion.identity);
+        GameManager.Instance.SoundManager.PlayImpactSFX(clip, clipVolume);
         activeBolts.Add(bolt);
         StartCoroutine(DestroyBoltAfterTime(bolt, boltLifeTime));
     }

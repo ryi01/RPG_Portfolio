@@ -10,6 +10,7 @@ public class CharacterStatComponent : MonoBehaviour
     private Material[] originMat;
     private SkinnedMeshRenderer[] renderers;
     private bool isMat = false;
+    private bool isInvincible = false;
 
     protected float currentHP;
     public float speedMutlfile = 1;
@@ -27,6 +28,8 @@ public class CharacterStatComponent : MonoBehaviour
     public float HitAngle { get => statinfo.hitAngle; }
     public float NockbackForce { get => statinfo.nockbackForce; }
     public float KnckBackTime { get => statinfo.nockbackTime; }
+
+    public bool IsInvincible { get => isInvincible; set => isInvincible = value; }
 
     public LayerMask TargetLayer { get => statinfo.targetLayer; }
     public LayerMask PassLayer { get => statinfo.passLayer; }
@@ -69,6 +72,7 @@ public class CharacterStatComponent : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
+        if (IsInvincible) return;
         currentHP -= damage;
         
         if(currentHP <= 0.01f)

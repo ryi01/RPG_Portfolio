@@ -6514,6 +6514,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyIdleState
   stateType: 0
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
   checkTime: 0
   checkTimeRange: {x: 2, y: 5}
 --- !u!114 &2384940347424685577
@@ -6530,6 +6532,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyWanderState
   stateType: 1
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &913031123706241744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6544,6 +6548,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetectState
   stateType: 2
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &6667028401638320237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6558,6 +6564,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackState
   stateType: 3
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &5947733984705025128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6572,6 +6580,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyReturnState
   stateType: 4
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &2084690996922472538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6586,6 +6596,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDamageState
   stateType: 5
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
   hitParticle: {fileID: 5280910925821004819}
 --- !u!114 &2651567197090475380
 MonoBehaviour:
@@ -6601,6 +6613,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStunState
   stateType: 6
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
   stunParticle: {fileID: 6460754933140752237}
   defaultStunDuration: 3
 --- !u!114 &6799416283904255116
@@ -6617,7 +6631,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathState
   stateType: 7
   animSpeed: 1
-  deathParticle: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 3}
+  clipVolume: 1
+  clip: {fileID: 0}
+  deathParticle: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
 --- !u!114 &2055518659677600253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6633,6 +6649,10 @@ MonoBehaviour:
   bc: {fileID: 3349256201958917282}
   attackTransform: {fileID: 5052559790321036121}
   hitEffectPrefab: {fileID: 0}
+  swingClipVolume: 1
+  swingClip: {fileID: 0}
+  impactClipVolume: 1
+  impactClip: {fileID: 8300000, guid: ce977001dc5583243bba7f1a6883be74, type: 3}
   bulletPrefab: {fileID: 7057945501504461240, guid: 85f1dbf38e713dc4fb0a80831647f6c1, type: 3}
 --- !u!114 &2709256724351467241
 MonoBehaviour:

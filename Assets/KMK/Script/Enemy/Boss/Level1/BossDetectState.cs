@@ -30,7 +30,10 @@ public class BossDetectState : EnemyDetectState
         controller.NavigationResume(1.5f);
         controller.NavMeshAgent.SetDestination(controller.Player.transform.position);
     }
-
+    public void OnWalkSFX()
+    {
+        PlaySFX();
+    }
     public override void ExitState()
     {
         if (Anim != null) Anim.SetBool("Run", false);

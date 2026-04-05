@@ -44,7 +44,8 @@ public class PlayerSkillAttack : PlayerMeleeAttack
         if (target != null)
         {
             if (target.GetStat.CurrentHP <= 0) return;
-            target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
+            target.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
+            PlayImpactSFX();
         }
     }
     public void UnLockSkill()

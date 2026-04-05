@@ -18,10 +18,11 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource sfxLoopSource;
     [SerializeField] private AudioSource combatSource;
 
     [SerializeField] private List<BGMData> bgmList;
-    private Dictionary<string, AudioClip> soundDict = new Dictionary<string, AudioClip>();
+   
     private Dictionary<EBGMType, AudioClip> bgmDict = new Dictionary<EBGMType, AudioClip>();
     private Dictionary<AudioClip, float> lastPlayTimeDict = new Dictionary<AudioClip, float>();
     private void Awake()
@@ -98,18 +99,19 @@ public class SoundManager : MonoBehaviour
         audioMixer.SetFloat("SFXAudio", Mathf.Log10(safeVolume / 100) * 20);
     }
 
-    public void PlayLoopSFX(AudioClip clip)
+    public void PlayLoopSFX(AudioClip clip, float volumeScale = 1f)
     {
         if (clip == null) return;
-        if (sfxSource.clip == clip && sfxSource.isPlaying) return;
+        if (sfxLoopSource.clip == clip && sfxLoopSource.isPlaying) return;
 
-        sfxSource.clip = clip;
-        sfxSource.loop = true;
-        sfxSource.Play();
+        sfxLoopSource.clip = clip;
+        sfxLoopSource.loop = true;
+        sfxLoopSource.volume = volumeScale;
+        sfxLoopSource.Play();
     }
     public void StopLoopSFX()
     {
-        sfxSource.Stop();
-        sfxSource.clip = null;
+        sfxLoopSource.Stop();
+        sfxLoopSource.clip = null;
     }
 }

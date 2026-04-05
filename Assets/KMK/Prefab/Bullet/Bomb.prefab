@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BombMovement
   throwPower: 7
-  bias: 1.5
+  upwardForce: 4
 --- !u!1 &7932921286097933101
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,12 +205,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 37632
   sfxString: Bomb
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 4096
   destroyTime: 2
   bulletParticle: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
   isArrow: 1
+  impactClipVolume: 0.4
+  impactClip: {fileID: 8300000, guid: 9706c78c60e02d547a157fa25e9655fb, type: 3}
   rb: {fileID: 2938928714078515468}
   explosionRadius: 3
   flashMat: {fileID: 2100000, guid: 7851c032e0e3e874eae0740b427864d3, type: 2}

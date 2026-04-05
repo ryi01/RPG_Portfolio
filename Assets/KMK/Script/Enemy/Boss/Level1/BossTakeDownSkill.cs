@@ -24,6 +24,10 @@ public class BossTakeDownSkill : EnemySkillAttack
     public void OnEffect()
     {
         PlayEffect();
+        if (cameraEffect == null) return;
+        cameraEffect.PlayHeavyHit();
+        PlaySwingSFX();
+        GameManager.Instance.CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Heavy);
     }
     public void OnEffectOff()
     {
@@ -31,7 +35,6 @@ public class BossTakeDownSkill : EnemySkillAttack
     }
     public void OnTakeDown()
     {
-
         Attack();
     }
 

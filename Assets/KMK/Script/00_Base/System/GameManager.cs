@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private QuestManager questManager;
     [SerializeField] private PortalSpawner portalSpawner;
     [SerializeField] private SQLiteManager sQLiteManager;
+    [SerializeField] private CombatFeedback combatFeedback;
+    [SerializeField] private CameraShakeController cameraShakeController;
 
     public PlayerStatComponent Player { get; private set; }
 
@@ -28,6 +30,9 @@ public class GameManager : MonoBehaviour
     public DialogueSystem DialogueSystem => dialogueSystem;
     public SoundManager SoundManager => soundManager;
     public PortalSpawner PortalSpawner => portalSpawner;
+    // 피격 연출 카메라 연출
+    public CombatFeedback CombatFeedback => combatFeedback;
+    public CameraShakeController CameraShakeController => cameraShakeController;
 
     public GameState CurrentState {  get; private set; }
 

@@ -6,6 +6,12 @@ public class MeleeAttack : CommonAttack
     protected float Force { get => CS.NockbackForce; }
     public virtual float CurrentRadius => CS.AttackRadius;
     [SerializeField] protected ParticleSystem hitEffectPrefab;
+    [SerializeField]
+    [Range(0f, 1f)] protected float swingClipVolume = 1;
+    [SerializeField] protected AudioClip swingClip;
+    [SerializeField]
+    [Range(0f, 1f)] protected float impactClipVolume = 1;
+    [SerializeField] protected AudioClip impactClip;
 
     public override void Attack()
     {
@@ -24,6 +30,22 @@ public class MeleeAttack : CommonAttack
         if (hitEffectPrefab != null)
         {
             hitEffectPrefab.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    public virtual void PlaySwingSFX(bool randomPitch = true)
+    {
+        if (swingClip != null)
+        {
+            GameManager.Instance.SoundManager.PlayCombatSFX(swingClip, swingClipVolume, randomPitch);
+        }
+    }
+
+    public virtual void PlayImpactSFX()
+    {
+        if (impactClip != null)
+        {
+            GameManager.Instance.SoundManager.PlayImpactSFX(impactClip, impactClipVolume);
         }
     }
     public virtual void RangeAngleTargetAttack(SkillInfo data = null)

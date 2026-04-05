@@ -21,5 +21,7 @@ MonoBehaviour:
   isEquip: 0
   buyPrice: 15
   sellPrice: 10
+  itemClipVolume: 0.75
+  itemClip: {fileID: 8300000, guid: 03a7fd2a6659d5048a4e016030e33d73, type: 3}
   cbType: 1
   upValue: 20

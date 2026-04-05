@@ -26,6 +26,10 @@ public class BossDashSkillAttack : EnemySkillAttack
         if (IsRunning || owner == null) return;
         IsRunning = true;
         IsFinished = false;
+        if(cameraEffect != null)
+        {
+            cameraEffect.PlaySpawn();
+        }
         if (dashCoroutine != null) StopCoroutine(dashCoroutine);
         dashCoroutine = StartCoroutine(WaitDash());
     }
@@ -78,6 +82,9 @@ public class BossDashSkillAttack : EnemySkillAttack
 
         owner.NavMeshAgent.speed = owner.StatComp.SetSpeedMultifle(6);
         owner.NavMeshAgent.acceleration = 1000f;
+
+        if (cameraEffect != null) cameraEffect.PlayDashMove();
+        cameraEffect.PlayDashMove();
         // 최종 위치 결정
         Vector3 targetPos = transform.position + (dashDir * dashDistance);
 
@@ -137,4 +144,5 @@ public class BossDashSkillAttack : EnemySkillAttack
         IsRunning = false;
         IsFinished = false;
     }
+
 }

@@ -10,7 +10,9 @@ public class BossHomingMissileSkillAttack : EnemySkillAttack
         GameObject missile = Instantiate(homingProjectilePrefab, attackTransform.position, attackTransform.rotation);
         if(missile != null)
         {
-            missile.GetComponentInChildren<BulletCollision>().Owner = this.GetComponent<BaseController>();
+            missile.GetComponentInChildren<BulletCollision>().InitSet(this.GetComponent<BaseController>(), cameraEffect, this);
+
+            cameraEffect.PlaySpawn();
         }
     }
     public void OnMissileEffect()

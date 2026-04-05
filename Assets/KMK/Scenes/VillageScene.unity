@@ -6738,6 +6738,8 @@ MonoBehaviour:
   uiPrefab: {fileID: 3790533417186835734, guid: bb93c905088045c46b69b28ea408f2b7, type: 3}
   storeId: 2
   storeSprite: {fileID: -1340868759, guid: 81a09b10b55cc0b4ea8452c10e23c891, type: 3}
+  clipVolume: 0.5
+  clip: {fileID: 8300000, guid: 2b7012b5b6487af45871389734ba0723, type: 3}
 --- !u!95 &2032657980
 Animator:
   serializedVersion: 7
@@ -24856,6 +24858,8 @@ MonoBehaviour:
   uiPrefab: {fileID: 3790533417186835734, guid: bb93c905088045c46b69b28ea408f2b7, type: 3}
   storeId: 1
   storeSprite: {fileID: -1340868759, guid: 81a09b10b55cc0b4ea8452c10e23c891, type: 3}
+  clipVolume: 0.5
+  clip: {fileID: 0}
 --- !u!95 &9062619811925871473
 Animator:
   serializedVersion: 7

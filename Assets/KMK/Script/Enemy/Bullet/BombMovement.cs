@@ -5,6 +5,8 @@ public class BombMovement : MonoBehaviour
     [SerializeField] private float throwPower = 15f;
     [SerializeField] private float upwardForce = 4f;
 
+    public Transform TargetPos { get; set; }
+
     private Rigidbody rb;
     private void Awake()
     {
@@ -14,9 +16,8 @@ public class BombMovement : MonoBehaviour
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
-        Vector3 targetDir = (player.transform.position - transform.position).normalized;
-
-        Vector3 force = targetDir * throwPower + Vector3.up * upwardForce;
+        Vector3 dir = (TargetPos.position - transform.position).normalized;
+        Vector3 force = dir.normalized * throwPower + Vector3.up * upwardForce;
 
         rb.AddForce(force, ForceMode.VelocityChange);
     }

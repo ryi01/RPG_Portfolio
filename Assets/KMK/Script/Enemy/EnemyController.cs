@@ -36,6 +36,8 @@ public class EnemyController : BaseController<EnemyStatComponent>
     public BossSummonComponent BossSummon { get; private set; }
     public BossLightningComponent BossLightning { get; private set; }
 
+    public bool IsSkillLocked { get; set; }
+
 
     protected override void Awake()
     {
@@ -89,7 +91,10 @@ public class EnemyController : BaseController<EnemyStatComponent>
             TransitionToState(EnumTypes.STATE.DEATH, force);
             return;
         }
-        if(currentState != null && currentState.StateType == EnumTypes.STATE.STUN) return;
+
+        if (IsSkillLocked) return;
+
+        if (currentState != null && currentState.StateType == EnumTypes.STATE.STUN) return;
 
         if(StatComp.AddGroogy(damage))
         {
@@ -164,5 +169,6 @@ public class EnemyController : BaseController<EnemyStatComponent>
         BossSummon?.ClearAll();
         BossLightning?.StopPattern();
         OffCollider();
+        GameManager.Instance.SoundManager.StopLoopSFX();
     }
 }

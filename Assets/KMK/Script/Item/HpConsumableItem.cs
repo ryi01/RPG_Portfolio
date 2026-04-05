@@ -11,6 +11,7 @@ public class HpConsumableItem : ConsumableItem
         if (target.TryGetComponent<PlayerStatComponent>(out var playerStat))
         {
             playerStat.RecoveryHP(UpValue);
+            
         }
     }
 }

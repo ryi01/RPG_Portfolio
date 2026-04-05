@@ -28,6 +28,7 @@ public class FloorLauncher : ArrowLauncher
         Vector3 preview = startPos + (tragetOffset * 0.3f);
         yield return StartCoroutine(MoveTo(preview, launchTime * 0.15f));
         yield return new WaitForSeconds(launchTime * 0.1f);
+        if (impactClip != null) GameManager.Instance.SoundManager.PlayImpactSFX(impactClip, impactClipVolume);
         yield return StartCoroutine(MoveTo(targetPos, launchTime * 0.15f));
         yield return new WaitForSeconds(launchTime * 0.2f);
         yield return StartCoroutine(MoveTo(startPos, launchTime * 0.4f));

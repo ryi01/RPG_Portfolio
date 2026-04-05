@@ -1,3 +1,4 @@
+using System.Reflection;
 using UnityEngine;
 
 public class BossLinearShotSkillAttack : EnemySkillAttack
@@ -58,7 +59,7 @@ public class BossLinearShotSkillAttack : EnemySkillAttack
         {
             if (bullet.TryGetComponent(out BulletCollision collision))
             {
-                collision.Owner = GetComponent<BaseController>();
+                collision.InitSet(GetComponent<BaseController>(), cameraEffect, this);
             }
         }
     }

@@ -24,6 +24,5 @@ MonoBehaviour:
   openLevel: 2
   needLookAtTarget: 1
   needDash: 0
-  nextSkillIndex: 2
+  nextSkillIndex: 1
   chainNextSkill: 0
-  audioClip: {fileID: 0}

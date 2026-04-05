@@ -145,6 +145,7 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject bossTriggerPrefab;
     [SerializeField] private EnemyUIManager enemyUIManager;
     [SerializeField] private CameraEnviroment cameraEnviroment;
+    [SerializeField] private CameraShakeController cameraShakeController;
 
     private int[,] mapData;
     private int roomSize;
@@ -949,7 +950,7 @@ public class DungeonGenerator : MonoBehaviour
         Vector3 spawnPos = new Vector3(EndPoint.x * tileSize, 0.5f, EndPoint.y * tileSize);
         var questData = GameManager.Instance.QuestManager.GetCurrentQuestData();
         GameObject bossObj = Instantiate(questData.BossPrefab, spawnPos, Quaternion.identity, dungeonParent);
-
+        bossObj?.GetComponent<BossCameraEffectController>().SetCameraShakeController(cameraShakeController);
         BossQuestComponent questComp = bossObj.GetComponent<BossQuestComponent>();
         if(questComp != null)
         {

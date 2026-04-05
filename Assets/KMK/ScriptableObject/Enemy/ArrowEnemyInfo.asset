@@ -24,7 +24,7 @@ MonoBehaviour:
   hitAngle: 0
   moveSpeed: 2.5
   rotSpeed: 600
-  nockbackForce: 8.5
+  nockbackForce: 2.2
   nockbackTime: 0.12
   detectRange: 15
   attackRange: 5

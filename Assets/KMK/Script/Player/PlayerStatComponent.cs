@@ -11,6 +11,9 @@ public class PlayerStatComponent : CharacterStatComponent
     [SerializeField] private ParticleSystem hpEffectPrefab;
     [SerializeField] private ParticleSystem coinEffectPrefab;
     [SerializeField] private GoldSystem goldSystem;
+    [SerializeField]
+    [Range(0f, 1f)] protected float levelUpClipVolume = 0.75f;
+    [SerializeField] private AudioClip levelupClip;
     private PlayerStatInfo playerInfo;
 
     public int CurrentExp { get; private set; }
@@ -76,6 +79,7 @@ public class PlayerStatComponent : CharacterStatComponent
     {
         CurrentExp -= usedExp;
         CurrentLevel++;
+        GameManager.Instance.SoundManager.PlayImpactSFX(levelupClip, levelUpClipVolume);
         OnChangeExp?.Invoke(CurrentExp, playerInfo.requiredExpByLevel[CurrentLevel - 1]);
         if (currentEffectCoroutine != null) StopCoroutine(currentEffectCoroutine);
         currentEffectCoroutine = StartCoroutine(EffectCoroutine(levelUpEffectPrefab, 0.5f));

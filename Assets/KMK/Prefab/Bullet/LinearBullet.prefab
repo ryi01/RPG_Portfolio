@@ -9769,12 +9769,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 37632
   sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1024
   destroyTime: 0.5
   bulletParticle: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c, type: 3}
   isArrow: 1
+  impactClipVolume: 0.4
+  impactClip: {fileID: 8300000, guid: a5eb88e4b9310df49b35664cde9bd177, type: 3}
 --- !u!114 &288062145641256234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9868,8 +9871,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7009125380969162238}
   m_Father: {fileID: 0}

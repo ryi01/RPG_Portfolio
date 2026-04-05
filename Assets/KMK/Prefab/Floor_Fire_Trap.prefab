@@ -192,12 +192,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &1945927505201931061
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,12 +541,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &4001228282948480586
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,12 +679,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &4323123222043998407
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,12 +849,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &6298734174453567662
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,12 +987,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &6334462031887419298
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,12 +1189,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &6442502655874949131
 GameObject:
   m_ObjectHideFlags: 0
@@ -1303,12 +1327,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &6666098651773458077
 GameObject:
   m_ObjectHideFlags: 0
@@ -1437,12 +1465,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &6685760384435693442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1571,12 +1603,16 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 256
+  sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 1536
-  attack: 2
   destroyTime: 0.5
   bulletParticle: {fileID: 0}
+  isArrow: 1
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &7658281599497753811
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,6 +1701,9 @@ MonoBehaviour:
   launchTrans: []
   launchTime: 3
   trapPrefab: {fileID: 0}
+  arrowLifeTime: 2
+  impactClipVolume: 0.2
+  impactClip: {fileID: 8300000, guid: 03697aaf1c754be4da4a24e9b52b1c92, type: 3}
   speed: 2
   tragetOffset: {x: 0, y: 1, z: 0}
 --- !u!1 &8793962089600867872

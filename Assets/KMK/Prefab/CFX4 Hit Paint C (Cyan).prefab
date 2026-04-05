@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8533524568076238265}
   - component: {fileID: 8533524568095635705}
   - component: {fileID: 8533524568095654233}
-  - component: {fileID: 8533524568087417977}
   m_Layer: 0
   m_Name: CFX4 Hit Paint C (Cyan)
   m_TagString: Untagged
@@ -4764,19 +4763,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &8533524568087417977
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8533524568076657049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnlyDeactivate: 0
 --- !u!1 &8533524568076657051
 GameObject:
   m_ObjectHideFlags: 0

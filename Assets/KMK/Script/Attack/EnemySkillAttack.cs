@@ -3,6 +3,9 @@ using UnityEngine;
 public class EnemySkillAttack : EnemyMeleeAttack
 {
     [SerializeField] protected SkillInfo skillInfo;
+    [SerializeField] private bool lockStateDuringSkill = false;
+    [SerializeField] protected BossCameraEffectController cameraEffect;
+    public bool LockStateDuringSkill => lockStateDuringSkill;
 
     private float currentRadiusMult = 1.0f;
 
@@ -10,6 +13,7 @@ public class EnemySkillAttack : EnemyMeleeAttack
     private float lastUseTime = -100f;
     public bool NeedLookAtTarget { get => skillInfo.needLookAtTarget; }
     public bool NeedDash { get => skillInfo.needDash; }
+    public float KnockBack { get => skillInfo.nockbackForce; }
     public int NextSkillIndex { get => skillInfo.nextSkillIndex; }
     public bool ChainNextSkill { get => skillInfo.chainNextSkill; }   
     public float WaitSkillTime { get => skillInfo.coolTime; }
@@ -51,6 +55,7 @@ public class EnemySkillAttack : EnemyMeleeAttack
         if (target != null)
         {
             if (target.GetStat.CurrentHP <= 0) return;
+            PlayImpactSFX();
             target?.Damage(CS.FinalAttack * skillInfo.attackMultifle, skillInfo.nockbackForce, transform);
         }
     }

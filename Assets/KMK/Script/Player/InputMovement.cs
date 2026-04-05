@@ -199,7 +199,7 @@ public class InputMovement : MonoBehaviour
         dir.y = 0;
         if (dir.sqrMagnitude <= 0.001f) return;
         dir.Normalize();
-        pc.CameraShakeController.ShakeCam(0.1f, 0.2f);
+        GameManager.Instance.CameraShakeController.ShakeCam(0.1f, 0.2f);
 
         if (dashTrail != null)
             dashTrail.emitting = useTrail;

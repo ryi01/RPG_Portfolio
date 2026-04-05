@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class RotationSkill : PlayerSkillAttack
 {
+
     private bool isImpactPlay = false;
     public void OnPlayEffect2()
     {
@@ -11,11 +12,17 @@ public class RotationSkill : PlayerSkillAttack
     {
         StopPlayEffect();
     }
+
+    public void OnPlaySFX()
+    {
+        PlaySwingSFX();
+    }
     public void OnPlayerRotAttack()
     {
         isImpactPlay = false;
-        pc.CameraShakeController.PlayMotionBlur(0.45f, 0.12f);
-        pc.CameraShakeController.ShakeCam(hitShake.x, hitShake.y);
+        var gm = GameManager.Instance;
+        gm.CameraShakeController.PlayMotionBlur(0.45f, 0.12f);
+        gm.CameraShakeController.ShakeCam(hitShake.x, hitShake.y);
         Attack();
     }
 
@@ -23,8 +30,9 @@ public class RotationSkill : PlayerSkillAttack
     {
         if (!isImpactPlay)
         {
-            pc.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
-            pc.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
+            var gm = GameManager.Instance;
+            gm.CameraShakeController.ShakeCam(attackShake.x, attackShake.y);
+            gm.CombatFeedback.HitStopThenSlow(stopTime, 0.03f, impactScaleAndDuration.x, impactScaleAndDuration.y);
             isImpactPlay = true;
         }
         base.AttackHit(hit);

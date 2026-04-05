@@ -9669,12 +9669,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 37120
   sfxString: 
+  hitEnableDelay: 0.1
   noHitLayer:
     serializedVersion: 2
     m_Bits: 512
   destroyTime: 0.5
-  bulletParticle: {fileID: 100018, guid: a40b64bf23366dc42a892af2c6ff6140, type: 3}
+  bulletParticle: {fileID: 8194992990867289339, guid: 99bc28c0d45f51c4fbac01080b73edc7, type: 3}
   isArrow: 1
+  impactClipVolume: 0.3
+  impactClip: {fileID: 8300000, guid: 30e7a91ca6887684785b960e4159281a, type: 3}
 --- !u!114 &2282020418090719913
 MonoBehaviour:
   m_ObjectHideFlags: 0

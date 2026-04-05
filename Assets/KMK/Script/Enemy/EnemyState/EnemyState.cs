@@ -13,6 +13,10 @@ public abstract class EnemyState : MonoBehaviour
     // 애니메이션 재생속도
     [Range(1f, 2f)]
     [SerializeField] protected float animSpeed;
+    [Range(0f, 1f)]
+    [SerializeField] protected float clipVolume = 1;
+    [SerializeField] protected AudioClip clip;
+
 
     protected ParticleSystem effect;
     public virtual void Intialize(EnemyController owner)
@@ -44,6 +48,14 @@ public abstract class EnemyState : MonoBehaviour
         {
             if(isClear) effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             else effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    public virtual void PlaySFX()
+    {
+        if (clip != null)
+        {
+            GameManager.Instance.SoundManager.PlayImpactSFX(clip, clipVolume);
         }
     }
     protected virtual bool CheckDeath()

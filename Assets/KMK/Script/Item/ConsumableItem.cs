@@ -10,6 +10,6 @@ public class ConsumableItem : Item
 
     public virtual void Consume(GameObject target = null)
     {
-
+        if (itemClip != null) GameManager.Instance.SoundManager.PlayImpactSFX(itemClip, itemClipVolume);
     }
 }

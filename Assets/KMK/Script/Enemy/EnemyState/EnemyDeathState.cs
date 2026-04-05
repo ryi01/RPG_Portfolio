@@ -34,6 +34,7 @@ public class EnemyDeathState : EnemyState
     }
     private void CreateEffect()
     {
+        if (clip != null) PlaySFX();
         Vector3 pos = new Vector3(transform.position.x, 1.8f, transform.position.z);
         GameObject vfx = Instantiate(deathParticle, pos, Quaternion.identity);
         Destroy(vfx, 2);

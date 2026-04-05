@@ -31,12 +31,12 @@ public class MoveToPosSkill : PlayerSkillAttack
         {
             Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
         }
-
+        PlayImpactSFX();
         StartSkill();
-
-        pc.CameraShakeController.PlayMotionBlur(0.75f, skillInfo.attackTime);
+        var gm = GameManager.Instance;
+        gm.CameraShakeController.PlayMotionBlur(0.75f, skillInfo.attackTime);
         pc.MovementComp.Push(dir, dist, skillInfo.attackTime, false, true);
-        pc.CameraShakeController.GenerateImpulseDirection(dir, 0.4f);
+        gm.CameraShakeController.GenerateImpulseDirection(dir, 0.4f);
 
         yield return new WaitForSeconds(skillInfo.attackTime);
         if (enemyLayer != -1)

@@ -25,6 +25,7 @@ public class CombatFeedback : MonoBehaviour
     {
         PlayTimeEffect(scale, duration);
     }
+
     public void HitStopThenSlow(float stopDuration, float stopScale, float slowScale, float slowDuration)
     {
         if (timeEffectCoroutine != null) StopCoroutine(timeEffectCoroutine);

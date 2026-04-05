@@ -90,6 +90,7 @@ public class BombCollision : BulletCollision
         if (bulletParticle != null) Instantiate(bulletParticle, transform.position, bulletParticle.transform.rotation);
 
         ExplodeDamage();
+        PlayImpactSFX();
         Destroy(gameObject);
     }
     private void ExplodeDamage()

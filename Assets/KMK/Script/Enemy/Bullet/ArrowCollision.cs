@@ -25,7 +25,7 @@ public class ArrowCollision : BulletCollision
         GameObject broken = Instantiate(brokenArrowPrefab, finalPos, transform.rotation);
         broken.transform.SetParent(parent);
         transform.localScale = Vector3.one;
-
+        PlayImpactSFX();
         Destroy(broken, 10);
     }
 }

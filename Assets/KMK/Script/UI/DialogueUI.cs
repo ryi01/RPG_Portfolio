@@ -17,7 +17,9 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private Text messageText;
     private Coroutine typingCor;
     [SerializeField] private bool isSkip;
-
+    [SerializeField]
+    [Range(0f, 1f)] protected float clipVolume = 0.5f;
+    [SerializeField] protected AudioClip clip;
     public static Action OnRequestNext;
     public static Action OnDialogueFinish;
 
@@ -95,6 +97,7 @@ public class DialogueUI : MonoBehaviour
     public void OnNextButt()
     {
         OnRequestNext?.Invoke();
+        GameManager.Instance.SoundManager.PlayImpactSFX(clip, clipVolume);
     }
 
     public void OnFinishButt()
@@ -104,5 +107,6 @@ public class DialogueUI : MonoBehaviour
         GameManager.Instance.ChangeState(GameState.Town);
         OnDialogueFinish?.Invoke();
         QuestManager.OnQuestUpdate?.Invoke();
+        GameManager.Instance.SoundManager.PlayImpactSFX(clip, clipVolume);
     }
 }

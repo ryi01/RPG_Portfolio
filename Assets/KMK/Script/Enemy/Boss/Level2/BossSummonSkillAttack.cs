@@ -17,6 +17,8 @@ public class BossSummonSkillAttack : EnemySkillAttack
     public void OnEffectPlay()
     {
         PlayEffect();
+        if (cameraEffect == null) return;
+        cameraEffect.PlaySpawn();
     }
 
     public void OnSummon()

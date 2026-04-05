@@ -1,8 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class BulletCollision : MonoBehaviour
 {
@@ -10,6 +8,8 @@ public class BulletCollision : MonoBehaviour
     [SerializeField] protected LayerMask hitLayer;
     protected MeshRenderer mesh;
     [SerializeField] protected string sfxString;
+    private bool canHit = false;
+    [SerializeField] private float hitEnableDelay = 0.1f;
 
     // 피격 제한 대상 태그 (복수 대상일 경우 레이어로 제어할 것)
     [SerializeField] protected LayerMask noHitLayer;
@@ -20,9 +20,15 @@ public class BulletCollision : MonoBehaviour
 
     [SerializeField] protected bool isArrow = true;
 
+    [SerializeField]
+    [Range(0f, 1f)] protected float impactClipVolume = 1;
+    [SerializeField] protected AudioClip impactClip;
+
     protected HashSet<CharacterStatComponent> hitTargets = new HashSet<CharacterStatComponent>();
 
     public BaseController Owner { get; set; }
+    public BossCameraEffectController CameraEffect { get; set; }
+    public EnemySkillAttack CurrentBossSkill { get; set; }
 
     protected virtual void Awake()
     {
@@ -30,6 +36,23 @@ public class BulletCollision : MonoBehaviour
         if(mesh != null) mesh.enabled = true;
     }
 
+    public void InitSet(BaseController controller, BossCameraEffectController cameraEffectController, EnemySkillAttack enemySkillAttack = null)
+    {
+        Owner = controller;
+        CameraEffect = cameraEffectController;
+        CurrentBossSkill = enemySkillAttack;
+    }
+    protected virtual void Start()
+    {
+        StartCoroutine(CanHit());
+    }
+    public virtual void PlayImpactSFX()
+    {
+        if (impactClip != null)
+        {
+            GameManager.Instance.SoundManager.PlayImpactSFX(impactClip, impactClipVolume);
+        }
+    }
     protected virtual void OnCollisionEnter(Collision collision)
     {
         if (collision.contactCount == 0) return;
@@ -42,6 +65,7 @@ public class BulletCollision : MonoBehaviour
     }
     protected virtual void HandleEnter(Collider other, Vector3 hitPoint)
     {
+        if (!canHit) return;
         if (Owner != null && other.gameObject == Owner.gameObject)
         {
             return;
@@ -60,6 +84,12 @@ public class BulletCollision : MonoBehaviour
     protected virtual void OnHitTarget(Collider other, Vector3 hitPoint)
     {
         PlayEffect(hitPoint);
+        if(CameraEffect != null)
+        {
+            Vector3 dir = (other.transform.position - transform.position).normalized;
+            CameraEffect.PlayProjectileImpact(dir);
+            GameManager.Instance.CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Medium);
+        }
         if(mesh != null) mesh.enabled = false;
         DamageTarget(other);
         FinishBullet();
@@ -67,6 +97,11 @@ public class BulletCollision : MonoBehaviour
     protected virtual void OnHitObstacle(Collider other, Vector3 hitPoint)
     {
         PlayEffect(hitPoint);
+        if (CameraEffect != null)
+        {
+            Vector3 dir = (transform.position - hitPoint).normalized;
+            CameraEffect.PlayProjectileImpact(dir);
+        }
         FinishBullet();
     }
 
@@ -74,8 +109,10 @@ public class BulletCollision : MonoBehaviour
     {
         if (!other.TryGetComponent(out BaseController target)) return;
         float final = Owner != null ? Owner.GetStat.Attack : 1;
+        float force = CurrentBossSkill != null ? CurrentBossSkill.KnockBack : 0;
+
         Transform finalPos = Owner != null ? Owner.transform : null;
-        target.Damage(final, 0, finalPos);
+        target.Damage(final, force, finalPos);
     }
 
     protected virtual void FinishBullet()
@@ -83,6 +120,7 @@ public class BulletCollision : MonoBehaviour
         if (mesh != null) mesh.enabled = false;
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
+        PlayImpactSFX();
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if(rb != null && !rb.isKinematic)
@@ -91,7 +129,6 @@ public class BulletCollision : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
         }
-
         ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
         
         foreach(var ps in particles)
@@ -110,5 +147,11 @@ public class BulletCollision : MonoBehaviour
     {
         if(bulletParticle != null)
             Instantiate(bulletParticle, pos, Quaternion.identity);
+    }
+
+    private IEnumerator CanHit()
+    {
+        yield return new WaitForSeconds(hitEnableDelay);
+        canHit = true;
     }
 }

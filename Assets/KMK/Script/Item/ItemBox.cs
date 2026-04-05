@@ -14,7 +14,9 @@ public class ItemBox : InteractionObject
     public List<ItemInfo> ItemInfoList => itemInfoList;
     [SerializeField] private Vector2 idWpRange;
     [SerializeField] private Vector2 idCbRange;
-
+    [SerializeField]
+    [Range(0f, 1f)] protected float clipVolume = 0.5f;
+    [SerializeField] protected AudioClip clip;
     private void Awake()
     {
         MakeRandomContents();
@@ -86,5 +88,6 @@ public class ItemBox : InteractionObject
     public override void Interact(PlayerController player)
     {
         player.OpenBox(this);
+        GameManager.Instance.SoundManager.PlayImpactSFX(clip, clipVolume);
     }
 }

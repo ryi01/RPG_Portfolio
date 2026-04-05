@@ -8,12 +8,17 @@ public class EnemyShotAttack : MeleeAttack
         GameObject obj = CreateSomething(bulletPrefab, attackTransform);
         if (obj)
         {
+            if(obj.TryGetComponent<BombMovement>(out BombMovement bombMovement))
+            {
+                bombMovement.TargetPos = this.GetComponent<EnemyController>().Player.transform;
+            }
             obj.GetComponentInChildren<BulletCollision>().Owner = this.GetComponent<BaseController>();
         }
     }
     public void OnShotAttack()
     {
         Attack();
+        PlaySwingSFX();
     }
     
     protected GameObject CreateSomething(GameObject prefab, Transform pos)

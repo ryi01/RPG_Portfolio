@@ -24,6 +24,10 @@ public class BossCrossCutSkill : EnemySkillAttack
     public void EffectOn()
     {
         PlayEffect();
+        PlaySwingSFX();
+        if (cameraEffect == null) return;
+        cameraEffect.PlayLightHit();
+        GameManager.Instance.CombatFeedback.HitStopByStrength(CombatFeedback.HitStrength.Light);
     }
 
     public void EffectOff()

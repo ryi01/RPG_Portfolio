@@ -197,6 +197,8 @@ MonoBehaviour:
   launchTime: 0.3
   trapPrefab: {fileID: 2158071795903760815, guid: 57712ab23d7d99c41a0b9e30361dda21, type: 3}
   arrowLifeTime: 2
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &2737146833625685073
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,6 +396,8 @@ MonoBehaviour:
   launchTime: 0.3
   trapPrefab: {fileID: 2158071795903760815, guid: 57712ab23d7d99c41a0b9e30361dda21, type: 3}
   arrowLifeTime: 4
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
 --- !u!1 &3776102404901894745
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,6 +533,8 @@ MonoBehaviour:
   launchTime: 0.3
   trapPrefab: {fileID: 2158071795903760815, guid: 57712ab23d7d99c41a0b9e30361dda21, type: 3}
   arrowLifeTime: 4
+  impactClipVolume: 0.6
+  impactClip: {fileID: 8300000, guid: 62aba1db083f34140a0e78b319bd3fb8, type: 3}
 --- !u!1 &3780035581363031786
 GameObject:
   m_ObjectHideFlags: 0

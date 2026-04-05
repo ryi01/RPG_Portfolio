@@ -22,6 +22,4 @@ public class SkillInfo: ScriptableObject
     public bool needDash = false;
     public int nextSkillIndex = 1;
     public bool chainNextSkill = false;
-    [Header("Audio")]
-    public AudioClip audioClip;
 }

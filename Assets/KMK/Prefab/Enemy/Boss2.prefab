@@ -20107,6 +20107,7 @@ GameObject:
   - component: {fileID: 4672304093593142747}
   - component: {fileID: -2239192282069927537}
   - component: {fileID: -2215114616948990014}
+  - component: {fileID: 4839934348577698191}
   m_Layer: 9
   m_Name: Boss2
   m_TagString: Untagged
@@ -20335,6 +20336,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossChangePhaseState
   stateType: 8
   animSpeed: 1
+  phaseAuraEffect: {fileID: 0}
+  phaseShockwavePrefab: {fileID: 0}
+  shockwaveYOffset: 0.1
+  phaseChangeSfx: {fileID: 0}
+  phaseTwoSpeedMultiplier: 1.3
+  isUseInvincibleDuringPhaseChange: 1
+  phaseTwoScaleMultiplier: 1.2
+  scaleUpDuration: 0.25
 --- !u!114 &1221442118006117444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20367,8 +20376,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossSummonAttackState
   stateType: 3
   animSpeed: 1
-  summonChance: 0.15
-  summonBlockTime: 5
+  summonChance: 0.12
+  summonBlockTime: 7
   isReturnToDetectIfNoSkill: 1
   allowSameSkillTwice: 0
 --- !u!114 &8720533004269710589
@@ -20396,7 +20405,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossPhaseComponent
   phaseTwoHpRatio: 0.4
-  phaseTwoSpeedMultiplier: 2
 --- !u!114 &2072232535203642595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20412,8 +20420,10 @@ MonoBehaviour:
   summonPrefabs:
   - {fileID: 1289355918717940, guid: e2e4912477ad02e42a9a2cb8ebbdbea1, type: 3}
   - {fileID: 3437770679800848509, guid: b012fe6b82dcb864fb0b153f8b6cddce, type: 3}
-  summonCount: 2
-  maxAliveSummon: 4
+  phaseOneSummonCount: 2
+  phaseTwoSummonCount: 3
+  phaseOneMaxAlive: 3
+  phaseTwoMaxAlive: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -20433,6 +20443,8 @@ MonoBehaviour:
   attackTransform: {fileID: 6057019238898825511}
   hitEffectPrefab: {fileID: 963683834405170715}
   skillInfo: {fileID: 11400000, guid: 94b78d945f2e23f448db8525993f1c42, type: 2}
+  lockStateDuringSkill: 0
+  cameraEffect: {fileID: 0}
   summonAroundBoss: 1
   summonForwardOffset: 2
 --- !u!114 &1199752746059411499
@@ -20451,6 +20463,8 @@ MonoBehaviour:
   attackTransform: {fileID: 1042459734846192951}
   hitEffectPrefab: {fileID: 1514178828586799513}
   skillInfo: {fileID: 11400000, guid: 014018931e946314495fdc1abd9ff9d3, type: 2}
+  lockStateDuringSkill: 0
+  cameraEffect: {fileID: 0}
   homingProjectilePrefab: {fileID: 2946174697627738867, guid: 75ecd8899b812b244bd2922e8b4c8c1a, type: 3}
 --- !u!114 &4672304093593142747
 MonoBehaviour:
@@ -20468,6 +20482,8 @@ MonoBehaviour:
   attackTransform: {fileID: 1042459734846192951}
   hitEffectPrefab: {fileID: 7042442540583185574}
   skillInfo: {fileID: 11400000, guid: d5a521bc8a2c0904e8e7047c17460ae2, type: 2}
+  lockStateDuringSkill: 0
+  cameraEffect: {fileID: 0}
 --- !u!114 &-2239192282069927537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20484,6 +20500,8 @@ MonoBehaviour:
   attackTransform: {fileID: 1042459734846192951}
   hitEffectPrefab: {fileID: 1514178828586799513}
   skillInfo: {fileID: 11400000, guid: 61a1d99398aea93419ec38fcbadbfd98, type: 2}
+  lockStateDuringSkill: 0
+  cameraEffect: {fileID: 0}
   linearProjectilePrefab: {fileID: 3070874539147405805, guid: 2ca85b12a2f38f840938a840b67f10b5, type: 3}
   phaseOneShotCount: 1
   phaseTwoShotCount: 3
@@ -20506,6 +20524,116 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &4839934348577698191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2276350134783907571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4afaf2301526b5c419700fbf19ca4f0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossCameraEffectController
+  lightHitPreset:
+    intensity: 0.27
+    time: 0.14
+    frequency: 3
+    isImpulse: 0
+    impulseStrength: 1.2
+    isDirectionalShake: 0
+    isZoom: 0
+    zoomFov: 55
+    zoomDuration: 0.08
+    zoomHoldTime: 0.04
+    isMotionBlur: 0
+    motionBlurIntensity: 0.15
+    motionBlurDuration: 0.08
+  heavyHitPreset:
+    intensity: 0.32
+    time: 0.22
+    frequency: 2.2
+    isImpulse: 1
+    impulseStrength: 1.2
+    isDirectionalShake: 0
+    isZoom: 1
+    zoomFov: 41
+    zoomDuration: 0.08
+    zoomHoldTime: 0.04
+    isMotionBlur: 1
+    motionBlurIntensity: 0.22
+    motionBlurDuration: 0.08
+  projectileImpactPreset:
+    intensity: 0.22
+    time: 0.2
+    frequency: 2.5
+    isImpulse: 0
+    impulseStrength: 1
+    isDirectionalShake: 1
+    isZoom: 0
+    zoomFov: 55
+    zoomDuration: 0.08
+    zoomHoldTime: 0.04
+    isMotionBlur: 0
+    motionBlurIntensity: 0.15
+    motionBlurDuration: 0.08
+  dashImpactPreset:
+    intensity: 0.12
+    time: 0.16
+    frequency: 3.2
+    isImpulse: 0
+    impulseStrength: 1
+    isDirectionalShake: 0
+    isZoom: 1
+    zoomFov: 42.5
+    zoomDuration: 0.05
+    zoomHoldTime: 0.03
+    isMotionBlur: 1
+    motionBlurIntensity: 0.18
+    motionBlurDuration: 0.1
+  spawnPreset:
+    intensity: 0.08
+    time: 0.12
+    frequency: 2
+    isImpulse: 0
+    impulseStrength: 1
+    isDirectionalShake: 0
+    isZoom: 0
+    zoomFov: 55
+    zoomDuration: 0.08
+    zoomHoldTime: 0.04
+    isMotionBlur: 0
+    motionBlurIntensity: 0.15
+    motionBlurDuration: 0.08
+  dashMovePreset:
+    intensity: 0.12
+    time: 0.16
+    frequency: 3.2
+    isImpulse: 0
+    impulseStrength: 1
+    isDirectionalShake: 0
+    isZoom: 1
+    zoomFov: 42.5
+    zoomDuration: 0.05
+    zoomHoldTime: 0.03
+    isMotionBlur: 1
+    motionBlurIntensity: 0.18
+    motionBlurDuration: 0.1
+  pushHitPreset:
+    intensity: 0.24
+    time: 0.16
+    frequency: 2.6
+    isImpulse: 1
+    impulseStrength: 0.9
+    isDirectionalShake: 1
+    isZoom: 1
+    zoomFov: 42.8
+    zoomDuration: 0.05
+    zoomHoldTime: 0.03
+    isMotionBlur: 1
+    motionBlurIntensity: 0.12
+    motionBlurDuration: 0.06
 --- !u!1 &2314005241704369910
 GameObject:
   m_ObjectHideFlags: 0

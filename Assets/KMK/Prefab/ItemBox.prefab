@@ -70,6 +70,8 @@ MonoBehaviour:
   itemInfoList: []
   idWpRange: {x: 1002, y: 1004}
   idCbRange: {x: 2001, y: 2003}
+  clipVolume: 0.5
+  clip: {fileID: 8300000, guid: 3148a81794bb4884988c68613563a492, type: 3}
 --- !u!1 &1575712960429046418
 GameObject:
   m_ObjectHideFlags: 0

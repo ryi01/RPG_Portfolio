@@ -69,7 +69,7 @@ public class SceneLoadManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
-            finalPos = dungeonGenerator.WorldEndPoint + Vector3.up * 5f;
+            finalPos = dungeonGenerator.WorldStartPoint + Vector3.up * 5f;
 
             RaycastHit hit;
 
@@ -77,7 +77,7 @@ public class SceneLoadManager : MonoBehaviour
             {
                 finalPos = hit.point + Vector3.up * 0.1f;
             }
-            else finalPos = dungeonGenerator.WorldEndPoint;
+            else finalPos = dungeonGenerator.WorldStartPoint;
         }
         else
         {
