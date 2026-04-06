@@ -235,7 +235,7 @@ MonoBehaviour:
   destroyTime: 0.5
   bulletParticle: {fileID: 100000, guid: f2dba9e16cd347f44a395b8204544ee5, type: 3}
   isArrow: 1
-  impactClipVolume: 0.6
+  impactClipVolume: 0.601
   impactClip: {fileID: 8300000, guid: 82394cd7c127edd4788a07f0b8198677, type: 3}
 --- !u!114 &6621624955881208750
 MonoBehaviour:

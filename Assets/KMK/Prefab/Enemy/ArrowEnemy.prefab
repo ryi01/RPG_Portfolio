@@ -6631,8 +6631,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathState
   stateType: 7
   animSpeed: 1
-  clipVolume: 1
-  clip: {fileID: 0}
+  clipVolume: 0.342
+  clip: {fileID: 8300000, guid: 5f5496aa41991d14ebe215953c1155b2, type: 3}
   deathParticle: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
 --- !u!114 &2055518659677600253
 MonoBehaviour:
@@ -6668,7 +6668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 4
   outlineColor: {r: 1, g: 0.53998077, b: 0.15686274, a: 1}
-  outlineWidth: 1.67
+  outlineWidth: 3.03
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

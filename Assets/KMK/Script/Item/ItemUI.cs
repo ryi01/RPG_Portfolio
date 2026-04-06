@@ -157,7 +157,7 @@ public class ItemUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
     private bool HandleDrop(GameObject target)
     {
         if (target == null) return false;
-
+        Debug.Log($"{target.tag} : {target.name}");
         // 인벤토리쪽
         if (target.CompareTag("ItemSlot"))
         {

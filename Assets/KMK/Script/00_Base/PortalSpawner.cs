@@ -6,7 +6,9 @@ public class PortalSpawner : MonoBehaviour
     [SerializeField] private SceneCoordinator sceneCoordinator;
     [SerializeField] private GameObject protalPrefab;
     [SerializeField] private GridAStar gridAStar;
-
+    [SerializeField]
+    [Range(0f, 1f)] protected float impactClipVolume = 0.7f;
+    [SerializeField] protected AudioClip impactClip;
     public void SpawnPortal(string sceneName, Vector3 pos)
     {
         GameObject existingPortal = GameObject.FindGameObjectWithTag("Portal");
@@ -16,6 +18,7 @@ public class PortalSpawner : MonoBehaviour
         }
         if (protalPrefab != null)
         {
+            if(GameManager.Instance.CurrentState != GameState.Start) GameManager.Instance.SoundManager.PlayImpactSFX(impactClip, impactClipVolume);
             GameObject go = Instantiate(protalPrefab, pos, Quaternion.identity);
             
             go.tag = "Portal";

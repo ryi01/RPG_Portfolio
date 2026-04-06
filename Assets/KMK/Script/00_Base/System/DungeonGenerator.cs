@@ -1,13 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.AI.Navigation;
-using Unity.VisualScripting;
-using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
-using static UnityEngine.EventSystems.EventTrigger;
 #region 필요한 데이터
 public class Triangle
 {

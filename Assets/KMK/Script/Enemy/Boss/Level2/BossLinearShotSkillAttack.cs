@@ -28,13 +28,13 @@ public class BossLinearShotSkillAttack : EnemySkillAttack
         if (linearProjectilePrefab == null) return;
         FireSpreadShot();
     }
-
     private void FireSpreadShot()
     {
         Vector3 targetPos = owner.Player.transform.position;
         targetPos.y = attackTransform.position.y;
         Vector3 dir = (targetPos - attackTransform.position).normalized;
         if (dir == Vector3.zero) return;
+        PlaySwingSFX();
         Quaternion baseRot = Quaternion.LookRotation(dir);
         if (currentShotCnt <= 1)
         {

@@ -6,10 +6,13 @@ public class BossChangePhaseState : EnemyState
     [SerializeField] private ParticleSystem phaseAuraEffect;
     [SerializeField] private GameObject phaseShockwavePrefab;
     [SerializeField] private float shockwaveYOffset = 0.1f;
+    [Range(0f, 1f)]
+    [SerializeField] protected float phaseChangeSfxVolume = 1;
     [SerializeField] private AudioClip phaseChangeSfx;
 
     [SerializeField] private float phaseTwoSpeedMultiplier = 1.3f;
     [SerializeField] private bool isUseInvincibleDuringPhaseChange = true;
+    [SerializeField] private bool isSingleLargeShockWave = false;
 
     [SerializeField] private float phaseTwoScaleMultiplier = 1.2f;
     [SerializeField] private float scaleUpDuration = 0.25f;
@@ -64,7 +67,7 @@ public class BossChangePhaseState : EnemyState
         }
         if (phaseChangeSfx != null)
         {
-            GameManager.Instance.SoundManager.PlaySFX(phaseChangeSfx);
+            GameManager.Instance.SoundManager.PlaySFX(phaseChangeSfx, phaseChangeSfxVolume);
         }
     }
     public void OnChangeEndPhase()
@@ -81,7 +84,7 @@ public class BossChangePhaseState : EnemyState
         {
             statComp.IsInvincible = false;
         }
-        if(auraClip != null)GameManager.Instance.SoundManager.PlayLoopSFX(auraClip, clipVolume);
+        if(auraClip != null)GameManager.Instance.SoundManager.PlayLoopSFX(auraClip, phase2AuraVolume);
         controller.TransitionToState(EnumTypes.STATE.DETECT);
     }
     private IEnumerator ScaleUpRoutine()
@@ -109,6 +112,11 @@ public class BossChangePhaseState : EnemyState
         GameObject large = Instantiate(phaseShockwavePrefab, pos, Quaternion.identity);
         large.transform.localScale = Vector3.one;
 
+        if (isSingleLargeShockWave)
+        {
+            Destroy(large, 2f);
+            yield break;
+        }
         yield return new WaitForSeconds(0.3f);
 
         GameObject mid = Instantiate(phaseShockwavePrefab, pos, Quaternion.identity);

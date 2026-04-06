@@ -18,5 +18,6 @@ public class BossKnockbackBurstSkillAttack : EnemySkillAttack
     public void OnBurst()
     {
         Attack();
+        PlaySwingSFX();
     }
 }

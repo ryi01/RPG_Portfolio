@@ -127,4 +127,12 @@ public class PlayerStatComponent : CharacterStatComponent
         datamanager.SetCurrentHP(CurrentHP);
         datamanager.SetCurrentExp(CurrentExp);
     }
+    public void ReviveFull()
+    {
+        isDead = false;
+        CurrentHP = MaxHP;
+        IsHit = false;
+
+        OnHpChanged?.Invoke(CurrentHP, MaxHP);
+    }
 }

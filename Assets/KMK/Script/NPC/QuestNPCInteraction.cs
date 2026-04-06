@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class QuestNPCInteraction : BaseNPCInteraction
 {
     [SerializeField] private QuestData myQuestData;
+    [SerializeField] private Transform portalSpawnTrans;
 
     [SerializeField] private int myStageIndex;
     [SerializeField] private int startDialogueIndex = 0;
@@ -103,7 +104,7 @@ public class QuestNPCInteraction : BaseNPCInteraction
     {
         if (isPortalSpawned) return;
         if (myQuestData == null || myQuestData.BossPrefab == null) return;
-        GameManager.Instance.SpawnPortal("GameScene", transform.position + Vector3.right * 2);
+        GameManager.Instance.SpawnPortal("GameScene", portalSpawnTrans.position);
         isPortalSpawned = true;
     }
     private bool IsInteract(QuestManager questManager)

@@ -11997,6 +11997,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyIdleState
   stateType: 0
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
   checkTime: 0
   checkTimeRange: {x: 2, y: 5}
 --- !u!114 &7385855069661455760
@@ -12013,6 +12015,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyWanderState
   stateType: 1
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &420040896829141938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12027,6 +12031,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetectState
   stateType: 2
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &5108308858606336638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12041,6 +12047,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackState
   stateType: 3
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &3387322682406840569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12055,6 +12063,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyReturnState
   stateType: 4
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
 --- !u!114 &911271675322516194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12069,6 +12079,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDamageState
   stateType: 5
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
   hitParticle: {fileID: 5626063127069136416}
 --- !u!114 &848266852437912532
 MonoBehaviour:
@@ -12084,6 +12096,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStunState
   stateType: 6
   animSpeed: 1
+  clipVolume: 1
+  clip: {fileID: 0}
   stunParticle: {fileID: 1193007496272105617}
   defaultStunDuration: 3
 --- !u!114 &1848942824473095222
@@ -12100,6 +12114,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathState
   stateType: 7
   animSpeed: 1
+  clipVolume: 0.342
+  clip: {fileID: 8300000, guid: 5f5496aa41991d14ebe215953c1155b2, type: 3}
   deathParticle: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
 --- !u!114 &4677844569803479896
 MonoBehaviour:
@@ -12116,6 +12132,10 @@ MonoBehaviour:
   bc: {fileID: 1230874241627881867}
   attackTransform: {fileID: 1162123107904664306}
   hitEffectPrefab: {fileID: 0}
+  swingClipVolume: 0.404
+  swingClip: {fileID: 8300000, guid: 09595ab7e655f4b4299bfae17b5efef0, type: 3}
+  impactClipVolume: 1
+  impactClip: {fileID: 0}
   bulletPrefab: {fileID: 2946174697627738867, guid: 75ecd8899b812b244bd2922e8b4c8c1a, type: 3}
   slimePrefab: {fileID: 7188791091733837851, guid: 28f2afe21a7323946860fb4b4bfd0983, type: 3}
   slimeTrans: {fileID: 8619415595093307360}
@@ -12133,7 +12153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 4
   outlineColor: {r: 1, g: 0.53998077, b: 0.15686274, a: 1}
-  outlineWidth: 1.67
+  outlineWidth: 3.03
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

@@ -25,7 +25,13 @@ public class InputSkill : MonoBehaviour
         }
         
     }
-
+    public void OffEffectAll()
+    {
+        for (int i = 0; i < skillAttacks.Length; i++)
+        {
+            skillAttacks[i].StopPlayEffect();
+        }
+    }
     public void ActiveSkill(SKILLS skillTypes = SKILLS.SKILL3)
     {
         PlayerSkillAttack skill = skillAttacks[(int)skillTypes];

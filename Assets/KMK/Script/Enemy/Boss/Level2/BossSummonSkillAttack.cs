@@ -24,6 +24,7 @@ public class BossSummonSkillAttack : EnemySkillAttack
     public void OnSummon()
     {
         Attack();
+        PlaySwingSFX();
     }
 
     public void OnEffectOff()

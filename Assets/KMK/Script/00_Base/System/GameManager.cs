@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] private DataManager dataManager;
+    [SerializeField] private DungeonGenerator dungeonGenerator;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private StartUI startUI;
     [SerializeField] private DialogueSystem dialogueSystem;
@@ -33,6 +35,8 @@ public class GameManager : MonoBehaviour
     // 피격 연출 카메라 연출
     public CombatFeedback CombatFeedback => combatFeedback;
     public CameraShakeController CameraShakeController => cameraShakeController;
+
+    public Transform CurrentRetryPoint { get; private set; }
 
     public GameState CurrentState {  get; private set; }
 
@@ -191,4 +195,49 @@ public class GameManager : MonoBehaviour
         DataManager.SaveData();
     }
     #endregion
+    public void RetryFromDungeonStart()
+    {
+        StartCoroutine(CoRetryFromDungeonStart());
+    }
+    private IEnumerator CoRetryFromDungeonStart()
+    {
+        ResumeGame();
+        startUI.CloseDeathUI();
+
+        // 플레이어 상태 초기화
+        Player.ReviveFull();
+        Player.GetComponent<PlayerController>().ResetAfterRespawn();
+
+        // 기존 던전 제거
+        dungeonGenerator.ClearDungeon();
+
+        yield return null;
+        // 새 던전 생성
+        dungeonGenerator.GenerateDungeon();
+        // 시작점으로 이동
+        Vector3 startPos = dungeonGenerator.WorldStartPoint;
+        Player.transform.position = startPos + Vector3.up * 1f;
+
+        // 필요하면 NavMesh/중력 안정화용 정리
+        Player.GetComponent<PlayerController>().MovementComp.StopMove();
+
+        CurrentState = GameState.Dungeon;
+    }
+
+    public void ReturnToMainMenu()
+    {
+        ResumeGame();
+        startUI?.CloseDeathUI();
+
+        var pc = Player.GetComponent<PlayerController>();
+        if (pc != null)
+            pc.ResetAfterRespawn();
+
+        if (dungeonGenerator != null && dungeonGenerator.IsGenerationCompleted)
+            dungeonGenerator.ClearDungeon();
+
+        SaveCurrentPlayerData();
+        EnterTitleMenu();
+    }
+
 }

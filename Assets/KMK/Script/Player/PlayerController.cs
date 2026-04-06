@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using TreeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 // 강제적으로 컴포넌트와 컨트롤러를 세트로 만들어줌
 [RequireComponent(typeof(PlayerStatComponent))]
@@ -73,6 +69,8 @@ public class PlayerController : BaseController<PlayerStatComponent>
     private float bufferedAttackTime = -1f;
     private InputSkill.SKILLS bufferedSkill = (InputSkill.SKILLS)(-1);
 
+    public event Action OnPlayerDeath;
+
     #endregion
     protected override void Awake()
     {
@@ -92,15 +90,18 @@ public class PlayerController : BaseController<PlayerStatComponent>
         StatComp.OnChangeLevel += SkillComp.UnlockSkill;
         storeSystem.OnCloseStore += CloseStore;
         inventoryUI.OnRequestUseItem += UseInventoryItem;
+        StatComp.OnDie += HandleDeath;
     }
     private void OnDisable()
     {
         storeSystem.OnCloseStore -= CloseStore;
         inventoryUI.OnRequestUseItem -= UseInventoryItem;
+        StatComp.OnDie -= HandleDeath;
     }
     // Update is called once per frame
     void Update()
     {
+        if (StatComp.IsDead) return;
         // 마우스 위치와 방향 갱신
         UpdateAimData();
         // 공격 중 버퍼 체크
@@ -110,10 +111,14 @@ public class PlayerController : BaseController<PlayerStatComponent>
             MovementComp.StopMove();
             return;
         }
-        if(IsDamage)
+        if (IsDamage)
         {
-            TryConsumeBufferedInput();
+            MovementComp.StopMove();
+            Animator.SetFloat("Move", 0f);
+            return;
         }
+
+        TryConsumeBufferedInput();
 
         // 일반 입력
         HandleInput();
@@ -463,6 +468,7 @@ public class PlayerController : BaseController<PlayerStatComponent>
     {
         if (IsBlink || IsDamage) return;
         TrailOff();
+
         base.Damage(damage, force, attacker);
         var gm = GameManager.Instance;
         bool isBoss = false;
@@ -475,18 +481,30 @@ public class PlayerController : BaseController<PlayerStatComponent>
 
         if(isBoss)
         {
-            Vector3 dir = Vector3.zero;
-            if(attacker != null)
+            SkillComp.OffEffectAll();
+            Vector3 pushDir = Vector3.zero;
+            Vector3 lookDir = Vector3.zero;
+            if (attacker != null)
             {
-                dir = (transform.position - attacker.transform.position).normalized;
-                dir.y = 0;
+                // 밀려나는 방향
+                pushDir = (transform.position - attacker.position);
+                pushDir.y = 0f;
+                if (pushDir.sqrMagnitude > 0.001f)
+                    pushDir.Normalize();
+
+                // 공격자를 바라보는 방향
+                lookDir = (attacker.position - transform.position);
+                lookDir.y = 0f;
+                if (lookDir.sqrMagnitude > 0.001f)
+                    lookDir.Normalize();
             }
+
             var shake = GameManager.Instance.CameraShakeController;
             var feedback = GameManager.Instance.CombatFeedback;
             if(shake != null)
             {
                 shake.PlayMotionBlur(0.14f, 0.06f);
-                if(dir != Vector3.zero) shake.ShakeCamDirectional(dir, 0.32f, 0.12f, 2.6f, true, 0.85f);
+                if (pushDir != Vector3.zero) shake.ShakeCamDirectional(pushDir, 0.32f, 0.12f, 2.6f, true, 0.85f);
                 else shake.GenerateImpulse(0.45f);
             }
             if (feedback != null)
@@ -495,9 +513,11 @@ public class PlayerController : BaseController<PlayerStatComponent>
             }
             if(force > 2.5f)
             {
+                MovementComp.StopMove();
+                MovementComp.LookAtInstant(lookDir);
                 Animator.SetTrigger("Damage");
             }
-            MovementComp.PushByBoss(dir, force * 0.4f, 0.08f);
+            MovementComp.PushByBoss(pushDir, force * 0.4f, 0.08f);
             return;
         }
         gm.CameraShakeController.GenerateImpulse(0.5f);
@@ -549,5 +569,30 @@ public class PlayerController : BaseController<PlayerStatComponent>
         StatComp.OnChangeLevel -= SkillComp.UnlockSkill;
     }
 
+    private void HandleDeath()
+    {
+        MovementComp.StopMove();
+        TrailOff();
+        ClearTarget();
+        isStoreOpen = false;
+        isMoveToInteraction = false;
+        Animator.SetTrigger("Die");
 
+        OnPlayerDeath?.Invoke();
+    }
+    public void ResetAfterRespawn()
+    {
+        IsDamage = false;
+        IsBlink = false;
+
+        TrailOff();
+        ClearTarget();
+
+        isMoveToInteraction = false;
+        bufferedAttackTime = -1f;
+        bufferedSkill = (InputSkill.SKILLS)(-1);
+
+        MovementComp.StopMove();
+        Animator.Play("Idle", 0, 0f);
+    }
 }

@@ -16,7 +16,7 @@ public class CharacterStatComponent : MonoBehaviour
     public float speedMutlfile = 1;
     public float attackBuffMultifle = 1;
 
-    public float CurrentHP { get => currentHP;}
+    public float CurrentHP { get => currentHP; set => currentHP = value; }
     public float MaxHP { get => statinfo.maxHP; }
     private bool isHit = false;
     public bool IsHit { get => isHit; set => isHit = value; }
@@ -34,7 +34,11 @@ public class CharacterStatComponent : MonoBehaviour
     public LayerMask TargetLayer { get => statinfo.targetLayer; }
     public LayerMask PassLayer { get => statinfo.passLayer; }
 
+    protected bool isDead = false;
+    public bool IsDead => isDead;
+
     public Action<float, float> OnHpChanged;
+    public Action OnDie;
 
     protected virtual void Awake()
     {
@@ -72,11 +76,13 @@ public class CharacterStatComponent : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
-        if (IsInvincible) return;
+        if (IsInvincible || isDead) return;
         currentHP -= damage;
         
         if(currentHP <= 0.01f)
         {
+            isDead = true;
+            OnDie?.Invoke();
             currentHP = 0;
         }
         else

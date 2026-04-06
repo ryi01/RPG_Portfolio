@@ -27,6 +27,7 @@ public class ChargeSkill : PlayerSkillAttack
         
         base.AttackHit(hit);
     }
+    
     public void OnPlayEffect()
     {
         PlayEffect();

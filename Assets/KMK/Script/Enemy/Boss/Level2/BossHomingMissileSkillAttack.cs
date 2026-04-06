@@ -25,7 +25,7 @@ public class BossHomingMissileSkillAttack : EnemySkillAttack
     }
     public void OnFireMissile()
     {
-        
+        PlaySwingSFX();
         Attack();
     }
 }

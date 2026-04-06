@@ -9,8 +9,23 @@ public class StartUI : MonoBehaviour
     [SerializeField] private GameObject pauseCanvas;
     [SerializeField] private GameObject I_Back;
 
+    [SerializeField] private GameObject goCanvas;
+    [SerializeField] private PlayerController playerController;
+    private void OnEnable()
+    {
+        if (playerController != null)
+            playerController.OnPlayerDeath += OpenDeathUI;
+    }
+
+    private void OnDisable()
+    {
+        if (playerController != null)
+            playerController.OnPlayerDeath -= OpenDeathUI;
+    }
+
     private void Start()
     {
+        CloseDeathUI();
         ShowTitleMenu(true);
         settingCanvas.SetActive(false);
         pauseCanvas.SetActive(false);
@@ -66,5 +81,26 @@ public class StartUI : MonoBehaviour
         GameManager.Instance.ResumeGame();
     }
     #endregion
+    #region 게임 오버
+    private void OpenDeathUI()
+    {
+        goCanvas.SetActive(true);
+    }
 
+    public void CloseDeathUI()
+    {
+        goCanvas.SetActive(false);
+    }
+
+    public void OnClickRetry()
+    {
+        CloseDeathUI();
+        GameManager.Instance.RetryFromDungeonStart();
+    }
+    public void OnClickDeathMain()
+    {
+        CloseDeathUI();
+        GameManager.Instance.ReturnToMainMenu();
+    }
+    #endregion
 }

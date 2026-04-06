@@ -11915,8 +11915,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathState
   stateType: 7
   animSpeed: 1
-  clipVolume: 1
-  clip: {fileID: 0}
+  clipVolume: 0.342
+  clip: {fileID: 8300000, guid: 5f5496aa41991d14ebe215953c1155b2, type: 3}
   deathParticle: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
 --- !u!114 &8405312352430967517
 MonoBehaviour:
@@ -11933,8 +11933,8 @@ MonoBehaviour:
   bc: {fileID: 5259705674882952304}
   attackTransform: {fileID: 3249045397021302181}
   hitEffectPrefab: {fileID: 0}
-  swingClipVolume: 0.4
-  swingClip: {fileID: 8300000, guid: b010e635f1d101e4f875b6c23041004f, type: 3}
+  swingClipVolume: 0.105
+  swingClip: {fileID: 8300000, guid: 51d9937fe88d75c448f4591cc34a883e, type: 3}
   impactClipVolume: 1
   impactClip: {fileID: 0}
   bulletPrefab: {fileID: 3070874539147405805, guid: 6728515f8b9b3b9419f659321ee23aab, type: 3}
@@ -11952,7 +11952,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 4
   outlineColor: {r: 1, g: 0.53998077, b: 0.15686274, a: 1}
-  outlineWidth: 1.67
+  outlineWidth: 3.03
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
