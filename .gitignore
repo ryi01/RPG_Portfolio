@@ -70,7 +70,17 @@ crashlytics-build.properties
 # Packed Addressables
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
-# Temporary auto-generated Android Assets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
-/[Aa]ssets/KMK_Asset/
+# Ignore all Assets
+/[Aa]ssets/*
+
+# Keep KMK folder
+!/[Aa]ssets/KMK/
+!/[Aa]ssets/KMK.meta
+
+# Ignore everything inside KMK
+/[Aa]ssets/KMK/*
+
+# Keep Script folder and all files inside it
+!/[Aa]ssets/KMK/Script/
+!/[Aa]ssets/KMK/Script.meta
+!/[Aa]ssets/KMK/Script/**
